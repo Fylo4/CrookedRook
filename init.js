@@ -51,6 +51,23 @@ function load_board_textures() {
     add_image("board", "full_space");
 }
 
+function handle_make_move(src_x, src_y, dst_x, dst_y, prom) {
+    if(in_multiplayer_game) {
+        multiplayer_make_move(src_x, src_y, dst_x, dst_y, prom);
+    }
+    else {
+        make_move(src_x, src_y, dst_x, dst_y, prom);
+    }
+}
+function handle_make_drop(piece, color, dest) {
+    if(in_multiplayer_game) {
+        multiplayer_make_drop(piece, color, dest);
+    }
+    else {
+        make_drop_move(piece, color, dest);
+    }
+}
+
 function handle_mouse_click() {
     let brd = board_history[view_move];
 
@@ -70,8 +87,14 @@ function handle_mouse_click() {
             && clicked_piece >= 0 && clicked_piece < temp_data.promotions.length) {
             let prom = temp_data.promotions[clicked_piece];
             let src = temp_data.selected_position, dst = temp_data.move_to;
-            make_move(src % game_data.width, Math.floor(src / game_data.width),
-                dst % game_data.width, Math.floor(dst / game_data.width), prom);
+            let src_x = src % game_data.width, src_y = Math.floor(src / game_data.width);
+            let dst_x = dst % game_data.width, dst_y = Math.floor(dst / game_data.width);
+            if(validate_move(src_x, src_y, dst_x, dst_y, prom)) {
+                handle_make_move(src_x, src_y, dst_x, dst_y, prom);
+            }
+            else {
+                console.error("Invalid move attempted after promotion was selected");
+            }
             temp_data.selected = false;
         }
         temp_data.waiting_for_promotion = false;
@@ -82,13 +105,25 @@ function handle_mouse_click() {
                 //See how many promotions are possible
                 let src = temp_data.selected_position, dst = mouse_sq;
                 let promote_to = find_promotions(identify_piece(src, brd), src, dst, brd.white_ss.get(src), brd.black_ss.get(src));
+                let src_x = src % game_data.width, src_y = Math.floor(src / game_data.width);
+                let dst_x = mouse_sq_pos.x, dst_y = mouse_sq_pos.y;
                 if (promote_to.length < 2) {
-                    make_move(src % game_data.width, Math.floor(src / game_data.width), mouse_sq_pos.x, mouse_sq_pos.y);
+                    if(validate_move(src_x, src_y, dst_x, dst_y)) {
+                        handle_make_move(src_x, src_y, dst_x, dst_y);
+                    }
+                    else {
+                        console.error("Invalid move attempted without promotion selections");
+                    }
                     temp_data.selected = false;
                 }
                 else if (game_data.all_pieces[identify_piece(src, brd)].attributes.includes(attrib.random_promotion)) {
-                    make_move(src % game_data.width, Math.floor(src / game_data.width), mouse_sq_pos.x, mouse_sq_pos.y,
-                        promote_to[Math.floor(Math.random() * promote_to.length)]);
+                    let prom = promote_to[Math.floor(Math.random() * promote_to.length)];
+                    if(validate_move(src_x, src_y, dst_x, dst_y, prom)) {
+                        handle_make_move(src_x, src_y, dst_x, dst_y, prom);
+                    }
+                    else {
+                        console.error("Invalid move attempted with random promotion");
+                    }
                     temp_data.selected = false;
                 }
                 else {
@@ -106,7 +141,12 @@ function handle_mouse_click() {
         if (mouse_sq >= 0 && mouse_sq < game_data.width * game_data.height) {
             if (!brd.white_ss.get(mouse_sq) && !brd.black_ss.get(mouse_sq)) {
                 //Piece, color, dest
-                make_drop_move(temp_data.selected_position, temp_data.selected_side, mouse_sq);
+                if(validate_drop(temp_data.selected_position, temp_data.selected_side, mouse_sq)) {
+                    handle_make_drop(temp_data.selected_position, temp_data.selected_side, mouse_sq);
+                }
+                else {
+                    console.error("Invalid drop attempted");
+                }
             }
         }
         temp_data.hand_selected = false;
@@ -153,6 +193,15 @@ function handle_mouse_leave() {
         old_mouse_sq = -1;
         render_board();
     }
+}
+
+function board_page() {
+    document.getElementById("board_section").style.display = "block";
+    document.getElementById("lobby_section").style.display = "none";
+}
+function lobby_page() {
+    document.getElementById("board_section").style.display = "none";
+    document.getElementById("lobby_section").style.display = "block";
 }
 
 function handle_mouse_move(e) {
@@ -242,4 +291,5 @@ function page_init() {
                 break;*/
         }
     };
+    board_page()
 }

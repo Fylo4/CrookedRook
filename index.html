@@ -11,7 +11,7 @@
     <script src="style_data.js"></script>
     <script src="init.js"></script>
 
-    <script src="boards/CCIT/Cannon.js"></script>
+    <!--<script src="boards/CCIT/Cannon.js"></script>
     <script src="boards/CCIT/No Step On Snek.js"></script>
     <script src="boards/CCIT/Kitchen.js"></script>
     <script src="boards/CCIT/LeapyMakruk.js"></script>
@@ -28,7 +28,7 @@
 
     <script src="boards/Other/Xiangqi.js"></script>
 
-    <script src="boards/Shogi/Shogi.js"></script>
+    <script src="boards/Shogi/Shogi.js"></script>-->
 
     <title>The Crooked Rook</title>
     <link rel="icon" href="icon.png">
@@ -37,47 +37,113 @@
             margin-top: 8px;
             margin-bottom: 8px;
         }
+        table, th, td {
+            border:1px solid black;
+            text-align:center;
+        }
+        table {
+            width:50%;
+        }
+        th {
+            width:33%;
+        }
     </style>
 </head>
 <body>
-    <p><b style="font-size: 30px">The Crooked Rook</b> Pre-Release 0.1.0</p>
-    <label>Choose Variant: </label>
-    <select id="categoryField" onchange="add_files_to_dropdown()">
-        <option value="0">Chess</option>
-        <option value="1">Shogi</option>
-        <option value="2">Historical</option>
-        <!--<option value="3">Regional</option>-->
-        <option value="4">CCIT</option>
-        <option value="5">Other</option>
-    </select>
-    <select id="variantField" name="variantField"></select>
-    <button onclick="load_variant_dropdown();">Load</button>
-    <br /> <br />
-    <button onclick="document.getElementById('history').value = export_history();">Export History</button>
-    <button onclick="view_move = 0; import_history(document.getElementById('history').value); render_board();">Import History</button>
-    <input id="history" />
+    <!-- Header -->
+    <div style="width: 100%; overflow:auto;">
+        <div style="width: 50%; float: left;">
+            <p><b style="font-size: 30px">The Crooked Rook</b> Pre-Release 0.1.0</p>
+        </div>
+        <div style="width: max-content; float: right;">
+            <p id="name_p">Name:</p>
+            <input id="name_input"/>
+            <button onclick="set_name()">Change</button>
+            <br />
+        </div>
+    </div>
+    <button onclick="board_page()">Board</button>
+    <button onclick="lobby_page()">Lobby</button>
     <br /> <br />
 
-    <button onClick="change_zoom(1);  render_board();">+</button>
-    <button onClick="change_zoom(-1); render_board();">-</button>
-    <button onClick="style_data.flip_board ^= 1; render_board()">Flip</button>
-    <button onClick="style_data.name_squares ^= 1; render_board()">Square Names</button>
-    <!-- <button onClick="">End turn</button> -->
-    <br /> <br />
-    <canvas id="board_canvas" width="400" height="50" onClick="temp_data.mouse_pressed = 1"></canvas>
-    <p id="turn_indicator">Turn: N/A</p>
-    <br />
+    <div id="lobby_section">
+        <table id="lobby_table">
+            <tr>
+                <th>Board Name</th>
+                <th>Creator</th>
+                <th>Join</th>
+            </tr>
+        </table>
+        <br />
+        <label for="board_name">Board Name:</label>
+        <input id="board_name">
+        <button onclick="add_lobby()">Start Room</button>
+    </div>
+    
+    <div id="board_section">
+        <label>Choose Variant: </label>
+        <select id="categoryField" onchange="add_files_to_dropdown()">
+            <option value="0">Chess</option>
+            <option value="1">Shogi</option>
+            <option value="2">Historical</option>
+            <!--<option value="3">Regional</option>-->
+            <option value="4">CCIT</option>
+            <option value="5">Other</option>
+        </select>
+        <select id="variantField" name="variantField"></select>
+        <button onclick="load_variant_dropdown();">Load</button>
+        <br /> <br />
+        <button onclick="document.getElementById('history').value = export_history();">Export History</button>
+        <button onclick="view_move = 0; import_history(document.getElementById('history').value); render_board();">Import History</button>
+        <input id="history" />
+        <br /> <br />
 
-    <button onclick="up_arrow_click();">&uarr;</button>
-    <button onclick="left_arrow_click();">&larr;</button>
-    <button onclick="right_arrow_click();">&rarr;</button>
-    <button onclick="down_arrow_click();">&darr;</button>
-    <div id="move_history"></div>
-    <p>If you see blank spaces when loading a board, move your mouse on the canvas and it should reload</p>
+        <button onClick="change_zoom(1);  render_board();">+</button>
+        <button onClick="change_zoom(-1); render_board();">-</button>
+        <button onClick="style_data.flip_board ^= 1; render_board()">Flip</button>
+        <button onClick="style_data.name_squares ^= 1; render_board()">Square Names</button>
+        <!-- <button onClick="">End turn</button> -->
+        <br /> <br />
+        <p id="multiplayer_label">Mode: Single-player</p>
+        <p id="top_player_label"></p>
+        <canvas id="board_canvas" width="400" height="0" onClick="temp_data.mouse_pressed = 1"></canvas>
+        <p id="bottom_player_label"></p>
+        <p id="turn_indicator">Turn: N/A</p>
+        <br />
+
+        <button onclick="up_arrow_click();">&uarr;</button>
+        <button onclick="left_arrow_click();">&larr;</button>
+        <button onclick="right_arrow_click();">&rarr;</button>
+        <button onclick="down_arrow_click();">&darr;</button>
+        <div id="move_history"></div>
+        <p>If you see blank spaces when loading a board, move your mouse on the canvas and it should reload</p>
+    </div>
 
     <div id="imageDiv" style="Display: none"></div>
     <canvas id="blend_canvas" style="Display: none" width="400" height="400"></canvas>
 
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script>
+        // Import the functions you need from the SDKs you need
+        // import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-app.js";
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBBbEUHGhTCavfixQmyBqMOEhJ-s9xfbsU",
+            authDomain: "crooked-rook.firebaseapp.com",
+            databaseURL: "https://crooked-rook-default-rtdb.firebaseio.com",
+            projectId: "crooked-rook",
+            storageBucket: "crooked-rook.appspot.com",
+            messagingSenderId: "612890880400",
+            appId: "1:612890880400:web:bf191526f0789a2ade2b15"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+    </script>
+    <script src="firebase-code.js"></script>
     <script>page_init()</script>
 </body>
 </html>

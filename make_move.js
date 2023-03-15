@@ -1,10 +1,14 @@
 function make_move(src_x, src_y, dst_x, dst_y, promotion) {
+    //console.log(`Make move params: src_x=${src_x}; src_y=${src_y}; dst_x=${dst_x}; dst_y=${dst_y}; prom=${promotion}`);
 
     if (src_x === undefined || src_y === undefined || dst_x === undefined || dst_y === undefined) {
         console.error("make_move called with less than 4 parameters");
     }
     if (typeof(src_x) != "number" || typeof(src_y) != "number" || typeof(dst_x) != "number" || typeof(dst_y) != "number") {
         console.error("Non-number parameter in make_move. Parameters: "+src_x+", "+src_y+", "+dst_x+", "+dst_y);
+    }
+    if(!validate_move(src_x, src_y, dst_x, dst_y, promotion)) {
+        console.error("make_move called with invalid move data");
     }
 
     board = cloneBoard(board_history[view_move]);
@@ -276,20 +280,12 @@ function make_move(src_x, src_y, dst_x, dst_y, promotion) {
     if (my_promotion >= 0) { history_record.promotion = my_promotion; }
     post_move(src_sq, dst_sq, history_record);
 }
+
 function make_drop_move(piece, color, dest) {
+    if(!validate_drop(piece, color, dest)) {
+        console.error("make_drop_move called with invalid data");
+    }
     let my_hand = color ? board.hands.black : board.hands.white;
-    if (my_hand[piece] <= 0) {
-        console.error("Trying to drop a piece you don't have");
-        return;
-    }
-    if (color != board.turn) {
-        console.error("Trying to drop a piece when it isn't your turn");
-        return;
-    }
-    if (board.white_ss.get(dest) || board.black_ss.get(dest)) {
-        console.error("Trying to drop a piece on another piece");
-        return;
-    }
 
     spawn_piece(dest, piece, color);
     my_hand[piece]--;
@@ -304,8 +300,40 @@ function make_drop_move(piece, color, dest) {
     let notation = piece_symbol + "'" + file(dest % game_data.width) + rank(Math.floor(dest / game_data.width));
 
     post_move(-1, dest, { piece: piece, color: color, dest: dest, turn: board.turn_count, drop: true, notation: notation });
-
 }
+
+function validate_move(src_x, src_y, dst_x, dst_y, promotion) {
+    let src_sq = src_y * game_data.width + src_x;
+    let dst_sq = dst_y * game_data.width + dst_x;
+
+    //If a piece of turn's color isn't on src
+    if(board.turn && !board.black_ss.get(src_sq) || !board.turn && !board.white_ss.get(src_sq)) {
+        return false;
+    }
+    //If the piece can't move there
+    if(!board.can_move_ss[src_sq].get(dst_sq)) {
+        return false;
+    }
+    return true;
+}
+
+function validate_drop(piece, color, dest) {
+    let my_hand = color ? board.hands.black : board.hands.white;
+    if (my_hand[piece] <= 0) {
+        //console.error("Trying to drop a piece you don't have");
+        return false;
+    }
+    if (color != board.turn) {
+        //console.error("Trying to drop a piece when it isn't your turn");
+        return false;
+    }
+    if (board.white_ss.get(dest) || board.black_ss.get(dest)) {
+        //console.error("Trying to drop a piece on another piece");
+        return false;
+    }
+    return true;
+}
+
 function post_move(src, dest, history_record) {
     board.turn_pos++;
     if (board.turn_pos >= game_data.turn_list.length) {

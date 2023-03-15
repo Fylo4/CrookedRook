@@ -229,6 +229,27 @@ function render_extras() {
         row = "";
     }
 
+    //Multiplayer stuff
+    if (in_multiplayer_game) {
+        document.getElementById("multiplayer_label").innerHTML = "Mode: Multi-player";
+        if(my_match != undefined && my_match.owner_col != undefined && my_match.joiner_col != undefined) {
+            let white_name = "White: " + my_match.owner_col ? my_match.joiner_name : my_match.owner_name;
+            let black_name = "Black: " + my_match.joiner_col ? my_match.joiner_name : my_match.owner_name;
+            document.getElementById("top_player_label").style.display = "block";
+            document.getElementById("top_player_label").style.display = "block";
+            document.getElementById("top_player_label").innerHTML = style_data.flip_board ? white_name : black_name;
+            document.getElementById("bottom_player_label").innerHTML = style_data.flip_board ? black_name : white_name;
+        }
+        else {
+            document.getElementById("top_player_label").style.display = "none";
+            document.getElementById("top_player_label").style.display = "none";
+        }
+    }
+    else {
+        document.getElementById("multiplayer_label").innerHTML = "Mode: Single-player";
+        document.getElementById("top_player_label").style.display = "none";
+        document.getElementById("top_player_label").style.display = "none";
+    }
 }
 
 function draw_on_square(img, pos1, pos2) {
