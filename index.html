@@ -11,7 +11,7 @@
     <script src="style_data.js"></script>
     <script src="init.js"></script>
 
-    <!--<script src="boards/CCIT/Cannon.js"></script>
+    <script src="boards/CCIT/Cannon.js"></script>
     <script src="boards/CCIT/No Step On Snek.js"></script>
     <script src="boards/CCIT/Kitchen.js"></script>
     <script src="boards/CCIT/LeapyMakruk.js"></script>
@@ -28,7 +28,7 @@
 
     <script src="boards/Other/Xiangqi.js"></script>
 
-    <script src="boards/Shogi/Shogi.js"></script>-->
+    <script src="boards/Shogi/Shogi.js"></script>
 
     <title>The Crooked Rook</title>
     <link rel="icon" href="icon.png">
@@ -53,7 +53,7 @@
     <!-- Header -->
     <div style="width: 100%; overflow:auto;">
         <div style="width: 50%; float: left;">
-            <p><b style="font-size: 30px">The Crooked Rook</b> Pre-Release 0.1.0</p>
+            <p><b style="font-size: 30px">The Crooked Rook</b> Pre-Release 0.2.0</p>
         </div>
         <div style="width: max-content; float: right;">
             <p id="name_p">Name:</p>
@@ -81,18 +81,20 @@
     </div>
     
     <div id="board_section">
-        <label>Choose Variant: </label>
-        <select id="categoryField" onchange="add_files_to_dropdown()">
-            <option value="0">Chess</option>
-            <option value="1">Shogi</option>
-            <option value="2">Historical</option>
-            <!--<option value="3">Regional</option>-->
-            <option value="4">CCIT</option>
-            <option value="5">Other</option>
-        </select>
-        <select id="variantField" name="variantField"></select>
-        <button onclick="load_variant_dropdown();">Load</button>
-        <br /> <br />
+        <div id="choose_section">
+            <label>Choose Variant: </label>
+            <select id="categoryField" onchange="add_files_to_dropdown()">
+                <option value="0">Chess</option>
+                <option value="1">Shogi</option>
+                <option value="2">Historical</option>
+                <!--<option value="3">Regional</option>-->
+                <option value="4">CCIT</option>
+                <option value="5">Other</option>
+            </select>
+            <select id="variantField" name="variantField"></select>
+            <button onclick="load_variant_dropdown();">Load</button>
+            <br /> <br />
+        </div>
         <button onclick="document.getElementById('history').value = export_history();">Export History</button>
         <button onclick="view_move = 0; import_history(document.getElementById('history').value); render_board();">Import History</button>
         <input id="history" />

@@ -102,23 +102,10 @@
             draw_ss(brd.can_move_ss[temp_data.selected_position], document.getElementById('img_sq_canmove_sel'));
         }
         else if ((mouse_sq_pos.y === -1 || mouse_sq_pos.y === game_data.height)) {
-            let hover_side = (mouse_sq_pos.y === -1 && brd.turn);
-            if (style_data.flip_board) {
-                hover_side = !hover_side;
-            }
-            let this_hand = hover_side ? brd.hands.black : brd.hands.white;
-            let col = 0;
-            let hover_piece = -1;
-            for (let a = 0; a < this_hand.length; a++) {
-                if (this_hand[a] > 0) {
-                    if (col === mouse_sq_pos.x) {
-                        hover_piece = a;
-                    }
-                    col++;
-                }
-            }
-            if (hover_piece != -1) {
-                let type = (hover_side === brd.turn) ? 'img_sq_canmove' : 'img_sq_canmove_turn';
+            let hover = highlighted_hand_piece(brd);
+            if (hover.piece != -1) {
+                let type = (hover.color === brd.turn) ? 'img_sq_canmove' : 'img_sq_canmove_turn';
+                if(in_multiplayer_game &&  brd.turn != my_col) { type = 'img_sq_canmove_turn'; }
                 let ss = ss_and(game_data.active_squares, ss_or(brd.white_ss, brd.black_ss).inverse());
                 draw_ss(ss, document.getElementById(type));
             }
@@ -130,6 +117,7 @@
                 if ((!brd.turn && brd.white_ss.get(highlight)) || (brd.turn && brd.black_ss.get(highlight))) {
                     type = 'img_sq_canmove';
                 }
+                if(in_multiplayer_game &&  brd.turn != my_col) { type = 'img_sq_canmove_turn'; }
                 draw_ss(brd.can_move_ss[highlight], document.getElementById(type));
             }
         }
@@ -159,6 +147,26 @@
             draw_sprite(img, start_width + width_px * a, start_height, width_px, height_px);
         }
     }
+}
+
+function highlighted_hand_piece(brd) {
+    if(brd === undefined) {
+        brd = board;
+    }
+    let hover_side = (mouse_sq_pos.y === -1);
+    let real_mouse_x = style_data.flip_board ? (game_data.width - mouse_sq_pos.x - 1) : mouse_sq_pos.x;
+    let this_hand = hover_side ? brd.hands.black : brd.hands.white;
+    let col = 0;
+    let hover_piece = -1;
+    for (let a = 0; a < this_hand.length; a++) {
+        if (this_hand[a] > 0) {
+            if (col === real_mouse_x) {
+                hover_piece = a;
+            }
+            col++;
+        }
+    }
+    return {piece: hover_piece, color: hover_side};
 }
 
 function draw_sprite(sprite, x, y, width, height, color) {
@@ -232,23 +240,25 @@ function render_extras() {
     //Multiplayer stuff
     if (in_multiplayer_game) {
         document.getElementById("multiplayer_label").innerHTML = "Mode: Multi-player";
-        if(my_match != undefined && my_match.owner_col != undefined && my_match.joiner_col != undefined) {
-            let white_name = "White: " + my_match.owner_col ? my_match.joiner_name : my_match.owner_name;
-            let black_name = "Black: " + my_match.joiner_col ? my_match.joiner_name : my_match.owner_name;
+        if(my_name != undefined && opp_name != undefined) {
+            let white_name = "White: " + (my_col ? opp_name : my_name);
+            let black_name = "Black: " + (my_col ? my_name : opp_name);
             document.getElementById("top_player_label").style.display = "block";
-            document.getElementById("top_player_label").style.display = "block";
+            document.getElementById("bottom_player_label").style.display = "block";
             document.getElementById("top_player_label").innerHTML = style_data.flip_board ? white_name : black_name;
             document.getElementById("bottom_player_label").innerHTML = style_data.flip_board ? black_name : white_name;
         }
         else {
             document.getElementById("top_player_label").style.display = "none";
-            document.getElementById("top_player_label").style.display = "none";
+            document.getElementById("bottom_player_label").style.display = "none";
         }
+        document.getElementById("choose_section").style.display = "none";
     }
     else {
         document.getElementById("multiplayer_label").innerHTML = "Mode: Single-player";
         document.getElementById("top_player_label").style.display = "none";
-        document.getElementById("top_player_label").style.display = "none";
+        document.getElementById("bottom_player_label").style.display = "none";
+        document.getElementById("choose_section").style.display = "block";
     }
 }
 
@@ -275,13 +285,13 @@ function draw_on_square(img, pos1, pos2) {
 }
 
 function draw_on_hand(img, x, is_black) {
-    if (style_data.flip_board) { is_black ^= 1; }
+    let side = style_data.flip_board ? !is_black : is_black;
     //Set size data
     let width_px = canvas.width / game_data.width;
     let height_px = canvas.height / (game_data.height + (game_data.has_hand ? 2 : 0));
     //Find x and y coordinates
     let pos_x = x * width_px;
-    let pos_y = is_black ? 0 : canvas.height - height_px;
+    let pos_y = side ? 0 : canvas.height - height_px;
     draw_sprite(img, pos_x, pos_y, width_px, height_px, is_black ? style_data.black_col : style_data.white_col);
 }
 

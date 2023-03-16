@@ -36,6 +36,8 @@ function add_files_to_dropdown() {
         var temp = new Option();
         temp.value = a;
         temp.innerHTML = preset_variants[Number(category.value)][a].name;
+        //console.log(preset_variants[Number(category.value)][a].name);
+        //console.log(JSON.stringify(preset_variants[Number(category.value)][a]));
         parent.appendChild(temp);
     }
 }
@@ -153,31 +155,17 @@ function handle_mouse_click() {
     }
     else if (mouse_sq_pos.y === -1 || mouse_sq_pos.y === game_data.height) {
         //We clicked a hand
-        let clicked_black = (mouse_sq_pos.y === -1 && !style_data.flip_board || mouse_sq_pos.y === game_data.height && style_data.flip_board);
-        if (clicked_black === brd.turn) {
-            let clicked_piece = -1;
-            let my_hand = clicked_black ? brd.hands.black : brd.hands.white;
-            let col = 0;
-            for (let a = 0; a < my_hand.length; a++) {
-                if (my_hand[a] > 0) {
-                    if (col === mouse_sq_pos.x) {
-                        clicked_piece = a;
-                        break;
-                    }
-                    col++;
-                }
-            }
-            if (clicked_piece >= 0) {
-                temp_data.hand_selected = true;
-                temp_data.selected_side = clicked_black;
-                temp_data.selected_position = clicked_piece;
-            }
+        let hover = highlighted_hand_piece(brd);
+        if (hover.piece >= 0 && hover.color === brd.turn && (!in_multiplayer_game || brd.turn === my_col)) {
+            temp_data.hand_selected = true;
+            temp_data.selected_side = hover.color;
+            temp_data.selected_position = hover.piece;
         }
     } 
     else {
         if ((!brd.turn && brd.white_ss.get(mouse_sq))
             || (brd.turn && brd.black_ss.get(mouse_sq))) {
-            if (!brd.can_move_ss[mouse_sq].is_zero()) {
+            if (!brd.can_move_ss[mouse_sq].is_zero() && (!in_multiplayer_game || brd.turn === my_col)) {
                 temp_data.selected = true;
                 temp_data.selected_position = mouse_sq;
             }

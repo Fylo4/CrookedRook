@@ -472,7 +472,6 @@ function find_promotions(this_id, src_sq, end_sq, is_white, is_black) {
             (is_white && !start_in_white && end_in_white) ||
             (is_black && !start_in_black && end_in_black)) {
             promote_to.push(...prom.to);
-            console.log(promote_to);
         }
         else if (prom.on.includes(events.exit) &&
             (is_white && start_in_white && !end_in_white) ||

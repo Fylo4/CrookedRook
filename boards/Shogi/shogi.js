@@ -73,7 +73,8 @@ preset_variants[1].push({
             description: "Moves one step in any direction. Can be checked and checkmated.",
             sprite: "king",
 			symbol: "K",
-			move: "[K]a"
+			move: "[K]a",
+            attributes: [attrib.royal]
         },
         {
             name: "+Pawn",
