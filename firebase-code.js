@@ -1,7 +1,13 @@
-let verbose_db_set = true;
-let verbose_db_get = true;
+let verbose_db_set = false;
+let verbose_db_get = false;
 //This is just an estimate and doesn't include overhead
 let total_bytes_fetched = 0;
+
+let stored_boards = localStorage.getItem("boards") ?? [];
+if(typeof(stored_boards) === "string") {
+    stored_boards = JSON.parse(stored_boards);
+}
+let stored_name = localStorage.getItem("name") ?? "Guest";
 
 function show_db_set(message) {
     if (verbose_db_set) {
@@ -25,8 +31,15 @@ function show_message (message) {
 
 let all_boards_ref = firebase.database().ref(`boards`);
 function set_board(board_name) {
+    let my_board = stored_boards.find(e => e.name === board_name);
+    if (my_board) {
+        start_game(my_board.board);
+        return;
+    }
     all_boards_ref.child(board_name).once("value", (snapshot) => {
         let this_board = snapshot.val();
+        stored_boards.push({name: board_name, board: JSON.parse(JSON.stringify(this_board))});
+        localStorage.setItem("boards", JSON.stringify(stored_boards));
         show_db_get(`Getting boards/${board_name}`, this_board);
         if (!this_board) {
             show_error("Trying to start a non-existent board");
@@ -43,6 +56,7 @@ let user_ref;
 let this_user;
 
 let in_multiplayer_game = false;
+let my_lobby_ref;
 let my_match_ref;
 let my_match;
 let my_col;
@@ -88,21 +102,24 @@ function resign() {
 //Pulls name automatically from name_input field
 function set_name() {
     let new_name = document.getElementById("name_input").value;
-    if (typeof(new_name) === "string") {
-        show_db_set("Updating my name");
-        user_ref.update({name: new_name});
+    if(typeof(new_name) != "string" || new_name.length < 1) {
+        show_error("Name must be a non-empty string");
+        return;
     }
+    show_db_set("Updating my name");
+    user_ref.update({name: new_name});
+    localStorage.setItem("name", new_name);
 }
 
 function close_match() {
     //Todo: Archive the match
     show_db_set("Setting my_match to close the match")
-    my_match_ref.set({});
+    //Todo: Don't have permission to set this
+    my_match_ref.remove();
     switch_to_single_player();
 }
 
 function switch_to_single_player() {
-    console.log("Switching to singleplayer mode");
     in_multiplayer_game = false;
     my_ver_ref = undefined;
     other_ver_ref = undefined;
@@ -221,6 +238,33 @@ let other_ver_change = (snapshot) => {
     }
 }
 
+function connect_to_match(match_ref_str, col, new_my_name, new_opp_name, owner, board_name) {
+    if(match_ref_str != undefined) {
+        my_match_ref = firebase.database().ref(`match/${match_ref_str}`);
+    }
+    in_multiplayer_game = true;
+    my_col = col;
+    is_owner = owner;
+    style_data.flip_board = my_col;
+    my_name = new_my_name;
+    opp_name = new_opp_name;
+    my_prop_ref = my_match_ref.child(is_owner?'o':'j').child('prop');
+    my_ver_ref  = my_match_ref.child(is_owner?'o':'j').child('ver');
+    other_prop_ref = my_match_ref.child(is_owner?'j':'o').child('prop');
+    other_ver_ref  = my_match_ref.child(is_owner?'j':'o').child('ver');
+    my_res_ref = my_match_ref.child(is_owner?'o':'j').child('res');
+    other_res_ref  = my_match_ref.child(is_owner?'j':'o').child('res');
+    other_prop_ref.on("value", other_prop_change);
+    other_ver_ref.on("value", other_ver_change);
+    other_res_ref.on("value", on_opp_resign);
+    if(my_lobby_ref) {
+        my_lobby_ref.remove();
+        my_lobby_ref = undefined;
+    }
+    set_board(board_name);
+    board_page();
+}
+
 function join_game(match_id) {
     if(in_multiplayer_game) {
         return;
@@ -249,9 +293,10 @@ function join_game(match_id) {
                 owner_col = (Math.random() < 0.5);
                 break;
         }
+        //Create the match
         my_match_ref = firebase.database().ref(`match`).push();
         show_db_set("Setting my_match to join the game");
-        my_match_ref.set({
+        my_match_ref.update({
             board_name: t_match.board_name,
             j: {
                 name: this_user.name,
@@ -264,31 +309,22 @@ function join_game(match_id) {
                 name: t_match.owner_name
             }
         });
-        in_multiplayer_game = true;
-        my_col = !owner_col;
-        style_data.flip_board = my_col;
-        my_name = this_user.name;
-        opp_name = t_match.owner_name;
-        let is_owner = (t_match.owner === user_id); //Should be false
-        my_prop_ref = my_match_ref.child(is_owner?'o':'j').child('prop');
-        my_ver_ref  = my_match_ref.child(is_owner?'o':'j').child('ver');
-        other_prop_ref = my_match_ref.child(is_owner?'j':'o').child('prop');
-        other_ver_ref  = my_match_ref.child(is_owner?'j':'o').child('ver');
-        my_res_ref = my_match_ref.child(is_owner?'o':'j').child('res');
-        other_res_ref  = my_match_ref.child(is_owner?'j':'o').child('res');
-        other_prop_ref.on("value", other_prop_change);
-        other_ver_ref.on("value", other_ver_change);
-        other_res_ref.on("value", on_opp_resign);
+        //Send match link to owner
         show_db_set("Updating lobby entry to start match")
         t_match_ref.update({goto: my_match_ref.key, joiner_name: this_user.name, owner_col});
         t_match_ref = undefined;
-        set_board(t_match.board_name);
-        board_page();
+        //Start match locally
+        connect_to_match(undefined, !owner_col, this_user.name, t_match.owner_name, false, t_match.board_name)
     });
 }
 
 function add_lobby() {
+    if(my_lobby_ref) {
+        show_error("Trying to add a lobby while you already have a lobby open");
+        return;
+    }
     if(in_multiplayer_game) {
+        show_error("Trying to add a lobby while you are in a game");
         return;
     }
     let board_name = document.getElementById("board_name").value;
@@ -300,39 +336,20 @@ function add_lobby() {
             show_error("Trying to create lobby with non-existent board");
             return;
         }
-        let lobby_ref = firebase.database().ref(`lobby`).push({
+        //Set up lobby
+        my_lobby_ref = firebase.database().ref(`lobby`).push({
             board_name,
             owner_col,
             owner: user_id,
             owner_name: this_user.name
         });
-        lobby_ref.on("value", (snapshot) => {
+        my_lobby_ref.onDisconnect().remove();
+        //When someone connects, start the game
+        my_lobby_ref.on("value", (snapshot) => {
             let val = snapshot.val();
             show_db_get("Getting lobby info", val)
-            if(!val) {
-                return;
-            }
-            if(val.goto) {
-                //Join the game
-                my_match_ref = firebase.database().ref(`match/${val.goto}`);
-                in_multiplayer_game = true;
-                my_col = val.owner_col;
-                style_data.flip_board = my_col;
-                my_name = val.owner_name;
-                opp_name = val.joiner_name;
-                let is_owner = (val.owner === user_id); //Should be true
-                my_prop_ref = my_match_ref.child(is_owner?'o':'j').child('prop');
-                my_ver_ref  = my_match_ref.child(is_owner?'o':'j').child('ver');
-                other_prop_ref = my_match_ref.child(is_owner?'j':'o').child('prop');
-                other_ver_ref  = my_match_ref.child(is_owner?'j':'o').child('ver');
-                my_res_ref = my_match_ref.child(is_owner?'o':'j').child('res');
-                other_res_ref  = my_match_ref.child(is_owner?'j':'o').child('res');
-                other_prop_ref.on("value", other_prop_change);
-                other_ver_ref.on("value", other_ver_change);
-                other_res_ref.on("value", on_opp_resign);
-                set_board(val.board_name);
-                board_page();
-                lobby_ref.remove();
+            if(val && val.goto) {
+                connect_to_match(val.goto, val.owner_col, val.owner_name, val.joiner_name, true, val.board_name)
             }
         });
     });
@@ -381,10 +398,27 @@ firebase.auth().onAuthStateChanged((user) => {
         show_db_set("Setting my user id and name");
         user_ref.set({
             id: user_id,
-            name: "Guest"
+            name: stored_name
         });
 
         user_ref.onDisconnect().remove();
+
+        //Look through all matches to see if you're in one
+        if (!in_multiplayer_game) {
+            firebase.database().ref("match").once("value", (snapshot) => {
+                let all_matches = snapshot.val();
+                for (let mid in all_matches) {
+                    let match = all_matches[mid]
+                    if ((match.o && match.o.uid === user_id) || (match.j && match.j.uid === user_id)) {
+                        //Join this match
+                        let owner = (match.o && match.o.uid === user_id);
+                        let me = owner ? match.o : match.j, them = owner ? match.j : match.o;
+                        connect_to_match(mid, me.col, me.name, them.name, owner, match.board_name);
+                        //Todo: Make the moves to restore the board state
+                    }
+                }
+            });
+        }
     }
     else {
         //Logged out
