@@ -303,31 +303,33 @@ function make_drop_move(piece, color, dest) {
 }
 
 function validate_move(src_x, src_y, dst_x, dst_y, promotion) {
+    let brd = board_history[view_move];
     let src_sq = src_y * game_data.width + src_x;
     let dst_sq = dst_y * game_data.width + dst_x;
 
     //If a piece of turn's color isn't on src
-    if(board.turn && !board.black_ss.get(src_sq) || !board.turn && !board.white_ss.get(src_sq)) {
+    if(brd.turn && !brd.black_ss.get(src_sq) || !brd.turn && !brd.white_ss.get(src_sq)) {
         return false;
     }
     //If the piece can't move there
-    if(!board.can_move_ss[src_sq].get(dst_sq)) {
+    if(!brd.can_move_ss[src_sq].get(dst_sq)) {
         return false;
     }
     return true;
 }
 
 function validate_drop(piece, color, dest) {
-    let my_hand = color ? board.hands.black : board.hands.white;
+    let brd = board_history[view_move];
+    let my_hand = color ? brd.hands.black : brd.hands.white;
     if (my_hand[piece] <= 0) {
         //console.error("Trying to drop a piece you don't have");
         return false;
     }
-    if (color != board.turn) {
+    if (color != brd.turn) {
         //console.error("Trying to drop a piece when it isn't your turn");
         return false;
     }
-    if (board.white_ss.get(dest) || board.black_ss.get(dest)) {
+    if (brd.white_ss.get(dest) || brd.black_ss.get(dest)) {
         //console.error("Trying to drop a piece on another piece");
         return false;
     }

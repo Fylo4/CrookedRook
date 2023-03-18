@@ -1,9 +1,38 @@
+let verbose_db_set = true;
+let verbose_db_get = true;
+//This is just an estimate and doesn't include overhead
+let total_bytes_fetched = 0;
+
+function show_db_set(message) {
+    if (verbose_db_set) {
+        console.log("db_set: "+message);
+    }
+}
+function show_db_get(message, data) {
+    /*if(typeof(data) != "object" && typeof(data) != "number" && typeof(data) != "string") {
+        console.warn("Warning: Data isn't an object, string, or number: "+data);
+    }*/
+    let len = JSON.stringify(data).length;
+    total_bytes_fetched += len;
+    if(verbose_db_get) {
+        console.log(`db_get: ${message} (size: ${len}, total: ${total_bytes_fetched})`);
+    }
+}
+//Todo: Make these show up on the website
+function show_error(message) {
+    console.error(message);
+}
+function show_message (message) {
+    console.log(message);
+}
+
 let all_boards_ref = firebase.database().ref(`boards`);
 function set_board(board_name) {
     all_boards_ref.child(board_name).once("value", (snapshot) => {
         let this_board = snapshot.val();
+        show_db_get(`Getting boards/${board_name}`, this_board);
         if (!this_board) {
-            console.error("Trying to start a non-existent board");
+            show_error("Trying to start a non-existent board");
         }
         start_game(this_board);
     });
@@ -28,21 +57,23 @@ let my_prop;
 
 function multiplayer_make_move(src_x, src_y, dst_x, dst_y, prom) {
     if(!in_multiplayer_game) {
-        console.error("Trying to make multiplayer move when not in a room");
+        show_error("Trying to make multiplayer move when not in a room");
     }
     let data = {src_x, src_y, dst_x, dst_y};
     if(prom != undefined) {
         data.prom = prom;
     }
+    show_db_set("Setting my_prop (move)");
     my_prop_ref.set(data);
     my_prop = data;
 }
 
 function multiplayer_make_drop(piece, color, dest) {
     if(!in_multiplayer_game) {
-        console.error("Trying to make multiplayer drop when not in a room");
+        show_error("Trying to make multiplayer drop when not in a room");
     }
     let data = {piece, color, dest};
+    show_db_set("Setting my_prop (drop)");
     my_prop_ref.set(data);
     my_prop = data;
 }
@@ -51,12 +82,14 @@ function multiplayer_make_drop(piece, color, dest) {
 function set_name() {
     let new_name = document.getElementById("name_input").value;
     if (typeof(new_name) === "string") {
+        show_db_set("Updating my name");
         user_ref.update({name: new_name});
     }
 }
 
 function close_match() {
     //Todo: Archive the match
+    show_db_set("Setting my_match to close the match")
     my_match_ref.set({});
 }
 
@@ -75,7 +108,9 @@ function switch_to_single_player() {
 
 let other_prop_change = (snapshot) => {
     let other_prop = snapshot.val();
+    show_db_get(`Getting other_prop`, other_prop)
     if (!other_prop) {
+        show_db_set("Setting my_ver to empty")
         my_ver_ref.set({});
         return;
     }
@@ -85,6 +120,7 @@ let other_prop_change = (snapshot) => {
         if (board.turn === my_col || other_prop.color === my_col) {
             valid = false;
         }
+        show_db_set("Setting my_ver to drop move")
         my_ver_ref.set({valid, piece: other_prop.piece, color: other_prop.color, dest: other_prop.dest});
         if (valid) {
             make_drop_move(other_prop.piece, other_prop.color, other_prop.dest);
@@ -95,7 +131,7 @@ let other_prop_change = (snapshot) => {
         }
         else {
             //Todo: Report invalid move
-            console.log("Opponent attempted invalid drop move");
+            show_message("Opponent attempted invalid drop move, but it was blocked");
         }
     }
     else if (other_prop.src_x != undefined && other_prop.src_y != undefined && other_prop.dst_x != undefined && other_prop.dst_y != undefined) {
@@ -111,6 +147,7 @@ let other_prop_change = (snapshot) => {
         if (other_prop.prom != undefined) {
             data.prom = other_prop.prom;
         }
+        show_db_set("Setting my_ver to make a move")
         my_ver_ref.set(data);
         if (valid) {
             make_move(other_prop.src_x, other_prop.src_y, other_prop.dst_x, other_prop.dst_y, other_prop.prom);
@@ -121,12 +158,13 @@ let other_prop_change = (snapshot) => {
         }
         else {
             //Todo: Report invalid move
-            console.log("Opponent attempted invalid move");
+            show_message("Opponent attempted invalid move, but it was blocked");
         }
     }
 }
 let other_ver_change = (snapshot) => {
     let other_ver = snapshot.val();
+    show_db_get("Getting other_ver", other_ver);
     if (!other_ver) {
         return;
     }
@@ -155,10 +193,16 @@ let other_ver_change = (snapshot) => {
     }
     else {
         //Todo: Notify client that the last move was invalid
-        console.log("Your last attempted move was automatically flagged as invalid by the opponent")
+        show_message("Your last attempted move was automatically flagged as invalid by the opponent")
     }
     my_prop = {};
-    my_prop_ref.set({});
+    if(my_prop_ref) {
+        show_db_set("Setting my_prop to empty")
+        my_prop_ref.set({});
+    }
+    else {
+        console.warn("my_prop_ref is undefined. This is normal at the end of a match.")
+    }
 }
 
 function join_game(match_id) {
@@ -166,14 +210,22 @@ function join_game(match_id) {
         return;
     }
     let t_match_ref = firebase.database().ref(`lobby/${match_id}`);
-    let skip = false;
-    t_match_ref.on("value", (snapshot) => {
-        if(skip) {return;} //To avoid double-dipping on value changes
-        skip = true;
+    //let skip = false;
+    //t_match_ref.on("value", (snapshot) => {
+    t_match_ref.once("value", (snapshot) => {
+        //if(skip) {return;} //To avoid double-dipping on value changes
+        //skip = true;
         let t_match = snapshot.val();
-        if(t_match.owner === user_id) {
-            console.error("Attempting to join your own game");
-            return; //Can't join your own match
+        show_db_get("Getting lobby info", t_match)
+        if (!t_match) {
+            //Todo: Notify user of this error
+            show_error("Trying to join a non-existent match");
+            return;
+        }
+        if (t_match.owner === user_id) {
+            //Todo: Notify user of this error
+            show_error("Attempting to join your own game");
+            return;
         }
         let owner_col;
         switch(t_match.owner_col) {
@@ -188,33 +240,38 @@ function join_game(match_id) {
                 break;
         }
         my_match_ref = firebase.database().ref(`match`).push();
+        show_db_set("Setting my_match to join the game");
         my_match_ref.set({
             board_name: t_match.board_name,
-            owner_col,
-            owner: t_match.owner,
-            owner_name: t_match.owner_name,
-            joiner: user_id,
-            joiner_name: this_user.name,
-            joiner_col: !owner_col
+            j: {
+                name: this_user.name,
+                uid: user_id,
+                col: !owner_col
+            },
+            o: {
+                col: owner_col,
+                uid: t_match.owner,
+                name: t_match.owner_name
+            }
         });
         in_multiplayer_game = true;
         my_col = !owner_col;
         style_data.flip_board = my_col;
         my_name = this_user.name;
         opp_name = t_match.owner_name;
-        let is_owner = (t_match.owner === user_id);
-        my_prop_ref = my_match_ref.child(is_owner?'owner_proposed':'joiner_proposed');
-        my_ver_ref  = my_match_ref.child(is_owner?'owner_verified':'joiner_verified');
-        other_prop_ref = my_match_ref.child(is_owner?'joiner_proposed':'owner_proposed');
-        other_ver_ref  = my_match_ref.child(is_owner?'joiner_verified':'owner_verified');
+        let is_owner = (t_match.owner === user_id); //Should be false
+        my_prop_ref = my_match_ref.child(is_owner?'o':'j').child('prop');
+        my_ver_ref  = my_match_ref.child(is_owner?'o':'j').child('ver');
+        other_prop_ref = my_match_ref.child(is_owner?'j':'o').child('prop');
+        other_ver_ref  = my_match_ref.child(is_owner?'j':'o').child('ver');
         other_prop_ref.on("value", other_prop_change);
         other_ver_ref.on("value", other_ver_change);
+        show_db_set("Updating lobby entry to start match")
         t_match_ref.update({goto: my_match_ref.key, joiner_name: this_user.name, owner_col});
         t_match_ref = undefined;
         set_board(t_match.board_name);
         board_page();
     });
-    //t_match_ref.update({joiner: user_id, joiner_name: this_user.name});
 }
 
 function add_lobby() {
@@ -223,11 +280,12 @@ function add_lobby() {
     }
     let board_name = document.getElementById("board_name").value;
     let owner_col = "r";
+    //Check if this board exists
     all_boards_ref.child(`${board_name}/height`).once("value", (snapshot) => {
-        //Check if this board exists
+        show_db_get("Checking if board exists", snapshot.val());
         if(!snapshot.val()) {
             //Todo: Show error to user
-            console.error("Trying to create lobby with non-existent board");
+            show_error("Trying to create lobby with non-existent board");
             return;
         }
         let lobby_ref = firebase.database().ref(`lobby`).push({
@@ -238,6 +296,7 @@ function add_lobby() {
         });
         lobby_ref.on("value", (snapshot) => {
             let val = snapshot.val();
+            show_db_get("Getting lobby info", val)
             if(!val) {
                 return;
             }
@@ -249,11 +308,11 @@ function add_lobby() {
                 style_data.flip_board = my_col;
                 my_name = val.owner_name;
                 opp_name = val.joiner_name;
-                let is_owner = (val.owner === user_id);
-                my_prop_ref = my_match_ref.child(is_owner?'owner_proposed':'joiner_proposed');
-                my_ver_ref  = my_match_ref.child(is_owner?'owner_verified':'joiner_verified');
-                other_prop_ref = my_match_ref.child(is_owner?'joiner_proposed':'owner_proposed');
-                other_ver_ref  = my_match_ref.child(is_owner?'joiner_verified':'owner_verified');
+                let is_owner = (val.owner === user_id); //Should be true
+                my_prop_ref = my_match_ref.child(is_owner?'o':'j').child('prop');
+                my_ver_ref  = my_match_ref.child(is_owner?'o':'j').child('ver');
+                other_prop_ref = my_match_ref.child(is_owner?'j':'o').child('prop');
+                other_ver_ref  = my_match_ref.child(is_owner?'j':'o').child('ver');
                 other_prop_ref.on("value", other_prop_change);
                 other_ver_ref.on("value", other_ver_change);
                 set_board(val.board_name);
@@ -264,8 +323,10 @@ function add_lobby() {
     });
 }
 
-let lobby_ref = firebase.database().ref(`lobby`);
-lobby_ref.on("value", (snapshot) => {
+let all_lobbies_ref = firebase.database().ref(`lobby`);
+all_lobbies_ref.on("value", (snapshot) => {
+    let lobby = snapshot.val();
+    show_db_get("Updating lobby info for table", lobby)
     let table = document.getElementById("lobby_table");
     table.innerHTML = `
     <tr>
@@ -273,7 +334,6 @@ lobby_ref.on("value", (snapshot) => {
         <th>Creator</th>
         <th>Join</th>
     </tr>`;
-    let lobby = snapshot.val();
     for(let row in lobby) {
         let row_v = lobby[row];
         table.innerHTML += `
@@ -287,18 +347,23 @@ lobby_ref.on("value", (snapshot) => {
 
 
 firebase.auth().onAuthStateChanged((user) => {
-    //console.log(user);
     if(user) {
-        //console.log("Logged in");
         user_id = user.uid;
         user_ref = firebase.database().ref(`users/${user_id}`);
 
         user_ref.on("value", (snapshot) => {
             this_user = snapshot.val();
-            let name_p = document.getElementById("name_p");
-            name_p.innerHTML = "Name: "+this_user.name;
+            if(!this_user) {
+                console.warn("This user is undefined. This is normal.")
+            }
+            else {
+                show_db_get("Getting my user info", this_user);
+                let name_p = document.getElementById("name_p");
+                name_p.innerHTML = "Name: "+this_user.name;
+            }
         });
         
+        show_db_set("Setting my user id and name");
         user_ref.set({
             id: user_id,
             name: "Guest"
@@ -307,10 +372,10 @@ firebase.auth().onAuthStateChanged((user) => {
         user_ref.onDisconnect().remove();
     }
     else {
-        //console.log("Logged out");
+        //Logged out
     }
 });
 
 firebase.auth().signInAnonymously().catch((error) => {
-    console.log(error.code, error.message);
+    show_error(error.code, error.message);
 });
