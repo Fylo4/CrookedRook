@@ -1,5 +1,5 @@
 let verbose_db_set = false; 
-let verbose_db_get = false;
+let verbose_db_get = true;
 //This is just an estimate and doesn't include overhead
 let total_bytes_fetched = 0;
 
@@ -135,6 +135,7 @@ function switch_to_single_player() {
 }
 
 let on_opp_resign = (snapshot) => {
+    show_db_get("Getting opp_resign", snapshot.val());
     if(snapshot.val() === true && in_multiplayer_game) {
         in_multiplayer_game = false;
         show_message("Opponent resigned");
@@ -236,7 +237,7 @@ let other_ver_change = (snapshot) => {
         my_prop_ref.set({});
     }
     else {
-        show_error("my_prop_ref is undefined")
+        console.warn("my_prop_ref is undefined. Not a problem, especially if the game just ended.")
     }
 }
 
@@ -274,7 +275,7 @@ function join_game(match_id) {
     let t_match_ref = firebase.database().ref(`lobby/${match_id}`);
     t_match_ref.once("value", (snapshot) => {
         let t_match = snapshot.val();
-        show_db_get("Getting lobby info", t_match)
+        show_db_get("Getting lobby info for join_game", t_match)
         if (!t_match) {
             show_error("Trying to join a non-existent match");
             return;
@@ -350,7 +351,7 @@ function add_lobby() {
         //When someone connects, start the game
         my_lobby_ref.on("value", (snapshot) => {
             let val = snapshot.val();
-            show_db_get("Getting lobby info", val)
+            show_db_get("Getting lobby info for add_lobby", val)
             if(val && val.goto) {
                 connect_to_match(val.goto, val.owner_col, val.owner_name, val.joiner_name, true, val.board_name)
             }
@@ -426,19 +427,20 @@ firebase.auth().onAuthStateChanged((user) => {
                         //Replay all moves
                         firebase.database().ref(`match/${mid}/moves`).once("value", (snapshot) => {
                             let all_moves = snapshot.val();
-                            for (let a = 0; a < all_moves.length; a ++) {
-                                for (let b = 0; b < all_moves[a].length; b ++) { 
-                                    let m = all_moves[a][b]; //To keep the lines short
-                                    if (m.color != undefined) {
-                                        make_drop_move(m.piece, m.color, m.dest);
-                                    }
-                                    else {
-                                        make_move(m.src_x, m.src_y, m.dst_x, m.dst_y, m.prom);
+                            if(all_moves) {
+                                for (let a = 0; a < all_moves.length; a ++) {
+                                    for (let b = 0; b < all_moves[a].length; b ++) { 
+                                        let m = all_moves[a][b]; //To keep the lines short
+                                        if (m.color != undefined) {
+                                            make_drop_move(m.piece, m.color, m.dest);
+                                        }
+                                        else {
+                                            make_move(m.src_x, m.src_y, m.dst_x, m.dst_y, m.prom);
+                                        }
                                     }
                                 }
                             }
                         });
-                        //Todo: Make the moves to restore the board state
                     }
                 }
             });
