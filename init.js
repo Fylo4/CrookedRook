@@ -114,7 +114,7 @@ function handle_mouse_click() {
                         handle_make_move(src_x, src_y, dst_x, dst_y);
                     }
                     else {
-                        console.error("Invalid move attempted without promotion selections");
+                        console.error("Invalid move attempted");
                     }
                     temp_data.selected = false;
                 }
@@ -124,7 +124,7 @@ function handle_mouse_click() {
                         handle_make_move(src_x, src_y, dst_x, dst_y, prom);
                     }
                     else {
-                        console.error("Invalid move attempted with random promotion");
+                        console.error("Invalid move attempted (random promotion)");
                     }
                     temp_data.selected = false;
                 }

@@ -330,7 +330,8 @@ function add_lobby() {
         return;
     }
     let board_name = document.getElementById("board_name").value;
-    let owner_col = "r";
+    let owner_col = document.getElementById("color_sel").value;
+    console.log(owner_col);
     //Check if this board exists
     all_boards_ref.child(`${board_name}/height`).once("value", (snapshot) => {
         show_db_get("Checking if board exists", snapshot.val());
@@ -366,14 +367,20 @@ all_lobbies_ref.on("value", (snapshot) => {
     <tr>
         <th>Board Name</th>
         <th>Creator</th>
+        <th>Creator's Color</th>
         <th>Join</th>
     </tr>`;
     for(let row in lobby) {
         let row_v = lobby[row];
+        let col =
+            row_v.owner_col === 'r' ? "Random" :
+            row_v.owner_col === 'w' ? "White" :
+            row_v.owner_col === 'b' ? "Black" : "Error";
         table.innerHTML += `
         <tr>
             <td>${row_v.board_name}</td>
             <td>${row_v.owner_name}</td>
+            <td>${col}</td>
             <td><button onclick="join_game('${row}')">Join</button></td>
         </tr>`;
     }
@@ -416,6 +423,7 @@ firebase.auth().onAuthStateChanged((user) => {
                         let owner = (match.o && match.o.uid === user_id);
                         let me = owner ? match.o : match.j, them = owner ? match.j : match.o;
                         connect_to_match(mid, me.col, me.name, them.name, owner, match.board_name);
+                        //Replay all moves
                         firebase.database().ref(`match/${mid}/moves`).once("value", (snapshot) => {
                             let all_moves = snapshot.val();
                             for (let a = 0; a < all_moves.length; a ++) {

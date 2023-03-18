@@ -45,7 +45,7 @@
             width:50%;
         }
         th {
-            width:33%;
+            width:25%;
         }
     </style>
 </head>
@@ -71,12 +71,19 @@
             <tr>
                 <th>Board Name</th>
                 <th>Creator</th>
+                <th>Creator's Color</th>
                 <th>Join</th>
             </tr>
         </table>
         <br />
         <label for="board_name">Board Name:</label>
         <input id="board_name">
+        <label for="color_sel">Play as:</label>
+        <select id="color_sel">
+            <option value="r">Random</option>
+            <option value="w">White</option>
+            <option value="b">Black</option>
+        </select>
         <button onclick="add_lobby()">Start Room</button>
     </div>
     
