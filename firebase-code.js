@@ -159,6 +159,7 @@ let other_prop_change = (snapshot) => {
         show_db_set("Setting my_ver to verify drop move")
         my_ver_ref.set({valid, piece: other_prop.piece, color: other_prop.color, dest: other_prop.dest});
         if (valid) {
+            my_match_ref.child("moves").child(board.turn_count-1).child(board.turn_pos).set(other_prop);
             make_drop_move(other_prop.piece, other_prop.color, other_prop.dest);
             if(find_victory() >= 0) {
                 switch_to_single_player();
@@ -186,6 +187,7 @@ let other_prop_change = (snapshot) => {
         show_db_set("Setting my_ver to verify move")
         my_ver_ref.set(data);
         if (valid) {
+            my_match_ref.child("moves").child(board.turn_count-1).child(board.turn_pos).set(other_prop);
             make_move(other_prop.src_x, other_prop.src_y, other_prop.dst_x, other_prop.dst_y, other_prop.prom);
             if(find_victory() >= 0) {
                 switch_to_single_player();
@@ -414,6 +416,20 @@ firebase.auth().onAuthStateChanged((user) => {
                         let owner = (match.o && match.o.uid === user_id);
                         let me = owner ? match.o : match.j, them = owner ? match.j : match.o;
                         connect_to_match(mid, me.col, me.name, them.name, owner, match.board_name);
+                        firebase.database().ref(`match/${mid}/moves`).once("value", (snapshot) => {
+                            let all_moves = snapshot.val();
+                            for (let a = 0; a < all_moves.length; a ++) {
+                                for (let b = 0; b < all_moves[a].length; b ++) { 
+                                    let m = all_moves[a][b]; //To keep the lines short
+                                    if (m.color != undefined) {
+                                        make_drop_move(m.piece, m.color, m.dest);
+                                    }
+                                    else {
+                                        make_move(m.src_x, m.src_y, m.dst_x, m.dst_y, m.prom);
+                                    }
+                                }
+                            }
+                        });
                         //Todo: Make the moves to restore the board state
                     }
                 }
