@@ -253,12 +253,14 @@ function render_extras() {
             document.getElementById("bottom_player_label").style.display = "none";
         }
         document.getElementById("choose_section").style.display = "none";
+        document.getElementById("resign_btn").style.display = "block";
     }
     else {
         document.getElementById("multiplayer_label").innerHTML = "Mode: Single-player";
         document.getElementById("top_player_label").style.display = "none";
         document.getElementById("bottom_player_label").style.display = "none";
         document.getElementById("choose_section").style.display = "block";
+        document.getElementById("resign_btn").style.display = "none";
     }
 }
 

@@ -9,9 +9,6 @@ function show_db_set(message) {
     }
 }
 function show_db_get(message, data) {
-    /*if(typeof(data) != "object" && typeof(data) != "number" && typeof(data) != "string") {
-        console.warn("Warning: Data isn't an object, string, or number: "+data);
-    }*/
     let len = JSON.stringify(data).length;
     total_bytes_fetched += len;
     if(verbose_db_get) {
@@ -50,8 +47,10 @@ let my_match_ref;
 let my_match;
 let my_col;
 let my_name, opp_name;
+let my_match_data, other_match_data;
 let my_ver_ref, other_ver_ref;
 let my_prop_ref, other_prop_ref;
+let my_res_ref, other_res_ref;
 let my_prop;
 
 
@@ -78,6 +77,14 @@ function multiplayer_make_drop(piece, color, dest) {
     my_prop = data;
 }
 
+function resign() {
+    if(in_multiplayer_game && my_res_ref) {
+        show_db_set("Setting my resign");
+        my_res_ref.set(true);
+        switch_to_single_player();
+    }
+}
+
 //Pulls name automatically from name_input field
 function set_name() {
     let new_name = document.getElementById("name_input").value;
@@ -91,19 +98,31 @@ function close_match() {
     //Todo: Archive the match
     show_db_set("Setting my_match to close the match")
     my_match_ref.set({});
+    switch_to_single_player();
 }
 
 function switch_to_single_player() {
+    console.log("Switching to singleplayer mode");
     in_multiplayer_game = false;
     my_ver_ref = undefined;
     other_ver_ref = undefined;
     my_prop_ref = undefined;
     other_prop_ref = undefined;
+    my_res_ref = undefined;
+    other_res_ref = undefined;
     my_prop = undefined;
     my_match = undefined;
     my_match_ref = undefined;
     my_col = undefined;
     render_extras();
+}
+
+let on_opp_resign = (snapshot) => {
+    if(snapshot.val() === true && in_multiplayer_game) {
+        in_multiplayer_game = false;
+        show_message("Opponent resigned");
+        close_match();
+    }
 }
 
 let other_prop_change = (snapshot) => {
@@ -120,7 +139,7 @@ let other_prop_change = (snapshot) => {
         if (board.turn === my_col || other_prop.color === my_col) {
             valid = false;
         }
-        show_db_set("Setting my_ver to drop move")
+        show_db_set("Setting my_ver to verify drop move")
         my_ver_ref.set({valid, piece: other_prop.piece, color: other_prop.color, dest: other_prop.dest});
         if (valid) {
             make_drop_move(other_prop.piece, other_prop.color, other_prop.dest);
@@ -147,7 +166,7 @@ let other_prop_change = (snapshot) => {
         if (other_prop.prom != undefined) {
             data.prom = other_prop.prom;
         }
-        show_db_set("Setting my_ver to make a move")
+        show_db_set("Setting my_ver to verify move")
         my_ver_ref.set(data);
         if (valid) {
             make_move(other_prop.src_x, other_prop.src_y, other_prop.dst_x, other_prop.dst_y, other_prop.prom);
@@ -175,7 +194,6 @@ let other_ver_change = (snapshot) => {
                 make_drop_move(my_prop.piece, my_prop.color, my_prop.dest);
                 if(find_victory() >= 0) {
                     close_match();
-                    switch_to_single_player();
                 }
                 render_board();
             }
@@ -185,14 +203,12 @@ let other_ver_change = (snapshot) => {
                 make_move(my_prop.src_x, my_prop.src_y, my_prop.dst_x, my_prop.dst_y, my_prop.prom);
                 if(find_victory() >= 0) {
                     close_match();
-                    switch_to_single_player();
                 }
                 render_board();
             }
         }
     }
     else {
-        //Todo: Notify client that the last move was invalid
         show_message("Your last attempted move was automatically flagged as invalid by the opponent")
     }
     my_prop = {};
@@ -201,7 +217,7 @@ let other_ver_change = (snapshot) => {
         my_prop_ref.set({});
     }
     else {
-        console.warn("my_prop_ref is undefined. This is normal at the end of a match.")
+        show_error("my_prop_ref is undefined")
     }
 }
 
@@ -210,20 +226,14 @@ function join_game(match_id) {
         return;
     }
     let t_match_ref = firebase.database().ref(`lobby/${match_id}`);
-    //let skip = false;
-    //t_match_ref.on("value", (snapshot) => {
     t_match_ref.once("value", (snapshot) => {
-        //if(skip) {return;} //To avoid double-dipping on value changes
-        //skip = true;
         let t_match = snapshot.val();
         show_db_get("Getting lobby info", t_match)
         if (!t_match) {
-            //Todo: Notify user of this error
             show_error("Trying to join a non-existent match");
             return;
         }
         if (t_match.owner === user_id) {
-            //Todo: Notify user of this error
             show_error("Attempting to join your own game");
             return;
         }
@@ -264,8 +274,11 @@ function join_game(match_id) {
         my_ver_ref  = my_match_ref.child(is_owner?'o':'j').child('ver');
         other_prop_ref = my_match_ref.child(is_owner?'j':'o').child('prop');
         other_ver_ref  = my_match_ref.child(is_owner?'j':'o').child('ver');
+        my_res_ref = my_match_ref.child(is_owner?'o':'j').child('res');
+        other_res_ref  = my_match_ref.child(is_owner?'j':'o').child('res');
         other_prop_ref.on("value", other_prop_change);
         other_ver_ref.on("value", other_ver_change);
+        other_res_ref.on("value", on_opp_resign);
         show_db_set("Updating lobby entry to start match")
         t_match_ref.update({goto: my_match_ref.key, joiner_name: this_user.name, owner_col});
         t_match_ref = undefined;
@@ -284,7 +297,6 @@ function add_lobby() {
     all_boards_ref.child(`${board_name}/height`).once("value", (snapshot) => {
         show_db_get("Checking if board exists", snapshot.val());
         if(!snapshot.val()) {
-            //Todo: Show error to user
             show_error("Trying to create lobby with non-existent board");
             return;
         }
@@ -313,8 +325,11 @@ function add_lobby() {
                 my_ver_ref  = my_match_ref.child(is_owner?'o':'j').child('ver');
                 other_prop_ref = my_match_ref.child(is_owner?'j':'o').child('prop');
                 other_ver_ref  = my_match_ref.child(is_owner?'j':'o').child('ver');
+                my_res_ref = my_match_ref.child(is_owner?'o':'j').child('res');
+                other_res_ref  = my_match_ref.child(is_owner?'j':'o').child('res');
                 other_prop_ref.on("value", other_prop_change);
                 other_ver_ref.on("value", other_ver_change);
+                other_res_ref.on("value", on_opp_resign);
                 set_board(val.board_name);
                 board_page();
                 lobby_ref.remove();
