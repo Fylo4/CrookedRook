@@ -39,10 +39,6 @@ preset_variants[2].push({
             sprite: "elephant",
 			symbol: "G",
 			move: "[A]a",
-			promotions: [],
-			attributes: [],
-			held_piece: -1,
-			held_move: ""
 		},
 		{
             name: "Mantri",
