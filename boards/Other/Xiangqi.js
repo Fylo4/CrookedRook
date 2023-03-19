@@ -12,7 +12,6 @@ preset_variants[5].push({
             symbol: "p",
             notation: "",
 			move: "[0 -1 1 1]a+z{0 1}[1 0 2 1]a",
-			promotions: [{white: 1, black: 0, to: [1, 2, 3, 4], on: [events.enter]}],
 			attributes: [attrib.ep_captured, attrib.ep_capturer],
         },
         {
@@ -42,7 +41,7 @@ preset_variants[5].push({
             description: "Moves exactly 2 spaces diagonally. Can be blocked. Cannot cross the river.",
             sprite: "elephant",
 			symbol: "e",
-			move: "[F]ae[0 -1 1 1]aZ{1 0}",
+			move: "[1 1 4 2]BaZ{1 0}+-[1 1 4 1]",
 		},
 		{
             name: "Advisor",

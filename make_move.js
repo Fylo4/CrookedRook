@@ -29,12 +29,13 @@ function make_move(src_x, src_y, dst_x, dst_y, promotion) {
         notation = this_piece.notation;
     }
     //Find how many pieces can go to the same spot
-    let in_same_row = false, in_same_column = false;
+    let in_same_row = false, in_same_column = false, needs_specification = false;;
     let other_pieces = ss_and(board.turn ? board.black_ss : board.white_ss, board.piece_ss[this_id]);
     for (; !other_pieces.is_zero(); other_pieces.pop()) {
         let pos = other_pieces.get_ls1b();
         if (pos === src_sq) { continue; }
         if (!board.can_move_ss[pos].get(dst_sq)) { continue; }
+        needs_specification = true;
         if (Math.floor(pos / game_data.width) === Math.floor(src_sq / game_data.width)) {
             in_same_row = true;
         }
@@ -44,13 +45,16 @@ function make_move(src_x, src_y, dst_x, dst_y, promotion) {
     }
     let file = (num) => { return String.fromCharCode(97 + num); };
     let rank = (num) => { return game_data.height - num; }
-    if (in_same_row && !in_same_column) {
+    if (!needs_specification) {
+        //Do nothing
+    }
+    else if (!in_same_column) {
         notation += file(src_sq%game_data.width);
     }
-    else if (in_same_column && !in_same_row) {
+    else if (!in_same_row) {
         notation += rank(Math.floor(src_sq/game_data.width));
     }
-    else if (in_same_column && in_same_row) {
+    else {
         notation += file(src_sq % game_data.width) + rank(Math.floor(src_sq / game_data.width));
     }
     //Captures
