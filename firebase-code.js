@@ -1,5 +1,5 @@
 let verbose_db_set = false; 
-let verbose_db_get = true;
+let verbose_db_get = false;
 //This is just an estimate and doesn't include overhead
 let total_bytes_fetched = 0;
 
