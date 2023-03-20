@@ -109,8 +109,10 @@
         <button onclick="document.getElementById('history').value = export_history();">Export History</button>
         <button onclick="view_move = 0; import_history(document.getElementById('history').value); render_board();">Import History</button>
         <input id="history" />
-        <br /> <br />
+        <br />
 
+        <h2 id="board_name_header">Board Name</h2>
+        <p id="board_description_header">Board Description</p>
         <button onClick="change_zoom(1);  render_board();">+</button>
         <button onClick="change_zoom(-1); render_board();">-</button>
         <button onClick="style_data.flip_board ^= 1; render_board()">Flip</button>

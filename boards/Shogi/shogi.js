@@ -1,4 +1,4 @@
-preset_variants[1].push({
+preset_variants[folders.shogi].push({
     name: "Shogi",
     description: "Japanese Chess. You can drop pieces after you capture them. Drop restrictions and some endgame rules are not implemented.",
 	width: 9,

@@ -210,6 +210,10 @@ function render_extras() {
         }
     }
 
+    //Name and Description
+    document.getElementById("board_name_header").innerHTML = game_data.name;
+    document.getElementById("board_description_header").innerHTML = game_data.description;
+
     //Move history
     let hist_div = document.getElementById("move_history");
     hist_div.innerHTML = "";

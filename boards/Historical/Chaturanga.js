@@ -1,4 +1,4 @@
-preset_variants[2].push({
+preset_variants[folders.historical].push({
     name: "Chaturanga",
     description: "Ancient ancestor of Chess-like games. Queen is replaced with Ferz, Bishop with Alfil, Pawns lose their double-step and promote to Ferz only, and King can't castle. Win by capturing, stalemating, or baring the opponent's King.",
 	width: 8,

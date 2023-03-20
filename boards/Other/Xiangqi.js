@@ -1,4 +1,4 @@
-preset_variants[5].push({
+preset_variants[folders.other].push({
     name: "Xiangqi",
     description: "Chinese Chess",
 	width: 9,

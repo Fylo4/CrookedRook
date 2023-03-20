@@ -61,5 +61,13 @@ const attrib = {
     empower: 47,
     random_promotion: 48
 }
+const folders = {
+	chess: 0,
+	shogi: 1,
+	historical: 2,
+	regional: 3,
+	ccit: 4,
+	other: 5
+}
 
 let preset_variants = [[],[],[],[],[],[]];

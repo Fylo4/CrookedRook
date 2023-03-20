@@ -1,4 +1,4 @@
-preset_variants[0].push({
+preset_variants[folders.chess].push({
     name: "Chess960",
     description: "The back rank of both players is randomized",
 	width: 8,
