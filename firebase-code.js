@@ -153,7 +153,8 @@ let other_prop_change = (snapshot) => {
     }
     if (other_prop.piece != undefined && other_prop.color != undefined && other_prop.dest != undefined) {
         //Drop move
-        let valid = validate_drop(other_prop.piece, other_prop.color, other_prop.dest);
+        //let valid = validate_drop(other_prop.piece, other_prop.color, other_prop.dest);
+        let valid = true;
         if (board.turn === my_col || other_prop.color === my_col) {
             valid = false;
         }
