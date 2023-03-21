@@ -42,6 +42,14 @@ function print_all_boards() {
     str += "}";
     return str;
 }
+//Will only work if you have access to the database
+function update_all_boards() {
+    for(let a = 0; a < preset_variants.length; a++) {
+        for(let b = 0; b < preset_variants[a].length; b++) {
+            firebase.database().ref("boards").child(preset_variants[a][b].name).update(preset_variants[a][b]);
+        }
+    }
+}
 function add_files_to_dropdown() {
     let parent = document.getElementById("variantField");
     let category = document.getElementById("categoryField");

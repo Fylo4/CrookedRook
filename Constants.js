@@ -67,7 +67,8 @@ const folders = {
 	historical: 2,
 	regional: 3,
 	ccit: 4,
-	other: 5
+	compound: 5,
+	other: 6
 }
 
-let preset_variants = [[],[],[],[],[],[]];
+let preset_variants = [[],[],[],[],[],[], []];
