@@ -93,10 +93,10 @@ function make_move(src_x, src_y, dst_x, dst_y, promotion) {
             else if (!on_board(king_sq) || !on_board(rook_sq)) {
                 console.log("Trying to castle to non-existent space");
             }
-            else if (dst_sq != king_sq && (board.black_ss.get(king_sq) || board.white_ss.get(king_sq))) {
+            else if (king_sq != dst_sq && (board.black_ss.get(king_sq) || board.white_ss.get(king_sq))) {
                 console.log("Trying to castle king to occupied space");
             }
-            else if (src_sq != rook_sq && (board.black_ss.get(rook_sq) || board.white_ss.get(rook_sq))) {
+            else if (rook_sq != src_sq && rook_sq != dst_sq && (board.black_ss.get(rook_sq) || board.white_ss.get(rook_sq))) {
                 console.log("Trying to castle rook to occupied space");
             }
             else {

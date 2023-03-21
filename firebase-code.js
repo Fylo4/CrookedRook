@@ -98,6 +98,7 @@ function resign() {
     if(in_multiplayer_game && my_res_ref) {
         show_db_set("Setting my resign");
         my_res_ref.set(true);
+        board_history[board_history.length-1].victory = !my_col;
         switch_to_single_player();
     }
 }
@@ -142,6 +143,7 @@ let on_opp_resign = (snapshot) => {
     if(snapshot.val() === true && in_multiplayer_game) {
         in_multiplayer_game = false;
         show_message("Opponent resigned");
+        board_history[board_history.length-1].victory = my_col;
         close_match();
     }
 }

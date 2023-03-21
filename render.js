@@ -199,12 +199,14 @@ function render_extras() {
     if (board_history[view_move].victory != -1) {
         switch (board_history[view_move].victory) {
             case 0:
+            case false:
                 ti.innerHTML += "; Winner: White";
                 break;
             case 0.5:
                 ti.innerHTML += "; Winner: Draw";
                 break;
             case 1:
+            case true:
                 ti.innerHTML += "; Winner: Black";
                 break;
         }
