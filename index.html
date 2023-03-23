@@ -27,7 +27,9 @@
     <script src="boards/Historical/Courier Chess Start.js"></script>
     <script src="boards/Historical/Grant Acedrex.js"></script>
 
-    <script src="boards/Other/Xiangqi.js"></script>
+    <script src="boards/Xiangqi/Xiangqi.js"></script>
+    <script src="boards/Xiangqi/MiniXiangqi.js"></script>
+    <script src="boards/Xiangqi/Manchu Chess.js"></script>
 
     <script src="boards/Shogi/Shogi.js"></script>
     <script src="boards/Shogi/Heian Shogi.js"></script>
@@ -104,11 +106,12 @@
             <select id="categoryField" onchange="add_files_to_dropdown()">
                 <option value="0">Chess</option>
                 <option value="1">Shogi</option>
-                <option value="2">Historical</option>
-                <!--<option value="3">Regional</option>-->
-                <option value="4">CCIT</option>
-                <option value="5">Compound</option>
-                <option value="6">Other</option>
+                <option value="2">Xiangqi</option>
+                <option value="3">Historical</option>
+                <!--<option value="4">Regional</option>-->
+                <option value="5">CCIT</option>
+                <option value="6">Compound</option>
+                <option value="7">Other</option>
             </select>
             <select id="variantField" name="variantField"></select>
             <button onclick="load_variant_dropdown();">Load</button>

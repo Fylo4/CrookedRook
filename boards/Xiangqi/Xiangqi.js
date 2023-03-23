@@ -1,4 +1,4 @@
-preset_variants[folders.other].push({
+preset_variants[folders.xiangqi].push({
     name: "Xiangqi",
     description: "Chinese Chess",
 	width: 9,
@@ -12,7 +12,6 @@ preset_variants[folders.other].push({
             symbol: "p",
             notation: "",
 			move: "[0 -1 1 1]a+z{0 1}[1 0 2 1]a",
-			attributes: [attrib.ep_captured, attrib.ep_capturer],
         },
         {
             name: "Rook",
@@ -20,7 +19,6 @@ preset_variants[folders.other].push({
             sprite: "rook",
             symbol: "r",
             move: "[R]Ba",
-            attributes: [attrib.castle_to],
         },
         {
             name: "Cannon",
