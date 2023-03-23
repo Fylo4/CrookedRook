@@ -112,13 +112,15 @@
                 <option value="5">CCIT</option>
                 <option value="6">Compound</option>
                 <option value="7">Other</option>
+                <option value="-1">From File</option>
             </select>
             <select id="variantField" name="variantField"></select>
-            <button onclick="load_variant_dropdown();">Load</button>
+            <input type="file" id="variant_file" style="display: none" accept=".json"/>
+            <button onclick="load_variant();">Load</button>
             <br /> <br />
         </div>
         <button onclick="document.getElementById('history').value = export_history();">Export History</button>
-        <button onclick="view_move = 0; import_history(document.getElementById('history').value); render_board();">Import History</button>
+        <button onclick="view_move = 0; import_history_firebase(document.getElementById('history').value); render_board();">Import History</button>
         <input id="history" />
         <br />
 
