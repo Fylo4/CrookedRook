@@ -21,10 +21,7 @@ preset_variants[folders.historical].push({
             sprite: "rook",
 			symbol: "R",
 			move: "[R]Ba",
-			promotions: [],
 			attributes: [attrib.castle_to],
-			held_piece: -1,
-			held_move: ""
 		},
 		{
             name: "Ashva",

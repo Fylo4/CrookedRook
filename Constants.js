@@ -65,7 +65,7 @@ const attrib = {
 }
 const attrib_str = ["ally_static", "enemy_static", "kill_ally", "save_enemy", "flip_this_on_attack", 
 "dont_flip_enemy", "fireball", "bomb", "save_self", "transform_on_death", "ep_capturer", "ep_captured",
-"castle_from", "catle_to", "pusher", "burn_passive", "burn_peaceful", "burn_attack", "burn_death",
+"castle_from", "castle_to", "pusher", "burn_passive", "burn_peaceful", "burn_attack", "burn_death",
 "burn_allies", "burn_immune", "coward", "child", "berzerk", "spawn_trail", "spawn_constant", "spawn_on_death",
 "copycat", "attacker_moves", "defender_moves", "tall", "iron", "silver", "bronze", "royal", "ghost",
 "flip_on_passive", "forced_step", "retreat", "bloodlust", "promote_on_attack", "kill_between",

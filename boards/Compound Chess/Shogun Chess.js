@@ -18,7 +18,7 @@ preset_variants[folders.compound].push({
             symbol: "p",
             notation: "",
 			move: "z{2 3}[0 -1 1 2]Bae+[0 -1 1 1]ae+([1 -1 1 1],[-1 -1 1 1])ca",
-            promotions: [{ white: 1, black: 0, to: ["p", "C"], on: [events.enter] }],
+            promotions: [{ white: 1, black: 0, to: ["p", "C"], on: [events.enter, events.exit, events.between] }],
             attributes: [attrib.ep_captured, attrib.ep_capturer],
 		},
 		{
@@ -27,7 +27,7 @@ preset_variants[folders.compound].push({
             sprite: "rook",
 			symbol: "R",
 			move: "[R]Ba",
-            promotions: [{ white: 1, black: 0, to: ["R", "M"], on: [events.enter] }],
+            promotions: [{ white: 1, black: 0, to: ["R", "M"], on: [events.enter, events.exit, events.between] }],
 			attributes: [attrib.castle_to],
 		},
 		{
@@ -36,7 +36,7 @@ preset_variants[folders.compound].push({
             sprite: "knight",
 			symbol: "N",
 			move: "[N]a",
-            promotions: [{ white: 1, black: 0, to: ["K", "G"], on: [events.enter] }],
+            promotions: [{ white: 1, black: 0, to: ["K", "G"], on: [events.enter, events.exit, events.between] }],
 		},
 		{
             name: "Bishop",
@@ -44,7 +44,7 @@ preset_variants[folders.compound].push({
             sprite: "bishop",
 			symbol: "B",
 			move: "[B]Ba",
-            promotions: [{ white: 1, black: 0, to: ["B", "A"], on: [events.enter] }],
+            promotions: [{ white: 1, black: 0, to: ["B", "A"], on: [events.enter, events.exit, events.between] }],
 		},
 		{
             name: "Duchess",

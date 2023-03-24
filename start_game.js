@@ -11,6 +11,9 @@ function start_game(json_data, seed) {
     if (game_data.height === undefined) { game_data.height = 8; }
     let size = game_data.width * game_data.height;
 	if (game_data.has_hand === undefined) { game_data.has_hand = false; }
+    if (game_data.snap_mode && !["clockwise", "counterclockwise", "orthogonal", "diagonal"].includes(game_data.snap_mode)) {
+        console.error("Snap mode not found: "+game_data.snap_mode);
+    }
 	if (game_data.turn_list === undefined) { game_data.turn_list = [false, true]; }
     //Convert from letters/words to bools
     for (let a = 0; a < game_data.turn_list.length; a ++) {
@@ -457,7 +460,7 @@ function string_to_term(string, mols) {
         else if (string[a] === "O") {
             let nums = get_2_nums(string, a + 1);
             term.push({ type: "post", data: (col) => { return col? game_data.zones[nums.num2] : game_data.zones[nums.num1] } });
-            a = data.pos;
+            a = nums.pos;
         }
         //Misc
         else if (string[a] === "s") { term.push({ type: "stop"}); }

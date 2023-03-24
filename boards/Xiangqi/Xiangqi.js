@@ -39,7 +39,7 @@ preset_variants[folders.xiangqi].push({
             description: "Moves exactly 2 spaces diagonally. Can be blocked. Cannot cross the river.",
             sprite: "elephant",
 			symbol: "e",
-			move: "[1 1 4 2]BaZ{1 0}+-[1 1 4 1]",
+			move: "[1 1 4 2]BaZ{1 0}+-[F]",
 		},
 		{
             name: "Advisor",
