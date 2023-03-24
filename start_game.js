@@ -12,15 +12,26 @@ function start_game(json_data, seed) {
     let size = game_data.width * game_data.height;
 	if (game_data.has_hand === undefined) { game_data.has_hand = false; }
 	if (game_data.turn_list === undefined) { game_data.turn_list = [false, true]; }
+    //Convert from letters/words to bools
+    for (let a = 0; a < game_data.turn_list.length; a ++) {
+        let word = game_data.turn_list[a].toLowerCase()
+        if (word === "w" || word === "white") {
+            game_data.turn_list[a] = false;
+        }
+        if (word === "b" || word === "black") {
+            game_data.turn_list[a] = true;
+        }
+    }
 	if (game_data.flip_colors === undefined) { game_data.flip_colors = false; }
 	if (game_data.can_pass === undefined) { game_data.can_pass = false; }
 	if (game_data.wins === undefined) { game_data.wins = [ends.royal_capture]; }
+    to_magic_numbers(game_data.wins, ends_str, "Win condition");
 	if (game_data.draws === undefined) { game_data.draws = [ends.stalemate]; }
+    to_magic_numbers(game_data.draws, ends_str, "Draw condition");
 	if (game_data.next_turn_win === undefined) { game_data.next_turn_win = false; }
 	if (game_data.all_pieces === undefined) { console.error("Piece data must be defined"); return; }
     if (game_data.setup === undefined) { console.error("Piece setup must be defined"); return; } //This remails a string
     if (game_data.starting_hands === undefined) { game_data.starting_hands = { white: [], black: [] }; }
-    if (game_data.castle_length === undefined) { game_data.castle_length = 2; }
     //Name-based hand filling
     else if (isNaN(game_data.starting_hands.white[0]) || isNaN(game_data.starting_hands.black[0])) {
         let new_white = [], new_black = [];
@@ -49,22 +60,25 @@ function start_game(json_data, seed) {
     for (let a = game_data.starting_hands.black.length; a < game_data.all_pieces.length; a++) {
         game_data.starting_hands.black.push(0);
     }
-    if (game_data.copy === undefined) { game_data.flip = ""; }
+    if (game_data.castle_length === undefined) { game_data.castle_length = 2; }
+    if (game_data.copy === undefined) { game_data.copy = ""; }
+    if (!["", "flip", "rotate"].includes(game_data.copy)) {
+        console.error("Copy type not found: "+game_data.copy);
+    }
 
     for (let a = 0; a < game_data.all_pieces.length; a++) {
         let piece = game_data.all_pieces[a];
         if (piece.name === undefined) { console.error("All pieces must be named"); return; }
         if (piece.symbol === undefined) { console.error("All pieces must have symbols"); return; }
         if (piece.move === undefined) { console.error("All pieces must have moves"); return; }
+        if (piece.sprite === undefined) { console.error("All pieces must have a sprite"); return; }
         if (piece.description === undefined) { piece.description = ""; }
-        if (piece.sprite === undefined) {
-            piece.sprite = "";
-            piece.use_symbol = true;
-        } else {
-            piece.use_symbol = false;
-        }
         if (piece.promotions === undefined) { piece.promotions = []; }
+        for(let b = 0; b < piece.promotions.length; b ++) {
+            to_magic_numbers(piece.promotions[a].on, events_str, "Piece promotion event");
+        }
         if (piece.attributes === undefined) { piece.attributes = []; }
+        to_magic_numbers(piece.attributes, attrib_str, "Piece attribute");
         if (piece.held_piece === undefined) { piece.held_piece = -1; }
         if (piece.held_move) { piece.held_move = string_to_mol_num(piece.held_move, mols); }
         else { piece.held_move = 0; }
@@ -73,7 +87,7 @@ function start_game(json_data, seed) {
     for (let a = 0; a < game_data.all_pieces.length; a++) {
         game_data.all_pieces[a].held_piece = name_to_piece_id(game_data.all_pieces[a].held_piece);
     }
-    //Piece upgrades - string to id
+    //Piece promotions - string to id
     for (let p = 0; p < game_data.all_pieces.length; p++) {
         let piece = game_data.all_pieces[p];
         for (let a = 0; a < piece.promotions.length; a++) {
@@ -261,6 +275,20 @@ function start_game(json_data, seed) {
     //The sprites might not be loaded yet, reload every 50ms for the next half second
     for (let a = 1; a < 11; a++) {
         setTimeout(() => { render_board(); }, 50*a);
+    }
+}
+
+function to_magic_numbers(arr, ref, str) {
+    for (let a = 0; a < arr.length; a ++) {
+        if (typeof (arr[a]) === "string") {
+            let index = ref.indexOf(arr[a]);
+            if (index === -1) {
+                console.error(str+" not found: "+arr[a]);
+            }
+            else {
+                arr[a] = index;
+            }
+        }
     }
 }
 
