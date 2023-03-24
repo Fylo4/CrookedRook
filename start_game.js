@@ -14,12 +14,14 @@ function start_game(json_data, seed) {
 	if (game_data.turn_list === undefined) { game_data.turn_list = [false, true]; }
     //Convert from letters/words to bools
     for (let a = 0; a < game_data.turn_list.length; a ++) {
-        let word = game_data.turn_list[a].toLowerCase()
-        if (word === "w" || word === "white") {
-            game_data.turn_list[a] = false;
-        }
-        if (word === "b" || word === "black") {
-            game_data.turn_list[a] = true;
+        if (typeof(game_data.turn_list[a]) === "string") {
+            let word = game_data.turn_list[a].toLowerCase()
+            if (word === "w" || word === "white") {
+                game_data.turn_list[a] = false;
+            }
+            if (word === "b" || word === "black") {
+                game_data.turn_list[a] = true;
+            }
         }
     }
 	if (game_data.flip_colors === undefined) { game_data.flip_colors = false; }
@@ -75,7 +77,7 @@ function start_game(json_data, seed) {
         if (piece.description === undefined) { piece.description = ""; }
         if (piece.promotions === undefined) { piece.promotions = []; }
         for(let b = 0; b < piece.promotions.length; b ++) {
-            to_magic_numbers(piece.promotions[a].on, events_str, "Piece promotion event");
+            to_magic_numbers(piece.promotions[b].on, events_str, "Piece promotion event");
         }
         if (piece.attributes === undefined) { piece.attributes = []; }
         to_magic_numbers(piece.attributes, attrib_str, "Piece attribute");
