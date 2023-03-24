@@ -42,6 +42,7 @@
     <script src="boards/Compound Chess/Gothic Chess.js"></script>
     <script src="boards/Compound Chess/Embassy Chess.js"></script>
     <script src="boards/Compound Chess/Compound Shuffle Chess.js"></script>
+    <script src="boards/Compound Chess/Shogun Chess.js"></script>
 
     <title>The Crooked Rook</title>
     <link rel="icon" href="icon.png">
@@ -66,7 +67,7 @@
     <!-- Header -->
     <div style="width: 100%; overflow:auto;">
         <div style="width: 50%; float: left;">
-            <p><b style="font-size: 30px">The Crooked Rook</b>Pre-Release 0.2.4</p>
+            <p><b style="font-size: 30px">The Crooked Rook</b>Pre-Release 0.3.0</p>
         </div>
         <div style="width: max-content; float: right;">
             <p id="name_p">Name:</p>
@@ -132,11 +133,13 @@
         <button onClick="style_data.name_squares ^= 1; render_board()">Square Names</button>
         <!-- <button onClick="">End turn</button> -->
         <br /> <br />
-        <p id="multiplayer_label">Mode: Single-player</p>
-        <p id="top_player_label"></p>
-        <canvas id="board_canvas" width="400" height="0" onClick="temp_data.mouse_pressed = 1"></canvas>
-        <p id="bottom_player_label"></p>
-        <p id="turn_indicator">Turn: N/A</p>
+        <div style="margin: auto; width: min-content;">
+            <p id="multiplayer_label">Mode: Single-player</p>
+            <p id="top_player_label"></p>
+            <canvas id="board_canvas" width="400" height="0"></canvas>
+            <p id="bottom_player_label"></p>
+            <p id="turn_indicator">Turn: N/A</p>
+        </div>
         <button id="resign_btn" onclick="resign()" style="display: none;">Resign</button>
         <br />
 

@@ -191,7 +191,8 @@ function handle_mouse_click() {
     }
     else if (temp_data.hand_selected) {
         if (mouse_sq >= 0 && mouse_sq < game_data.width * game_data.height) {
-            if (!brd.white_ss.get(mouse_sq) && !brd.black_ss.get(mouse_sq)) {
+            let drop_zone = get_drop_zone(temp_data.selected_position, temp_data.selected_side);
+            if (drop_zone.get(mouse_sq) && !brd.white_ss.get(mouse_sq) && !brd.black_ss.get(mouse_sq)) {
                 //Piece, color, dest
                 if(validate_drop(temp_data.selected_position, temp_data.selected_side, mouse_sq)) {
                     handle_make_drop(temp_data.selected_position, temp_data.selected_side, mouse_sq);
@@ -206,7 +207,7 @@ function handle_mouse_click() {
     else if (mouse_sq_pos.y === -1 || mouse_sq_pos.y === game_data.height) {
         //We clicked a hand
         let hover = highlighted_hand_piece(brd);
-        if (hover.piece >= 0 && hover.color === brd.turn && (!in_multiplayer_game || brd.turn === my_col)) {
+        if (hover.piece >= 0 && hover.color === brd.turn && (!in_multiplayer_game || brd.turn === my_col) && slots_left(hover.piece, hover.color, brd)) {
             temp_data.hand_selected = true;
             temp_data.selected_side = hover.color;
             temp_data.selected_position = hover.piece;

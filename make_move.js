@@ -120,6 +120,9 @@ function make_move(src_x, src_y, dst_x, dst_y, promotion) {
             other_space = src_sq;
             my_space = dst_sq;
         }
+        else {
+            board.has_moved_ss.set_on(src_sq);
+        }
         if (this_piece.attributes.includes(attrib.kill_ally)) {
             death(other_space);
         }
@@ -132,15 +135,20 @@ function make_move(src_x, src_y, dst_x, dst_y, promotion) {
             other_space = src_sq;
             my_space = dst_sq;
         }
+        else {
+            board.has_moved_ss.set_on(src_sq);
+        }
         if (this_piece.attributes.includes(attrib.flip_this_on_attack)) {
             if (board.black_ss.get(my_space) != board.white_ss.get(my_space)) {
                 board.black_ss.flip(my_space);
                 board.white_ss.flip(my_space);
+                is_white = !is_white;
+                is_black = !is_black;
             }
         }
+        let spawn_col = (is_white && is_black) ? 2 : is_black;
         if (this_piece.attributes.includes(attrib.promote_on_attack) && this_piece.held_piece >= 0
-            && this_piece.held_piece < game_data.all_pieces.length) {
-            let spawn_col = (is_white && is_black) ? 2 : is_black;
+            && this_piece.held_piece < game_data.all_pieces.length && slots_left(this_piece.held_piece, spawn_col)) {
             clear_space(my_space);
             spawn_piece(my_space, this_piece.held_piece, spawn_col);
             board.has_moved_ss.set_on(my_space);
@@ -208,7 +216,9 @@ function make_move(src_x, src_y, dst_x, dst_y, promotion) {
     if (this_piece.attributes.includes(attrib.spawn_trail)) {
         if (!board.black_ss.get(other_space) && !board.white_ss.get(other_space)) {
             let spawn_col = (is_white && is_black) ? 2 : is_black;
-            spawn_piece(other_space, this_piece.held_piece, spawn_col)
+            if(slots_left(this_piece.held_piece, spawn_col)) {
+                spawn_piece(other_space, this_piece.held_piece, spawn_col)
+            }
         }
     }
     for (let a = new squareset(board.constant_spawn_ss); !a.is_zero(); a.pop()) {
@@ -220,6 +230,10 @@ function make_move(src_x, src_y, dst_x, dst_y, promotion) {
         let spawn_col = (board.white_ss.get(sq) && board.black_ss.get(sq)) ? 2 : board.black_ss.get(sq);
         let spawn_ss = new squareset(game_data.move_ss[piece.held_move][sq][treat_as_col ? 4 : 0]);
         spawn_ss.ande(ss_or(board.black_ss, board.white_ss).inverse());
+        let pop_count = spawn_ss.count_bits() - slots_left(piece.held_piece, spawn_col);
+        for (let b = 0; b < pop_count; b ++) {
+            spawn_ss.pop();
+        }
         for (; !spawn_ss.is_zero(); spawn_ss.pop()) {
             spawn_piece(spawn_ss.get_ls1b(), piece.held_piece, spawn_col);
         }
@@ -297,6 +311,7 @@ function make_drop_move(piece, color, dest) {
     let my_hand = color ? board.hands.black : board.hands.white;
 
     spawn_piece(dest, piece, color);
+    board.has_moved_ss.set_on(dest);
     my_hand[piece]--;
 
     let file = (num) => { return String.fromCharCode(97 + num); };
@@ -340,6 +355,15 @@ function validate_drop(piece, color, dest) {
     }
     if (brd.white_ss.get(dest) || brd.black_ss.get(dest)) {
         //console.error("Trying to drop a piece on another piece");
+        return false;
+    }
+    let drop_zone = get_drop_zone(piece, color);
+    if(!drop_zone.get(dest)) {
+        //console.error("Trying to drop a piece outside of your drop zone");
+        return false;
+    }
+    if(slots_left(piece, color, brd) <= 0) {
+        //console.error("Trying to drop a piece which is at limit");
         return false;
     }
     return true;
@@ -471,6 +495,27 @@ function find_victory() {
     }
     return -1;
 }
+//Finds how many pieces can still be placed, considering piece.limit
+//Color = 0/false, 1/true, or 2 = white, black, neutral respectively
+//Any other color value applies it to all pieces combined
+function slots_left (piece_id, color, brd) {
+    if(piece_id < 0 || piece_id >= game_data.all_pieces.length) {
+        return 0;
+    }
+    if(board === undefined) {
+        brd = board;
+    }
+    let limit = game_data.all_pieces[piece_id].limit;
+    if(limit === undefined) {
+        return 1000000;
+    }
+    let col_ss = (color == 0) ? brd.white_ss :
+        (color == 1) ? brd.black_ss : 
+        (color == 2) ? ss_and(brd.black_ss, brd.white_ss) :
+        ss_or(brd.black_ss, brd.white_ss);
+    let pieces_placed = ss_and(brd.piece_ss[piece_id], col_ss);
+    return Math.max(limit - pieces_placed.count_bits(), 0);
+}
 function find_promotions(this_id, src_sq, end_sq, is_white, is_black) {
     let promote_to = [];
     for (let a = 0; a < game_data.all_pieces[this_id].promotions.length; a++) {
@@ -495,7 +540,16 @@ function find_promotions(this_id, src_sq, end_sq, is_white, is_black) {
             promote_to.push(...prom.to);
         }
     }
-    return promote_to;
+    //Go through each element of promote_to to make sure it doesn't exceed the piece limit
+    let ret = [];
+    let treat_as_col = is_white + is_black*2 - 1;
+    for (let a = 0; a < promote_to.length; a++) {
+        //Do I need to pass in some sort of board to slots_left here?
+        if(promote_to[a] === this_id || slots_left(promote_to[a], treat_as_col)) {
+            ret.push(promote_to[a]);
+        }
+    }
+    return ret;
 }
 function evaluate_burns(piece_id, sq, col) {
     let burn = new squareset(game_data.move_ss[game_data.all_pieces[piece_id].held_move][sq][col ? 4 : 0]);
@@ -516,9 +570,11 @@ function death(sq, flip = true) {
     let spawn_col = is_neutral ? 2 : board.black_ss.get(sq);
 
     if (piece.attributes.includes(attrib.transform_on_death)) {
-        clear_space(sq);
-        spawn_piece(sq, piece.held_piece, spawn_col);
-        board.has_moved_ss.set_on(sq);
+        if(!piece.attributes.includes(attrib.save_self) || slots_left(piece.held_piece, spawn_col)) {
+            clear_space(sq);
+            spawn_piece(sq, piece.held_piece, spawn_col);
+            board.has_moved_ss.set_on(sq);
+        }
     }
     if (flip && !is_neutral) {
         board.black_ss.flip(sq);
@@ -542,6 +598,10 @@ function death(sq, flip = true) {
     if (piece.attributes.includes(attrib.spawn_on_death)) {
         let spawns = new squareset(game_data.move_ss[piece.held_move][sq][burn_col ? 4 : 0]);
         spawns.ande(ss_or(board.black_ss, board.white_ss).inverse());
+        let pop_count = spawns.count_bits() - slots_left(piece.held_piece, spawn_col);
+        for (let b = 0; b < pop_count; b ++) {
+            spawns.pop();
+        }
         for (; !spawns.is_zero(); spawns.pop()) {
             spawn_piece(spawns.get_ls1b(), piece.held_piece, spawn_col);
         }
