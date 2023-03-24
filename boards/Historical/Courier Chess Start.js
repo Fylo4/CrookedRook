@@ -65,7 +65,7 @@ preset_variants[folders.historical].push({
             description: "Moves one step diagonally",
             sprite: "prince",
 			symbol: "F",
-			move: "it{5}[0 -2 1 1]a+T{4}[F]a",
+			move: "it{5}[0 2 1 1]a+T{4}[F]a",
         },
         {
             name: "King",

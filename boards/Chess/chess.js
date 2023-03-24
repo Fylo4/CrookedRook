@@ -46,9 +46,7 @@ preset_variants[folders.chess].push({
             description: "Moves like a Rook or Bishop",
             sprite: "queen",
 			symbol: "Q",
-			move: "U",
-			attributes: [attrib.burn_attack],
-			held_move: "[K]"
+			move: "[Q]Ba",
 		},
 		{
             name: "King",
