@@ -553,7 +553,7 @@ function find_promotions(this_id, src_sq, end_sq, is_white, is_black) {
 }
 function evaluate_burns(piece_id, sq, col) {
     let burn = new squareset(game_data.move_ss[game_data.all_pieces[piece_id].held_move][sq][col ? 4 : 0]);
-    burn = ss_and(burn, ss_or(board.black_ss, board.white_ss), board.burn_immune.inverse());
+    burn = ss_and(burn, ss_or(board.black_ss, board.white_ss), board.burn_immune_ss.inverse());
     if (!game_data.all_pieces[piece_id].attributes.includes(attrib.burn_allies)) {
         let my_ss = col ? board.black_ss : board.white_ss;
         burn.ande(my_ss.inverse());

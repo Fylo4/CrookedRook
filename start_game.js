@@ -85,7 +85,6 @@ function start_game(json_data, seed) {
         if (piece.attributes === undefined) { piece.attributes = []; }
         to_magic_numbers(piece.attributes, attrib_str, "Piece attribute");
         if (piece.held_piece === undefined) { piece.held_piece = -1; }
-        if (piece.held_move) { piece.held_move = string_to_mol_num(piece.held_move, mols); }
         else { piece.held_move = 0; }
     }
     //Held pieces - string to id
@@ -262,6 +261,13 @@ function start_game(json_data, seed) {
     game_data.move_ss = [];
     for (let a = 0; a < all_molecules.length; a++) {
         game_data.move_ss.push(generate_move_ss(all_molecules[a]));
+    }
+    //Update molecules for held moves
+    for (let a = 0; a < game_data.all_pieces.length; a++) {
+        let piece = game_data.all_pieces[a];
+        if (piece.held_move && typeof(piece.held_move) === "string") {
+            piece.held_move = string_to_mol_num(piece.held_move, all_molecules);
+        }
     }
     //Load all piece sprites
     for (let a = 0; a < game_data.all_pieces.length; a++) {

@@ -17,7 +17,7 @@ preset_variants[folders.compound].push({
             sprite: "pawn",
             symbol: "p",
             notation: "",
-			move: "z{2 3}[0 -1 1 2]Bae+[0 -1 1 1]ae+([1 -1 1 1],[-1 -1 1 1])ca",
+			move: "z{2 3}[0 1 1 2]Bae+[0 1 1 1]ae+([1 1 1 1],[-1 1 1 1])ca",
             promotions: [{ white: 1, black: 0, to: ["p", "C"], on: [events.enter, events.exit, events.between] }],
             attributes: [attrib.ep_captured, attrib.ep_capturer],
 		},

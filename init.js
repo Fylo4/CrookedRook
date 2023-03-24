@@ -22,6 +22,9 @@ function change_zoom(amount) {
 function add_image(dname, fname) {
     if (!document.getElementById("img_" + fname)) {
         let img1 = new Image();
+        img1.onerror = () => {
+            console.error(`Error loading image '${fname}'`);
+        }
         img1.src = "images/" + dname + "/" + fname + ".png";
         img1.id = "img_" + fname;
         document.getElementById("imageDiv").appendChild(img1);

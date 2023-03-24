@@ -15,7 +15,7 @@ preset_variants[folders.chess].push({
             sprite: "pawn",
             symbol: "p",
             notation: "",
-			move: "i[0 -1 1 2]Bae+[0 -1 1 1]ae+([1 -1 1 1],[-1 -1 1 1])ca",
+			move: "i[0 1 1 2]Bae+[0 1 1 1]ae+([1 1 1 1],[-1 1 1 1])ca",
             promotions: [{ white: 1, black: 0, to: ["NSNR"], on: [events.enter] }],
             attributes: [attrib.ep_captured, attrib.ep_capturer],
 		},
@@ -46,7 +46,9 @@ preset_variants[folders.chess].push({
             description: "Moves like a Rook or Bishop",
             sprite: "queen",
 			symbol: "Q",
-			move: "[Q]Ba",
+			move: "U",
+			attributes: [attrib.burn_attack],
+			held_move: "[K]"
 		},
 		{
             name: "King",
