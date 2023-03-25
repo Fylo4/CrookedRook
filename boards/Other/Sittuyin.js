@@ -16,8 +16,8 @@ preset_variants[folders.other].push({
             sprite: "peasant",
             symbol: "p",
             notation: "",
-			move: "[0 1 1 1]ae+([1 1 1 1],[-1 1 1 1])ba+z{1 0}r{G}[0]",
-            promotions: [{ white: 1, black: 0, to: ["G", "p"], on: [events.enter, events.between] }],
+			move: "[0 1 1 1]ae+([1 1 1 1],[-1 1 1 1])ba+z{1 0}r{G}[0]+ur{G}[0]",
+            promotions: [{ white: 6, black: 6, to: ["G"], on: [events.self] }],
 		},
 		{
             name: "Rook",
@@ -67,6 +67,7 @@ preset_variants[folders.other].push({
 		"11111111 11111111 11110000 00000000 00000000 00000000 00000000 00000000",
 		"00000000 00000000 00000000 00000000 00000000 00000000 00000000 11111111",
 		"11111111 00000000 00000000 00000000 00000000 00000000 00000000 00000000",
+		"11111111 11111111 11111111 11111111 11111111 11111111 11111111 11111111"
 	],
 	starting_hands: {white: ["K", "G", "E", "E", "N", "N", "R", "R"], black: ["K", "G", "E", "E", "N", "N", "R", "R"]},
 	highlight: "10000001 01000010 00100100 00011000 00011000 00100100 01000010 10000001"

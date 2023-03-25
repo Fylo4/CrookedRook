@@ -9,7 +9,8 @@ const events = {
 	enter: 0,
 	exit: 1,
 	between: 2,
-	drop: 3
+	drop: 3,
+	self: 4
 }
 const events_str = ["enter", "exit", "between", "drop"];
 const attrib = {

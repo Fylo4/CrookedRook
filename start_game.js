@@ -443,6 +443,11 @@ function string_to_term(string, mols) {
             }});
             a = piece_data.pos;
         }
+        else if(string[a] === "u") {
+            term.push({ type: "pre", data: (col, pos, id) => {
+                return ss_and(col ? board.black_ss : board.white_ss, board.piece_ss[id]).count_bits() > 1;
+            }})
+        }
         //Post-conditions
         //Data is a lambda that returns all squares it can't land on
         else if (string[a] === "a") { term.push({ type: "post", 

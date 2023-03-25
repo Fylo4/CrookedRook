@@ -528,7 +528,7 @@ function slots_left (piece_id, color, brd) {
     let pieces_placed = ss_and(brd.piece_ss[piece_id], col_ss);
     return Math.max(limit - pieces_placed.count_bits(), 0);
 }
-function find_promotions(this_id, src_sq, end_sq, is_white, is_black) {
+function find_promotions(this_id, src_sq, end_sq, is_white, is_black, verbose = false) {
     let promote_to = [];
     for (let a = 0; a < game_data.all_pieces[this_id].promotions.length; a++) {
         let prom = game_data.all_pieces[this_id].promotions[a];
@@ -536,19 +536,26 @@ function find_promotions(this_id, src_sq, end_sq, is_white, is_black) {
         let start_in_black = game_data.zones[prom.black].get(src_sq);
         let end_in_white = game_data.zones[prom.white].get(end_sq);
         let end_in_black = game_data.zones[prom.black].get(end_sq);
-        if (prom.on.includes(events.enter) &&
-            (is_white && !start_in_white && end_in_white) ||
-            (is_black && !start_in_black && end_in_black)) {
+        if (verbose) {
+            console.log(`start in white: ${start_in_white}, start in black: ${start_in_black}, end in white: ${end_in_white}, end in black: ${end_in_black}`);
+        }
+        if (prom.on.includes(events.self) && src_sq === end_sq &&
+            ((is_white && start_in_white) || (is_black && start_in_black))) {
+                promote_to.push(...prom.to);
+            }
+        else if (prom.on.includes(events.enter) &&
+            ((is_white && !start_in_white && end_in_white) ||
+            (is_black && !start_in_black && end_in_black))) {
             promote_to.push(...prom.to);
         }
         else if (prom.on.includes(events.exit) &&
-            (is_white && start_in_white && !end_in_white) ||
-            (is_black && start_in_black && !end_in_black)) {
+            ((is_white && start_in_white && !end_in_white) ||
+            (is_black && start_in_black && !end_in_black))) {
             promote_to.push(...prom.to);
         }
         else if (prom.on.includes(events.between) &&
-            (is_white && start_in_white && end_in_white) ||
-            (is_black && start_in_black && end_in_black)) {
+            ((is_white && start_in_white && end_in_white) ||
+            (is_black && start_in_black && end_in_black))) {
             promote_to.push(...prom.to);
         }
     }
