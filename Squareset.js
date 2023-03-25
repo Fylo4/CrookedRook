@@ -2,7 +2,7 @@ class squareset {
     constructor(length, seed) {
         if (length === undefined) {
             length = 256;
-            console.error("Squareset created without length or copy");
+            show_error("Technical problem (bad ss constructor). You should report this in #bug-reports.");
         }
         if (isNaN(length)) {
             //Copy constructor

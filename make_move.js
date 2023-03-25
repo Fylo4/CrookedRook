@@ -2,13 +2,13 @@ function make_move(src_x, src_y, dst_x, dst_y, promotion) {
     //console.log(`Make move params: src_x=${src_x}; src_y=${src_y}; dst_x=${dst_x}; dst_y=${dst_y}; prom=${promotion}`);
 
     if (src_x === undefined || src_y === undefined || dst_x === undefined || dst_y === undefined) {
-        console.error("make_move called with less than 4 parameters");
+        show_error("Error occurred while trying to make move (<4 params). You should report this in #bug-reports.");
     }
     if (typeof(src_x) != "number" || typeof(src_y) != "number" || typeof(dst_x) != "number" || typeof(dst_y) != "number") {
-        console.error("Non-number parameter in make_move. Parameters: "+src_x+", "+src_y+", "+dst_x+", "+dst_y);
+        show_error(`Error occurred while trying to make move (non-number). You should report this in #bug-reports. Data: ${src_x}, ${src_y}, ${dst_x}, ${dst_y}`);
     }
     if(!validate_move(src_x, src_y, dst_x, dst_y, promotion)) {
-        console.error("make_move called with invalid move data");
+        show_error("Error occurred while trying to make move (invalid move). You should report this in #bug-reports.");
     }
 
     board = cloneBoard(board_history[view_move]);
@@ -69,7 +69,7 @@ function make_move(src_x, src_y, dst_x, dst_y, promotion) {
     if (src_sq === dst_sq) {
         //Lands on self
         if (this_piece.attributes.includes(attrib.retreat)) {
-            death(src_sq);
+            death(src_sq, false);
         }
     }
     else if ((board.turn && board.black_ss.get(dst_sq)) || (!board.turn && board.white_ss.get(dst_sq))) {
@@ -88,16 +88,16 @@ function make_move(src_x, src_y, dst_x, dst_y, promotion) {
             let rook_sq = rook_dest_y * game_data.width + rook_dest_x;
 
             if (king_sq === rook_sq) {
-                console.log("Trying to castle on self");
+                show_error("Trying to castle on self");
             }
             else if (!on_board(king_sq) || !on_board(rook_sq)) {
-                console.log("Trying to castle to non-existent space");
+                show_error("Trying to castle to non-existent space");
             }
             else if (king_sq != dst_sq && (board.black_ss.get(king_sq) || board.white_ss.get(king_sq))) {
-                console.log("Trying to castle king to occupied space");
+                show_error("Trying to castle king to occupied space");
             }
             else if (rook_sq != src_sq && rook_sq != dst_sq && (board.black_ss.get(rook_sq) || board.white_ss.get(rook_sq))) {
-                console.log("Trying to castle rook to occupied space");
+                show_error("Trying to castle rook to occupied space");
             }
             else {
                 //Castle successful
@@ -124,7 +124,7 @@ function make_move(src_x, src_y, dst_x, dst_y, promotion) {
             board.has_moved_ss.set_on(src_sq);
         }
         if (this_piece.attributes.includes(attrib.kill_ally)) {
-            death(other_space);
+            death(other_space, false);
         }
     }
     else if ((board.turn && board.white_ss.get(dst_sq)) || (!board.turn && board.black_ss.get(dst_sq))) {
@@ -157,14 +157,14 @@ function make_move(src_x, src_y, dst_x, dst_y, promotion) {
             //Old values of this_piece and piece_id should be used, so don't update them
         }
         if (!this_piece.attributes.includes(attrib.save_enemy)) {
-            death(other_space, !this_piece.attributes.includes(attrib.dont_flip_enemy));
+            death(other_space, false, !this_piece.attributes.includes(attrib.dont_flip_enemy));
         }
         else if (!this_piece.attributes.includes(attrib.dont_flip_enemy)) {
             board.black_ss.flip(other_space);
             board.white_ss.flip(other_space);
         }
         if (this_piece.attributes.includes(attrib.fireball) || other_piece.attributes.includes(attrib.bomb)) {
-            death(my_space);
+            death(my_space, false);
         }
         if (this_piece.attributes.includes(attrib.burn_attack)) {
             evaluate_burns(this_id, my_space, board.turn);
@@ -193,7 +193,7 @@ function make_move(src_x, src_y, dst_x, dst_y, promotion) {
         if ((!this_piece.attributes.includes(attrib.save_enemy) && ((board.turn && other_white) || (!board.turn && other_black)))
             || ((this_piece.attributes.includes(attrib.kill_ally) && ((board.turn && other_white) || (!board.turn && other_black))))) {
             //If it's an enemy and I can kill enemies, or it's an ally and I can kill allies
-            death(board.last_moved_dest);
+            death(board.last_moved_dest, false);
         }
     }
 
@@ -201,15 +201,16 @@ function make_move(src_x, src_y, dst_x, dst_y, promotion) {
     let kill = new squareset(game_data.width * game_data.height);
     if (this_piece.attributes.includes(attrib.kill_between)) {
         kill.ore(game_data.ep_ss[src_sq][dst_sq]);
-        if (save_enemy) {
-            kill.ande(turn ? board.white_ss.inverse() : board.black_ss.inverse());
+        if (this_piece.attributes.includes(attrib.save_enemy)) {
+            kill.ande(board.turn ? board.white_ss.inverse() : board.black_ss.inverse());
         }
-        if (!kill_ally) {
-            kill.ande(turn ? board.black_ss.inverse() : board.white_ss.inverse());
+        if (!this_piece.attributes.includes(attrib.kill_ally)) {
+            kill.ande(board.turn ? board.black_ss.inverse() : board.white_ss.inverse());
         }
+        kill.ande(ss_or(board.white_ss, board.black_ss));
     }
     for (; !kill.is_zero(); kill.pop()) {
-        death(kill.get_ls1b());
+        death(kill.get_ls1b(), true);
     }
 
     //Spawn_trail, then spawn_constant
@@ -258,7 +259,7 @@ function make_move(src_x, src_y, dst_x, dst_y, promotion) {
     let burn = ss_or(ss_and(burn_white, board.white_ss), ss_and(burn_black, board.black_ss));
     burn.ande(board.burn_immune_ss.inverse());
     for (; !burn.is_zero(); burn.pop()) {
-        death(burn.get_ls1b());
+        death(burn.get_ls1b(), true);
     }
 
     //Promotions
@@ -275,7 +276,7 @@ function make_move(src_x, src_y, dst_x, dst_y, promotion) {
         }
         else if (promote_to.length > 1) {
             //Something went wrong, promote to the first possible piece and throw an error
-            console.error("Piece promotion not found, promoting to first possible promotion");
+            show_error("Piece promotion not found, promoting to first possible promotion. You should report this in #bug-reports");
             my_promotion = promote_to[0];
         }
         if (my_promotion >= 0) {
@@ -306,7 +307,7 @@ function make_move(src_x, src_y, dst_x, dst_y, promotion) {
 
 function make_drop_move(piece, color, dest) {
     if(!validate_drop(piece, color, dest)) {
-        console.error("make_drop_move called with invalid data");
+        show_error("make_drop_move called with invalid data. You should report this in #bug-reports.");
     }
     let my_hand = color ? board.hands.black : board.hands.white;
 
@@ -330,13 +331,21 @@ function validate_move(src_x, src_y, dst_x, dst_y, promotion) {
     let brd = board_history[view_move];
     let src_sq = src_y * game_data.width + src_x;
     let dst_sq = dst_y * game_data.width + dst_x;
+    
+    let color = (brd.black_ss.get(src_sq) && brd.white_ss.get(src_sq)) ? brd.turn : brd.black_ss.get(src_sq);
+    if (!can_move(color, brd)) {
+        show_error("Player cannot move pieces. You should report this in #bug-reports.");
+        return false;
+    }
 
     //If a piece of turn's color isn't on src
     if(brd.turn && !brd.black_ss.get(src_sq) || !brd.turn && !brd.white_ss.get(src_sq)) {
+        show_error("Wrong color in move validation. You should report this in #bug-reports.");
         return false;
     }
     //If the piece can't move there
     if(!brd.can_move_ss[src_sq].get(dst_sq)) {
+        show_error("Invalid move. You should report this in #bug-reports.");
         return false;
     }
     return true;
@@ -346,24 +355,24 @@ function validate_drop(piece, color, dest) {
     let brd = board_history[view_move];
     let my_hand = color ? brd.hands.black : brd.hands.white;
     if (my_hand[piece] <= 0) {
-        //console.error("Trying to drop a piece you don't have");
+        show_error("Trying to drop a piece you don't have");
         return false;
     }
     if (color != brd.turn) {
-        //console.error("Trying to drop a piece when it isn't your turn");
+        show_error("Trying to drop a piece when it isn't your turn");
         return false;
     }
     if (brd.white_ss.get(dest) || brd.black_ss.get(dest)) {
-        //console.error("Trying to drop a piece on another piece");
+        show_error("Trying to drop a piece on another piece");
         return false;
     }
     let drop_zone = get_drop_zone(piece, color);
     if(!drop_zone.get(dest)) {
-        //console.error("Trying to drop a piece outside of your drop zone");
+        show_error("Trying to drop a piece outside of your drop zone");
         return false;
     }
     if(slots_left(piece, color, brd) <= 0) {
-        //console.error("Trying to drop a piece which is at limit");
+        show_error("Trying to drop a piece which is at limit");
         return false;
     }
     return true;
@@ -392,21 +401,21 @@ function find_victory() {
     //If your royal gets captured, you lose
     if (game_data.wins.includes(ends.royal_capture)) {
         if (!board.royals_killed.white && board.royals_killed.black) {
-            console.log("Black by royal capture")
+            show_message("Black wins by royal capture")
             return 1; //Black wins
         }
         if (board.royals_killed.white && !board.royals_killed.black) {
-            console.log("White by royal capture")
+            show_message("White wins by royal capture")
             return 0; //White wins
         }
         if (board.royals_killed.white && board.royals_killed.black) {
-            console.log("Mutual win by royal capture")
+            show_message("Mutual win by royal capture")
             return 0.5; //Draw
         }
     }
     if (game_data.draws.includes(ends.royal_capture)) {
         if (board.royals_killed.white || board.royals_killed.black) {
-            console.log("Draw by royal capture")
+            show_message("Draw by royal capture")
             return 0.5; //Not sure why this would ever be a thing
         }
     }
@@ -420,21 +429,21 @@ function find_victory() {
     }
     if (game_data.wins.includes(ends.royal_extinction)) {
         if (ss_and(all_royals, board.white_ss).is_zero() && !ss_and(all_royals, board.black_ss).is_zero()) {
-            console.log("Black by royal extinction")
+            show_message("Black wins by royal extinction")
             return 1; //Black wins
         }
         if (ss_and(!all_royals, board.white_ss).is_zero() && ss_and(all_royals, board.black_ss).is_zero()) {
-            console.log("White by royal extinction")
+            show_message("White wins by royal extinction")
             return 0; //White wins
         }
         if (ss_and(all_royals, board.white_ss).is_zero() && ss_and(all_royals, board.black_ss).is_zero()) {
-            console.log("Mutual win by royal extinction")
+            show_message("Mutual win by royal extinction")
             return 0.5; //Draw
         }
     }
     if (game_data.draws.includes(ends.royal_extinction)) {
         if (ss_and(all_royals, board.white_ss).is_zero() || ss_and(all_royals, board.black_ss).is_zero()) {
-            console.log("Draw by royal extinction")
+            show_message("Draw by royal extinction")
             return 0.5; //Not sure why this would ever be a thing
         }
     }
@@ -442,21 +451,21 @@ function find_victory() {
     //If you have no non-royal pieces, you lose
     if (game_data.wins.includes(ends.bare_royal)) {
         if (ss_and(all_royals.inverse(), board.white_ss).is_zero() && !ss_and(all_royals.inverse(), board.black_ss).is_zero()) {
-            console.log("Black by bare royal")
+            show_message("Black wins by bare royal")
             return 1; //Black wins
         }
         if (ss_and(!all_royals.inverse(), board.white_ss).is_zero() && ss_and(all_royals.inverse(), board.black_ss).is_zero()) {
-            console.log("White by bare royal")
+            show_message("White wins by bare royal")
             return 0; //White wins
         }
         if (ss_and(all_royals.inverse(), board.white_ss).is_zero() && ss_and(all_royals.inverse(), board.black_ss).is_zero()) {
-            console.log("Mutual win by bare royal")
+            show_message("Mutual win by bare royal")
             return 0.5; //Draw
         }
     }
     if (game_data.draws.includes(ends.bare_royal)) {
         if (ss_and(all_royals.inverse(), board.white_ss).is_zero() || ss_and(all_royals.inverse(), board.black_ss).is_zero()) {
-            console.log("Draw by bare royal")
+            show_message("Draw by bare royal")
             return 0.5;
         }
     }
@@ -478,18 +487,18 @@ function find_victory() {
     if (game_data.wins.includes(ends.stalemate) || game_data.draws.includes(ends.stalemate)) {
         if (!board.turn && !has_possible_moves.white) {
             if (game_data.draws.includes(ends.stalemate)) {
-                console.log("Draw by stalemate")
+                show_message("Draw by stalemate")
                 return 0.5; //Black wins
             }
-            console.log("Black by stalemate")
+            show_message("Black by stalemate")
             return 1; //Black wins
         }
         if (board.turn && !has_possible_moves.black) {
             if (game_data.draws.includes(ends.stalemate)) {
-                console.log("Draw by stalemate")
+                show_message("Draw by stalemate")
                 return 0.5; //Black wins
             }
-            console.log("White by stalemate")
+            show_message("White by stalemate")
             return 0; //White wins
         }
     }
@@ -499,6 +508,9 @@ function find_victory() {
 //Color = 0/false, 1/true, or 2 = white, black, neutral respectively
 //Any other color value applies it to all pieces combined
 function slots_left (piece_id, color, brd) {
+    if(brd === undefined) {
+        brd = board;
+    }
     if(piece_id < 0 || piece_id >= game_data.all_pieces.length) {
         return 0;
     }
@@ -559,15 +571,19 @@ function evaluate_burns(piece_id, sq, col) {
         burn.ande(my_ss.inverse());
     }
     for (; !burn.is_zero(); burn.pop()) {
-        death(burn.get_ls1b());
+        death(burn.get_ls1b(), true);
     }
 }
-function death(sq, flip = true) {
+function death(sq, is_burn = false, flip = true) {
     let piece_id = identify_piece(sq);
     let piece = game_data.all_pieces[piece_id];
     let is_neutral = board.black_ss.get(sq) && board.white_ss.get(sq);
     let burn_col = is_neutral ? !board.turn : board.black_ss.get(sq);
     let spawn_col = is_neutral ? 2 : board.black_ss.get(sq);
+
+    if (piece.attributes.includes(attrib.dont_flip_on_death)) {
+        flip = false;
+    }
 
     if (piece.attributes.includes(attrib.transform_on_death)) {
         if(!piece.attributes.includes(attrib.save_self) || slots_left(piece.held_piece, spawn_col)) {
@@ -581,7 +597,9 @@ function death(sq, flip = true) {
         board.white_ss.flip(sq);
     }
     if (!piece.attributes.includes(attrib.save_self)) {
-        if (game_data.has_hand && !is_neutral) {
+        if ((game_data.has_hand && !is_neutral) &&
+            ((!is_burn && !game_data.destroy_on_capture) ||
+            (is_burn && !game_data.destroy_on_burn))) {
             if (board.black_ss.get(sq)) {
                 board.hands.black[identify_piece(sq)]++;
             }
@@ -644,6 +662,9 @@ function spawn_piece(sq, piece_id, col) {
     if (attributes.includes(attrib.burn_immune)) {
         board.burn_immune_ss.set_on(sq);
     }
+    if (attributes.includes(attrib.spawn_constant)) {
+        board.constant_spawn_ss.set_on(sq);
+    }
     board.has_moved_ss.set_off(sq);
 }
 function swap_spaces(src, dest) {
@@ -654,6 +675,7 @@ function swap_spaces(src, dest) {
     swap_ss_space(src, dest, board.tall_ss);
     swap_ss_space(src, dest, board.passive_burn_ss);
     swap_ss_space(src, dest, board.burn_immune_ss);
+    swap_ss_space(src, dest, board.constant_spawn_ss);
     for (let a = 0; a < game_data.all_pieces.length; a++) {
         swap_ss_space(src, dest, board.piece_ss[a]);
     }

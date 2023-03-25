@@ -24,8 +24,9 @@
             if (!on_board(a, b)) { continue; }
             let is_dark = (a + b + style_data.flip_colors) % 2;
             let sq = b * game_data.width + a;
-            if (game_data.mud.get(sq)) { ctx.fillStyle = is_dark ? style_data.dark_mud_col : style_data.light_mud_col; }
-            else if (game_data.etherial.get(sq)) { ctx.fillStyle = is_dark ? style_data.dark_etherial_col : style_data.light_etherial_col; }
+            if (game_data.highlight.get(sq)) { ctx.fillStyle = is_dark ? style_data.dark_highlight_col : style_data.light_highlight_col; }
+            else if (game_data.mud.get(sq)) { ctx.fillStyle = is_dark ? style_data.dark_mud_col : style_data.light_mud_col; }
+            else if (game_data.ethereal.get(sq)) { ctx.fillStyle = is_dark ? style_data.dark_ethereal_col : style_data.light_ethereal_col; }
             else if (game_data.pacifist.get(sq)) { ctx.fillStyle = is_dark ? style_data.dark_pacifist_col : style_data.light_pacifist_col; }
             else if (game_data.sanctuary.get(sq)) { ctx.fillStyle = is_dark ? style_data.dark_sanctuary_col : style_data.light_sanctuary_col; }
             else { ctx.fillStyle = is_dark ? style_data.dark_square_col : style_data.light_square_col; }
@@ -114,7 +115,9 @@
         }
         else {
             let highlight = square_x + square_y * game_data.width;
-            if (highlight >= 0 && highlight < game_data.width * game_data.height && on_board(square_x, square_y)) {
+            let color = (brd.black_ss.get(highlight) && brd.white_ss.get(highlight)) ? brd.turn : board.black_ss.get(highlight);
+            if (can_move(color, brd) && highlight >= 0 &&
+                highlight < game_data.width * game_data.height && on_board(square_x, square_y)) {
                 let type = 'img_sq_canmove_turn';
                 if ((!brd.turn && brd.white_ss.get(highlight)) || (brd.turn && brd.black_ss.get(highlight))) {
                     type = 'img_sq_canmove';
@@ -158,6 +161,22 @@ function get_drop_zone(piece_id, color) {
         game_data.active_squares;
 }
 
+function can_move(color, brd) {
+    if(brd === undefined) {
+        brd = board;
+    }
+    //If game_data.force_drop and you have pieces in your hand, you can't move normally
+    if (game_data.force_drop && game_data.has_hand) {
+        let my_hand = color ? board.hands.black : board.hands.white;
+        for (let a = 0; a < my_hand.length; a ++) {
+            if (my_hand[a] > 0) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
 function highlighted_hand_piece(brd) {
     if(brd === undefined) {
         brd = board;
@@ -179,7 +198,6 @@ function highlighted_hand_piece(brd) {
 }
 
 function draw_sprite(sprite, x, y, width, height, color) {
-    //console.log(sprite);
     let c = document.getElementById("board_canvas");
     let ctx = c.getContext("2d");
     if (!color || color === 'rgb(255,255,255)') {

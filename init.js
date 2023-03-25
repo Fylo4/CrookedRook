@@ -23,7 +23,7 @@ function add_image(dname, fname) {
     if (!document.getElementById("img_" + fname)) {
         let img1 = new Image();
         img1.onerror = () => {
-            console.error(`Error loading image '${fname}'`);
+            show_error(`Error loading image '${fname}'`);
         }
         img1.src = "images/" + dname + "/" + fname + ".png";
         img1.id = "img_" + fname;
@@ -53,6 +53,60 @@ function update_all_boards() {
         }
     }
 }
+function stringify_consts(json) {
+    let ret = JSON.parse(JSON.stringify(json));
+    if (ret.wins) {
+        for (let a = 0; a < ret.wins.length; a ++) {
+            if (typeof(ret.wins[a]) === "number") {
+                ret.wins[a] = ends_str[ret.wins[a]];
+            }
+        }
+    }
+    if (ret.draws) {
+        for (let a = 0; a < ret.draws.length; a ++) {
+            if (typeof(ret.draws[a]) === "number") {
+                ret.draws[a] = ends_str[ret.draws[a]];
+            }
+        }
+    }
+    for (let a = 0; a < ret.all_pieces.length; a ++){
+        let piece = ret.all_pieces[a];
+        if (piece.promotions) {
+            for (let b = 0; b < piece.promotions.length; b ++){
+                for (let c = 0; c < piece.promotions[b].on.length; c ++) {
+                    if (typeof(piece.promotions[b].on[c]) === "number") {
+                        piece.promotions[b].on[c] = events_str[piece.promotions[b].on[c]];
+                    }
+                }
+            }
+        }
+        if (piece.attributes) {
+            for (let b = 0; b < piece.attributes.length; b ++) {
+                if (typeof(piece.attributes[b]) === "number") {
+                    piece.attributes[b] = attrib_str[piece.attributes[b]];
+                }
+            }
+        }
+    }
+    return ret;
+}
+function download_all_boards() {
+    for(let a = 0; a < preset_variants.length; a++) {
+        for(let b = 0; b < preset_variants[a].length; b++) {
+            let str = JSON.stringify(stringify_consts(preset_variants[a][b]), null, 2);
+            let file = new File([str], preset_variants[a][b].name);
+            let url = URL.createObjectURL(file);
+            const anchor = document.createElement("a");
+            anchor.href = url;
+            anchor.download = preset_variants[a][b].name+".json";
+            document.body.appendChild(anchor);
+            anchor.click();
+            document.body.removeChild(anchor);
+            URL.revokeObjectURL(url);
+        }
+    }
+}
+
 function add_files_to_dropdown() {
     let variant_dropdown = document.getElementById("variantField");
     let variant_file = document.getElementById("variant_file");
@@ -82,10 +136,15 @@ function load_variant() {
             let reader = new FileReader();
             reader.readAsText(file, "UTF-8");
             reader.onload = function (evt) {
-                start_game(JSON.parse(evt.target.result));
+                try {
+                    start_game(JSON.parse(evt.target.result))
+                }
+                catch (error){
+                    show_error(error.message)
+                }
             }
             reader.onerror = function (evt) {
-                console.error("Couldn't read the file");
+                show_error("Couldn't read the file");
             }
         }
     }
@@ -148,7 +207,7 @@ function handle_mouse_click() {
                 handle_make_move(src_x, src_y, dst_x, dst_y, prom);
             }
             else {
-                console.error("Invalid move attempted after promotion was selected");
+                show_error("Invalid move attempted after promotion was selected. This should be reported in #bug-reports.");
             }
             temp_data.selected = false;
         }
@@ -167,7 +226,7 @@ function handle_mouse_click() {
                         handle_make_move(src_x, src_y, dst_x, dst_y);
                     }
                     else {
-                        console.error("Invalid move attempted");
+                        show_error("Invalid move attempted. This should be reported in #bug-reports.");
                     }
                     temp_data.selected = false;
                 }
@@ -177,7 +236,7 @@ function handle_mouse_click() {
                         handle_make_move(src_x, src_y, dst_x, dst_y, prom);
                     }
                     else {
-                        console.error("Invalid move attempted (random promotion)");
+                        show_error("Invalid move attempted (random promotion). This should be reported in #bug-reports.");
                     }
                     temp_data.selected = false;
                 }
@@ -201,7 +260,7 @@ function handle_mouse_click() {
                     handle_make_drop(temp_data.selected_position, temp_data.selected_side, mouse_sq);
                 }
                 else {
-                    console.error("Invalid drop attempted");
+                    show_error("Invalid drop attempted. This should be reported in #bug-reports.");
                 }
             }
         }
@@ -219,7 +278,7 @@ function handle_mouse_click() {
     else {
         if ((!brd.turn && brd.white_ss.get(mouse_sq))
             || (brd.turn && brd.black_ss.get(mouse_sq))) {
-            if (!brd.can_move_ss[mouse_sq].is_zero() && (!in_multiplayer_game || brd.turn === my_col)) {
+            if (!brd.can_move_ss[mouse_sq].is_zero() && (!in_multiplayer_game || brd.turn === my_col) && can_move(brd.turn, brd)) {
                 temp_data.selected = true;
                 temp_data.selected_position = mouse_sq;
             }
@@ -334,4 +393,6 @@ function page_init() {
         }
     };
     board_page()
+
+    reload_style_inputs();
 }

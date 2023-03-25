@@ -43,6 +43,9 @@
     <script src="boards/Compound Chess/Embassy Chess.js"></script>
     <script src="boards/Compound Chess/Compound Shuffle Chess.js"></script>
     <script src="boards/Compound Chess/Shogun Chess.js"></script>
+    
+    <script src="boards/Style.js"></script>
+    <script src="boards/Other/Sittuyin.js"></script>
 
     <title>The Crooked Rook</title>
     <link rel="icon" href="icon.png">
@@ -67,7 +70,8 @@
     <!-- Header -->
     <div style="width: 100%; overflow:auto;">
         <div style="width: 50%; float: left;">
-            <p><b style="font-size: 30px">The Crooked Rook</b>Pre-Release 0.3.4</p>
+            <p><b style="font-size: 30px">The Crooked Rook</b>Pre-Release 0.4.0</p>
+            <p><a href="https://discord.gg/NJNXUXqyvr">Discord</a> | <a href="https://drive.google.com/drive/folders/1yB_Elymo0vY33n6xQHWzukDGGkANqPQl">Documentation</a></p>
         </div>
         <div style="width: max-content; float: right;">
             <p id="name_p">Name:</p>
@@ -75,6 +79,9 @@
             <button onclick="set_name()">Change</button>
             <br />
         </div>
+    </div>
+    <div id="message_div">
+        
     </div>
     <button onclick="board_page()">Board</button>
     <button onclick="lobby_page()">Lobby</button>
@@ -143,6 +150,50 @@
         <button id="resign_btn" onclick="resign()" style="display: none;">Resign</button>
         <br />
 
+        <div id="style_div" style="display:none;">
+            <h2>Style Menu</h2>
+            <p>Piece colors- White: <input id="style_piece_w" onchange="set_style()" /> Black: <input id="style_piece_b" onchange="set_style()" /> Neutral: <input id="style_piece_n" onchange="set_style()" /></p>
+            <p>Background color- <input id="style_bg" onchange="set_style()" /></p>
+            <p>Hand color- <input id="style_hand" onchange="set_style()" /></p>
+            <table>
+                <tr>
+                    <th>Square type</th>
+                    <th>Light</th>
+                    <th>Dark</th>
+                </tr>
+                <tr>
+                    <td>Highlight</td>
+                    <td><input id="style_hi_light" onchange="set_style()" /></td>
+                    <td><input id="style_hi_dark" onchange="set_style()" /></td>
+                </tr>
+                <tr>
+                    <td>Mud</td>
+                    <td><input id="style_md_light" onchange="set_style()" /></td>
+                    <td><input id="style_md_dark" onchange="set_style()" /></td>
+                </tr>
+                <tr>
+                    <td>Ethereal</td>
+                    <td><input id="style_et_light" onchange="set_style()" /></td>
+                    <td><input id="style_et_dark" onchange="set_style()" /></td>
+                </tr>
+                <tr>
+                    <td>Pacifist</td>
+                    <td><input id="style_pa_light" onchange="set_style()" /></td>
+                    <td><input id="style_pa_dark" onchange="set_style()" /></td>
+                </tr>
+                <tr>
+                    <td>Sanctuary</td>
+                    <td><input id="style_sa_light" onchange="set_style()" /></td>
+                    <td><input id="style_sa_dark" onchange="set_style()" /></td>
+                </tr>
+                <tr>
+                    <td>Default</td>
+                    <td><input id="style_sq_light" onchange="set_style()" /></td>
+                    <td><input id="style_sq_dark" onchange="set_style()" /></td>
+                </tr>
+            </table>
+            <button onclick="export_style()">Save</button>
+        </div>
         <button onclick="up_arrow_click();">&uarr;</button>
         <button onclick="left_arrow_click();">&larr;</button>
         <button onclick="right_arrow_click();">&rarr;</button>
