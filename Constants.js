@@ -63,7 +63,9 @@ const attrib = {
 	anchor: 46,
     empower: 47,
     random_promotion: 48,
-	dont_flip_on_death: 49
+	dont_flip_on_death: 49,
+	destroy_on_capture: 50,
+	destroy_on_burn: 51,
 }
 const attrib_str = ["ally_static", "enemy_static", "kill_ally", "save_enemy", "flip_this_on_attack", 
 "dont_flip_enemy", "fireball", "bomb", "save_self", "transform_on_death", "ep_capturer", "ep_captured",
@@ -71,7 +73,8 @@ const attrib_str = ["ally_static", "enemy_static", "kill_ally", "save_enemy", "f
 "burn_allies", "burn_immune", "coward", "child", "berzerk", "spawn_trail", "spawn_constant", "spawn_on_death",
 "copycat", "attacker_moves", "defender_moves", "tall", "iron", "silver", "bronze", "royal", "ghost",
 "flip_on_passive", "forced_step", "retreat", "bloodlust", "promote_on_attack", "kill_between",
-"muddy", "ghost_caster", "defender", "pacifier", "anchor", "empower", "random_promotion", "dont_flip_on_death"];
+"muddy", "ghost_caster", "defender", "pacifier", "anchor", "empower", "random_promotion", "dont_flip_on_death",
+"destroy_on_capture", "destroy_on_burn"];
 const folders = {
 	chess: 0,
 	shogi: 1,

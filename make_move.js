@@ -606,8 +606,8 @@ function death(sq, is_burn = false, flip = true) {
     }
     if (!piece.attributes.includes(attrib.save_self)) {
         if ((game_data.has_hand && !is_neutral) &&
-            ((!is_burn && !game_data.destroy_on_capture) ||
-            (is_burn && !game_data.destroy_on_burn))) {
+            ((!is_burn && !game_data.destroy_on_capture && !piece.attributes.includes(attrib.destroy_on_capture)) ||
+            (is_burn && !game_data.destroy_on_burn && !piece.attributes.includes(attrib.destroy_on_burn)))) {
             if (board.black_ss.get(sq)) {
                 board.hands.black[identify_piece(sq)]++;
             }

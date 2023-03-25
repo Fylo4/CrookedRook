@@ -126,6 +126,7 @@ function resign() {
 //Pulls name automatically from name_input field
 function set_name() {
     let new_name = document.getElementById("name_input").value;
+    document.getElementById("name_input").value = "";
     if(typeof(new_name) != "string" || new_name.length < 1) {
         show_error("Name must be a non-empty string");
         return;
@@ -359,6 +360,7 @@ function add_lobby() {
         return;
     }
     let board_name = document.getElementById("board_name").value;
+    document.getElementById("board_name").value = "";
     let owner_col = document.getElementById("color_sel").value;
     //Check if this board exists
     all_boards_ref.child(`${board_name}/height`).once("value", (snapshot) => {
