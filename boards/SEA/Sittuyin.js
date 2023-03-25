@@ -1,4 +1,4 @@
-preset_variants[folders.other].push({
+preset_variants[folders.SEA].push({
     name: "Sittuyin",
     description: "At the start of the game, players take turns placing pieces on their side of the board. Rooks must be placed on the back rank. When a pawn reaches the highlighted promotion zone, it can promote to ferz. You can also promote if it is your last pawn. You can only promote if you have no other ferz on the board. Promotion is performed as its own turn, without moving. ",
 	width: 8,

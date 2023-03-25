@@ -12,7 +12,7 @@ const events = {
 	drop: 3,
 	self: 4
 }
-const events_str = ["enter", "exit", "between", "drop"];
+const events_str = ["enter", "exit", "between", "drop", "self"];
 const attrib = {
 	ally_static: 0,
 	enemy_static: 1,
@@ -80,7 +80,8 @@ const folders = {
 	regional: 4,
 	ccit: 5,
 	compound: 6,
-	other: 7
+	SEA: 7,
+	other: 8
 }
 
 let preset_variants = [];

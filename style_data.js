@@ -27,6 +27,8 @@ let style_data = {
 
 function show_style_data() {
     document.getElementById("style_div").style.display = "block";
+    //preset_variants[folders.other].push(style_board);
+    //add_files_to_dropdown();
 }
 function hide_style_data() {
     document.getElementById("style_div").style.display = "none";

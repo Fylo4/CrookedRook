@@ -24,10 +24,7 @@ function make_move(src_x, src_y, dst_x, dst_y, promotion) {
 
     //First figure out the notation
     //let notation = this_piece.notation ?? this_piece.symbol; //My IDE thinks this is an error
-    let notation = this_piece.symbol;
-    if (this_piece.notation != undefined) {
-        notation = this_piece.notation;
-    }
+    let notation = this_piece.notation ?? this_piece.symbol;
     //Find how many pieces can go to the same spot
     let in_same_row = false, in_same_column = false, needs_specification = false;
     let other_pieces = ss_and(board.turn ? board.black_ss : board.white_ss, board.piece_ss[this_id]);
@@ -45,20 +42,24 @@ function make_move(src_x, src_y, dst_x, dst_y, promotion) {
     }
     let file = (num) => { return String.fromCharCode(97 + num); };
     let rank = (num) => { return game_data.height - num; }
+    let is_capture = (board.turn && board.white_ss.get(dst_sq)) || (!board.turn && board.black_ss.get(dst_sq));
     if (!needs_specification) {
-        //Do nothing
+        //Still specify if it's a capture and we have no notation (e.g. pawn)
+        if(is_capture && this_piece.notation === "") {
+            notation += file(src_sq%game_data.width);
+        }
     }
     else if (!in_same_column) {
         notation += file(src_sq%game_data.width);
     }
-    else if (!in_same_row) {
+    else if (!in_same_row && this_piece.notation != "") {
         notation += rank(Math.floor(src_sq/game_data.width));
     }
     else {
         notation += file(src_sq % game_data.width) + rank(Math.floor(src_sq / game_data.width));
     }
     //Captures
-    if ((board.turn && board.white_ss.get(dst_sq)) || (!board.turn && board.black_ss.get(dst_sq))) {
+    if (is_capture) {
         notation += "x";
     }
     //To space

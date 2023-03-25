@@ -106,6 +106,18 @@ function download_all_boards() {
         }
     }
 }
+function download_board(folder, index) {
+    let str = JSON.stringify(stringify_consts(preset_variants[folder][index]), null, 2);
+    let file = new File([str], preset_variants[folder][index].name);
+    let url = URL.createObjectURL(file);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = preset_variants[folder][index].name+".json";
+    document.body.appendChild(anchor);
+    anchor.click();
+    document.body.removeChild(anchor);
+    URL.revokeObjectURL(url);
+}
 
 function add_files_to_dropdown() {
     let variant_dropdown = document.getElementById("variantField");
