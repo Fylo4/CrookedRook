@@ -104,11 +104,14 @@ function multiplayer_make_move(src_x, src_y, dst_x, dst_y, prom) {
     my_prop = data;
 }
 
-function multiplayer_make_drop(piece, color, dest) {
+function multiplayer_make_drop(piece, color, dest, promotion) {
     if(!in_multiplayer_game) {
         show_error("Trying to make multiplayer drop when not in a room");
     }
     let data = {piece, color, dest};
+    if (promotion != undefined) {
+        data.promotion = promotion;
+    }
     show_db_set("Setting my_prop (drop)");
     my_prop_ref.set(data);
     my_prop = data;

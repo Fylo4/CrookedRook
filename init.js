@@ -185,12 +185,12 @@ function handle_make_move(src_x, src_y, dst_x, dst_y, prom) {
         make_move(src_x, src_y, dst_x, dst_y, prom);
     }
 }
-function handle_make_drop(piece, color, dest) {
+function handle_make_drop(piece, color, dest, prom) {
     if(in_multiplayer_game) {
-        multiplayer_make_drop(piece, color, dest);
+        multiplayer_make_drop(piece, color, dest, prom);
     }
     else {
-        make_drop_move(piece, color, dest);
+        make_drop_move(piece, color, dest, prom);
     }
 }
 
@@ -230,7 +230,7 @@ function handle_mouse_click() {
             if (brd.can_move_ss[temp_data.selected_position].get(mouse_sq)) {
                 //See how many promotions are possible
                 let src = temp_data.selected_position, dst = mouse_sq;
-                let promote_to = find_promotions(identify_piece(src, brd), src, dst, brd.white_ss.get(src), brd.black_ss.get(src));
+                let promote_to = find_promotions(identify_piece(src, brd), src, dst, brd.white_ss.get(src), brd.black_ss.get(src), brd);
                 let src_x = src % game_data.width, src_y = Math.floor(src / game_data.width);
                 let dst_x = mouse_sq_pos.x, dst_y = mouse_sq_pos.y;
                 if (promote_to.length < 2) {
