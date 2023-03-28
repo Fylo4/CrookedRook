@@ -1,7 +1,6 @@
 ﻿function render_board(){
     let c = document.getElementById("board_canvas");
     let ctx = c.getContext("2d");
-
     //Set up some variables
     let width_px = c.width / game_data.width; //Width and height should be the same
     let height_px = c.height / (game_data.height + (game_data.has_hand ? 2 : 0)); //(they should be squares)
@@ -55,13 +54,13 @@
         ctx.fillStyle = style_data.hand_col;
         ctx.fillRect(0, 0, c.width, height_px);
         ctx.fillRect(0, c.height-height_px, c.width, height_px);
-    }
-    //Hand border
-    if (style_data.border) {
-        ctx.strokeStyle = 'black';
-        ctx.lineWidth = style_data.border*width_px;
-        ctx.strokeRect(0, 0, c.width, height_px);
-        ctx.strokeRect(0, c.height-height_px, c.width, height_px);
+        //Hand border
+        if (style_data.border) {
+            ctx.strokeStyle = 'black';
+            ctx.lineWidth = style_data.border*width_px;
+            ctx.strokeRect(0, 0, c.width, height_px);
+            ctx.strokeRect(0, c.height-height_px, c.width, height_px);
+        }
     }
 
     //Draw glow on last moved piece
@@ -85,6 +84,59 @@
             draw_ss(white_pieces, img, style_data.white_col, true);
             draw_ss(black_pieces, img, style_data.black_col, true);
             draw_ss(neutral_pieces, img, style_data.neutral_col, true);
+        }
+    }
+    //Circles and Lines
+    function draw_tcr_arrow(x1, y1, x2, y2, col) {
+        let angle = Math.atan2(x2-x1, y2-y1);
+        let angle3 = -Math.PI/2-angle+30*Math.PI/180;
+        let angle4 = -Math.PI/2-angle-30*Math.PI/180;
+        let x3 = Math.cos(angle3)*width_px*0.4 + x2;
+        let y3 = Math.sin(angle3)*width_px*0.4 + y2;
+        let x4 = Math.cos(angle4)*width_px*0.4 + x2;
+        let y4 = Math.sin(angle4)*width_px*0.4 + y2;
+
+        ctx.strokeStyle = col;
+        ctx.lineCap = "round";
+        ctx.lineWidth = 0.1*width_px;
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.moveTo(x2, y2);
+        ctx.lineTo(x3, y3);
+        ctx.moveTo(x2, y2);
+        ctx.lineTo(x4, y4);
+        ctx.stroke();
+    }
+    function draw_tcr_circle(x, y, col) {
+        ctx.strokeStyle = col;
+        ctx.lineWidth = 0.1*width_px;
+        ctx.beginPath();
+        ctx.arc(x, y, width_px * 0.4, 0, 2 * Math.PI);
+        ctx.stroke(); 
+    }
+    for (let a = 0; a < circles.length; a ++) {
+        let x = ((circles[a].sq % game_data.width)+ 0.5) * width_px;
+        let y = (Math.floor(circles[a].sq / game_data.width)+ 0.5) * height_px;
+        draw_tcr_circle(x, y, circles[a].col);
+    }
+    for (let a = 0; a < lines.length; a ++) {
+        let x1 = ((lines[a].sq1 % game_data.width)+ 0.5) * width_px;
+        let y1 = (Math.floor(lines[a].sq1 / game_data.width)+ 0.5) * height_px;
+        let x2 = ((lines[a].sq2 % game_data.width)+ 0.5) * width_px;
+        let y2 = (Math.floor(lines[a].sq2 / game_data.width)+ 0.5) * height_px;
+        draw_tcr_arrow(x1, y1, x2, y2, lines[a].col);
+    }
+    if (down_sq != -1) {
+        let x = ((down_sq % game_data.width)+ 0.5) * width_px;
+        let y = (Math.floor(down_sq / game_data.width)+ 0.5) * height_px;
+        if (down_sq === mouse_sq) {
+            draw_tcr_circle(x, y, line_col);
+        }
+        else if(mouse_sq != -1) {
+            let mx = ((mouse_sq % game_data.width)+ 0.5) * width_px;
+            let my = (Math.floor(mouse_sq / game_data.width)+ 0.5) * height_px;
+            draw_tcr_arrow(x, y, mx, my, line_col);
         }
     }
     //Pieces in hand
@@ -129,6 +181,9 @@
         }
         else if (temp_data.selected) {
             draw_ss(brd.can_move_ss[temp_data.selected_position], document.getElementById('img_sq_canmove_sel'));
+        }
+        else if(down_sq != -1) {
+            //Don't draw squares if we're drawing an arrow (except if it's already selected)
         }
         else if ((mouse_sq_pos.y === -1 || mouse_sq_pos.y === game_data.height)) {
             let hover = highlighted_hand_piece(brd);

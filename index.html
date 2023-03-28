@@ -71,13 +71,38 @@
         th {
             width:25%;
         }
+        .box {
+            float: left;
+            height: 15px;
+            width: 15px;
+            border: 1px solid black;
+            clear: both;
+        }
+        .red {
+            background-color: red;
+        }
+        .orange {
+            background-color: orange;
+        }
+        .yellow {
+            background-color: yellow;
+        }
+        .green {
+            background-color: green;
+        }
+        .blue {
+            background-color: blue;
+        }
+        .purple {
+            background-color: purple;
+        }
     </style>
 </head>
 <body>
     <!-- Header -->
     <div style="width: 100%; overflow:auto;">
         <div style="width: 50%; float: left;">
-            <p><b style="font-size: 30px">The Crooked Rook</b>Pre-Release 0.4.4</p>
+            <p><b style="font-size: 30px">The Crooked Rook</b>Pre-Release 0.5.0</p>
             <p><a href="https://discord.gg/NJNXUXqyvr">Discord</a> | <a href="https://drive.google.com/drive/folders/1yB_Elymo0vY33n6xQHWzukDGGkANqPQl">Documentation</a></p>
         </div>
         <div style="width: max-content; float: right;">
@@ -90,8 +115,8 @@
     <div id="message_div">
         
     </div>
-    <button onclick="board_page()">Board</button>
-    <button onclick="lobby_page()">Lobby</button>
+        <button onclick="board_page()">Board</button>
+        <button onclick="lobby_page()">Lobby</button>
     <br /> <br />
 
     <div id="lobby_section">
@@ -146,12 +171,20 @@
         <button onClick="change_zoom(-1); render_board();">-</button>
         <button onClick="style_data.flip_board ^= 1; render_board()">Flip</button>
         <button onClick="style_data.name_squares ^= 1; render_board()">Square Names</button>
+        <br>
+        <button onClick="clear_lines_circles();">Clear Lines / Circles</button>
+        <button onClick="line_col='red'"><div class='box red'></div></button>
+        <button onClick="line_col='orange'"><div class='box orange'></div></button>
+        <button onClick="line_col='yellow'"><div class='box yellow'></div></button>
+        <button onClick="line_col='green'"><div class='box green'></div></button>
+        <button onClick="line_col='blue'"><div class='box blue'></div></button>
+        <button onClick="line_col='purple'"><div class='box purple'></div></button>
         <!-- <button onClick="">End turn</button> -->
         <br /> <br />
         <div style="margin: auto; width: min-content;">
             <p id="multiplayer_label">Mode: Single-player</p>
             <p id="top_player_label"></p>
-            <canvas id="board_canvas" width="400" height="0"></canvas>
+            <canvas id="board_canvas" width="400" height="0" oncontextmenu="return false;"></canvas>
             <p id="bottom_player_label"></p>
             <p id="turn_indicator">Turn: N/A</p>
         </div>

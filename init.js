@@ -299,13 +299,30 @@ function handle_mouse_click() {
     render_board();
 }
 
+let down_sq = -1;
+let line_col = 'green';
+function handle_left_down() {
+    down_sq = mouse_sq;
+    render_board();
+}
+function handle_left_up() {
+    if (down_sq === mouse_sq) {
+        add_circle({sq: mouse_sq, col: line_col});
+    }
+    else {
+        add_line({sq1: down_sq, sq2: mouse_sq, col: line_col});
+    }
+    down_sq = -1;
+    render_board();
+}
+
 function handle_mouse_leave() {
     if (game_data.width != undefined) {
         mouse_sq = -1;
         mouse_sq_pos = { x: -1, y: -1 };
         old_mouse_sq = -1;
-        render_board();
     }
+    render_board();
 }
 
 function board_page() {
@@ -360,10 +377,52 @@ function up_arrow_click() {
     render_board();
     render_extras();
 }
+function add_circle(circle) {
+    if (circle.sq != undefined && circle.sq > -1) {
+        let index = circles.findIndex(e => e.sq === circle.sq);
+        if (index != -1) {
+            if (circles[index].col === line_col) {
+                circles.splice(index, 1);
+            }
+            else {
+                circles.splice(index, 1);
+                circles.push(circle);
+            }
+        }
+        else {
+            circles.push(circle);
+        }
+    }
+    render_board();
+}
+//Line is an object like {sq1: number, sq2: number}
+function add_line(line) {
+    let index = lines.findIndex(e => (e.sq1 === line.sq1 && e.sq2 === line.sq2));
+    if (index > -1) {
+        if (lines[index].col === line_col) {
+            lines.splice(index, 1);
+        }
+        else {
+            lines.splice(index, 1);
+            lines.push(line);
+        }
+    }
+    else {
+        lines.push(line);
+    }
+    render_board();
+}
+function clear_lines_circles() {
+    lines = [];
+    circles = [];
+    render_board();
+}
 
 let game_data = {};
 let board = {};
 let temp_data = {};
+let circles = [];
+let lines = [];
 let board_history = [];
 let move_history = [];
 let view_move = 0;
@@ -385,7 +444,17 @@ function page_init() {
         handle_mouse_leave();
     });
     canvas.addEventListener('mousedown', e => {
-        handle_mouse_click();
+        if(e.button === 0) {
+            handle_mouse_click();
+        }
+        else if(e.button === 2) {
+            handle_left_down();
+        }
+    });
+    canvas.addEventListener('mouseup', e => {
+        if(e.button === 2) {
+            handle_left_up();
+        }
     });
     document.onkeydown = function (e) {
         switch (e.keyCode) {
@@ -402,6 +471,8 @@ function page_init() {
             case 40:
                 down_arrow_click();
                 break;*/
+            case 67: //c for circle
+                add_circle();
         }
     };
     board_page()
