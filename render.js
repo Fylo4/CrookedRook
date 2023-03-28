@@ -88,6 +88,12 @@
     }
     //Circles and Lines
     function draw_tcr_arrow(x1, y1, x2, y2, col) {
+        if (style_data.flip_board) {
+            x1 = canvas.width - x1;
+            y1 = canvas.height - y1;
+            x2 = canvas.width - x2;
+            y2 = canvas.height - y2;
+        }
         let angle = Math.atan2(x2-x1, y2-y1);
         let angle3 = -Math.PI/2-angle+30*Math.PI/180;
         let angle4 = -Math.PI/2-angle-30*Math.PI/180;
@@ -109,6 +115,10 @@
         ctx.stroke();
     }
     function draw_tcr_circle(x, y, col) {
+        if (style_data.flip_board) {
+            x = canvas.width - x;
+            y = canvas.height - y;
+        }
         ctx.strokeStyle = col;
         ctx.lineWidth = 0.1*width_px;
         ctx.beginPath();
