@@ -296,6 +296,7 @@ function handle_mouse_click() {
             }
         }
     }
+    clear_lines_circles();
     render_board();
 }
 
