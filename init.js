@@ -174,7 +174,11 @@ function load_board_textures() {
     add_image("board", "sq_canmove_turn");
     add_image("board", "hand_bg");
     add_image("board", "glow");
+    add_image("board", "glow_check");
     add_image("board", "full_space");
+    add_image("board", "attack_white");
+    add_image("board", "attack_black");
+    add_image("board", "movable");
 }
 
 function handle_make_move(src_x, src_y, dst_x, dst_y, prom) {
@@ -476,7 +480,7 @@ function page_init() {
                 add_circle();
         }
     };
-    board_page()
-
+    board_page();
+    refresh_checkboxes();
     reload_style_inputs();
 }

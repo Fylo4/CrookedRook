@@ -1,4 +1,7 @@
 ﻿function render_board(){
+    if (!game_data || !game_data.width) {
+        return;
+    }
     let c = document.getElementById("board_canvas");
     let ctx = c.getContext("2d");
     //Set up some variables
@@ -35,6 +38,23 @@
                 y = height_px * (game_data.height - b - 1 + game_data.has_hand);
             }
             ctx.fillRect(x, y, width_px, height_px);
+            
+            //Draw border around pieces that can move
+            if (style_data.movable_pieces) {
+                if(!brd.can_move_ss[sq].is_zero()) {
+                    draw_on_square(document.getElementById("img_movable"), sq);
+                }
+            }
+            //Attacked spaces
+            if (style_data.attacked_squares) {
+                let scale = 0.2;
+                if(board.white_attack_ss.get(sq)) {
+                    fill_triangle(x, y, x+width_px*scale, y, x, y+width_px*scale, 'white');
+                }
+                if(board.black_attack_ss.get(sq)) {
+                    fill_triangle(x+width_px, y, x+width_px*(1-scale), y, x+width_px, y+width_px*scale, 'black');
+                }
+            }
             //Border
             if (style_data.border) {
                 ctx.strokeStyle = 'black';
@@ -64,10 +84,27 @@
     }
 
     //Draw glow on last moved piece
-    if (brd.last_moved_src >= 0 && brd.last_moved_dest >= 0) {
-        let img = document.getElementById("img_glow");
-        draw_on_square(img, brd.last_moved_src);
-        draw_on_square(img, brd.last_moved_dest);
+    if (style_data.last_moved) {
+        if (brd.last_moved_src >= 0 && brd.last_moved_dest >= 0) {
+            let img = document.getElementById("img_glow");
+            draw_on_square(img, brd.last_moved_src);
+            draw_on_square(img, brd.last_moved_dest);
+        }
+    }
+    //Draw glow on royals that can be landed on by opponent
+    if (style_data.check_indicator) {
+        let check_glows = new squareset(game_data.width * game_data.height);
+        let all_pieces = ss_or(brd.white_ss, brd.black_ss);
+        for (; !all_pieces.is_zero(); all_pieces.pop()) {
+            let sq = all_pieces.get_ls1b();
+            if (brd.white_ss.get(sq)) {
+                check_glows.ore(ss_and(brd.can_move_ss[sq], brd.black_ss, brd.royal_ss));
+            }
+            if (brd.black_ss.get(sq)) {
+                check_glows.ore(ss_and(brd.can_move_ss[sq], brd.white_ss, brd.royal_ss));
+            }
+        }
+        draw_ss(check_glows, document.getElementById("img_glow_check"));
     }
 
     //Draw the pieces
@@ -251,6 +288,18 @@ function get_drop_zone(piece_id, color) {
     return piece.drop_to_zone ? game_data.zones[color ? piece.drop_to_zone.black : piece.drop_to_zone.white] :
         game_data.drop_to_zone ? game_data.zones[color ? game_data.drop_to_zone.black : game_data.drop_to_zone.white] :
         game_data.active_squares;
+}
+
+function fill_triangle(x1, y1, x2, y2, x3, y3, color) {
+    let c = document.getElementById("board_canvas");
+    let ctx = c.getContext("2d");
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.lineTo(x3, y3);
+    ctx.closePath();
+    ctx.fill();
 }
 
 function can_move(color, brd) {

@@ -172,6 +172,7 @@ function start_game(json_data, seed) {
         solid_ss: new squareset(size),
         iron_ss: new squareset(size),
         tall_ss: new squareset(size),
+        royal_ss: new squareset(size),
         passive_burn_ss: new squareset(size),
         burn_immune_ss: new squareset(size),
         constant_spawn_ss: new squareset(size),
@@ -185,6 +186,8 @@ function start_game(json_data, seed) {
 
         royals_killed: { white: 0, black: 0 },
         victory: -1, //0 - White, 0.5 - Draw, 1 - Black, -1 - Undefined
+        white_attack_ss: new squareset(size),
+        black_attack_ss: new squareset(size),
     };
     temp_data = {
         selected: false,
@@ -350,9 +353,12 @@ function cloneBoard(brd) {
     Object.setPrototypeOf(ret.has_moved_ss, squareset.prototype);
     Object.setPrototypeOf(ret.iron_ss, squareset.prototype);
     Object.setPrototypeOf(ret.tall_ss, squareset.prototype);
+    Object.setPrototypeOf(ret.royal_ss, squareset.prototype);
     Object.setPrototypeOf(ret.passive_burn_ss, squareset.prototype);
     Object.setPrototypeOf(ret.burn_immune_ss, squareset.prototype);
     Object.setPrototypeOf(ret.constant_spawn_ss, squareset.prototype);
+    Object.setPrototypeOf(ret.black_attack_ss, squareset.prototype);
+    Object.setPrototypeOf(ret.white_attack_ss, squareset.prototype);
     for (let a = 0; a < ret.can_move_ss.length; a++) {
         Object.setPrototypeOf(ret.can_move_ss[a], squareset.prototype);
     }
@@ -465,13 +471,15 @@ function string_to_term(string, mols) {
         }
         //Post-conditions
         //Data is a lambda that returns all squares it can't land on
-        else if (string[a] === "a") { term.push({ type: "post", 
+        //at is how it applies to finding attacking squares
+        //at=true: remove all spaces; at=false: skip, at=undefined: normal
+        else if (string[a] === "a") { term.push({ type: "post", at: false,
             data: (col) => { return col ? board.black_ss : board.white_ss } }); }
-        else if (string[a] === "e") { term.push({ type: "post", 
+        else if (string[a] === "e") { term.push({ type: "post", at: true,
             data: (col) => { return col ? board.white_ss : board.black_ss } }); }
-        else if (string[a] === "b") { term.push({ type: "post", 
+        else if (string[a] === "b") { term.push({ type: "post", at: false,
             data: () => { return ss_or(board.white_ss, board.black_ss).inverse() } }); }
-        else if (string[a] === "c") { term.push({ type: "post", 
+        else if (string[a] === "c") { term.push({ type: "post", at: false,
             data: () => {return ss_and(ss_or(board.white_ss, board.black_ss).inverse(), board.ep_mask.inverse());} }); }
         else if (string[a] === "P") {
             let piece_data = pieces_in_bracket(string, a + 1);
@@ -718,6 +726,9 @@ function set_piece_space(piece, col, pos, rand, apply_fischer = false) {
     }
     if (attributes.includes(attrib.tall)) {
         board.tall_ss.set_on(pos);
+    }
+    if (attributes.includes(attrib.royal)) {
+        board.royal_ss.set_on(pos);
     }
     if (attributes.includes(attrib.burn_passive)) {
         board.passive_burn_ss.set_on(pos);

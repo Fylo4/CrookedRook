@@ -102,7 +102,7 @@
     <!-- Header -->
     <div style="width: 100%; overflow:auto;">
         <div style="width: 50%; float: left;">
-            <p><b style="font-size: 30px">The Crooked Rook</b>Pre-Release 0.5.0</p>
+            <p><b style="font-size: 30px">The Crooked Rook</b>Pre-Release 0.6.0</p>
             <p><a href="https://discord.gg/NJNXUXqyvr">Discord</a> | <a href="https://drive.google.com/drive/folders/1yB_Elymo0vY33n6xQHWzukDGGkANqPQl">Documentation</a></p>
         </div>
         <div style="width: max-content; float: right;">
@@ -167,18 +167,30 @@
 
         <h2 id="board_name_header">Board Name</h2>
         <p id="board_description_header">Board Description</p>
-        <button onClick="change_zoom(1);  render_board();">+</button>
-        <button onClick="change_zoom(-1); render_board();">-</button>
-        <button onClick="style_data.flip_board ^= 1; render_board()">Flip</button>
-        <button onClick="style_data.name_squares ^= 1; render_board()">Square Names</button>
-        <br>
-        <button onClick="clear_lines_circles();">Clear Lines / Circles</button>
-        <button onClick="line_col='red'"><div class='box red'></div></button>
-        <button onClick="line_col='orange'"><div class='box orange'></div></button>
-        <button onClick="line_col='yellow'"><div class='box yellow'></div></button>
-        <button onClick="line_col='green'"><div class='box green'></div></button>
-        <button onClick="line_col='blue'"><div class='box blue'></div></button>
-        <button onClick="line_col='purple'"><div class='box purple'></div></button>
+        <button onclick="style_toggle()">Style</button>
+        <div id="style_buttons" style="display:none">
+            <button onClick="change_zoom(1);  render_board();">+</button>
+            <button onClick="change_zoom(-1); render_board();">-</button>
+            <button onClick="style_data.flip_board ^= 1; render_board()">Flip</button>
+            <button onClick="style_data.name_squares ^= 1; render_board()">Square Names</button>
+            <br>
+            <button onClick="clear_lines_circles();">Clear Lines / Circles</button>
+            <button onClick="line_col='red'"><div class='box red'></div></button>
+            <button onClick="line_col='orange'"><div class='box orange'></div></button>
+            <button onClick="line_col='yellow'"><div class='box yellow'></div></button>
+            <button onClick="line_col='green'"><div class='box green'></div></button>
+            <button onClick="line_col='blue'"><div class='box blue'></div></button>
+            <button onClick="line_col='purple'"><div class='box purple'></div></button>
+            <br>
+            <input type="checkbox" id="attacked_squares_cb" onchange="refresh_checkboxes()">
+            <label for="attacked_squares_cb">Attacked squares</label>
+            <input type="checkbox" id="check_indicator_cb" checked onchange="refresh_checkboxes()">
+            <label for="check_indicator_cb">Check indicator</label>
+            <input type="checkbox" id="movable_pieces_cb" onchange="refresh_checkboxes()">
+            <label for="movable_pieces_cb">Movable pieces</label>
+            <input type="checkbox" id="last_moved_cb" checked onchange="refresh_checkboxes()">
+            <label for="last_moved_cb">Last moved piece</label>
+        </div>
         <!-- <button onClick="">End turn</button> -->
         <br /> <br />
         <div style="margin: auto; width: min-content;">

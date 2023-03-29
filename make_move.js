@@ -3,12 +3,15 @@ function make_move(src_x, src_y, dst_x, dst_y, promotion) {
 
     if (src_x === undefined || src_y === undefined || dst_x === undefined || dst_y === undefined) {
         show_error("Error occurred while trying to make move (<4 params). You should report this in #bug-reports.");
+        return;
     }
     if (typeof(src_x) != "number" || typeof(src_y) != "number" || typeof(dst_x) != "number" || typeof(dst_y) != "number") {
         show_error(`Error occurred while trying to make move (non-number). You should report this in #bug-reports. Data: ${src_x}, ${src_y}, ${dst_x}, ${dst_y}`);
+        return;
     }
     if(!validate_move(src_x, src_y, dst_x, dst_y, promotion)) {
         show_error("Error occurred while trying to make move (invalid move). You should report this in #bug-reports.");
+        return;
     }
 
     board = cloneBoard(board_history[view_move]);
@@ -16,6 +19,10 @@ function make_move(src_x, src_y, dst_x, dst_y, promotion) {
     let src_sq = src_y * game_data.width + src_x;
     let dst_sq = dst_y * game_data.width + dst_x;
     let this_id = identify_piece(src_sq);
+    if (this_id === -1) {
+        show_error("Error occured while trying to make move (source piece undefined). You should report this in #bug-reports.");
+        return;
+    }
     let this_piece = game_data.all_pieces[this_id];
     let is_white = board.white_ss.get(src_sq);
     let is_black = board.black_ss.get(src_sq);
@@ -720,6 +727,9 @@ function spawn_piece(sq, piece_id, col) {
     if (attributes.includes(attrib.tall)) {
         board.tall_ss.set_on(sq);
     }
+    if (attributes.includes(attrib.royal)) {
+        board.royal_ss.set_on(sq);
+    }
     if (attributes.includes(attrib.burn_passive)) {
         board.passive_burn_ss.set_on(sq);
     }
@@ -737,6 +747,7 @@ function swap_spaces(src, dest) {
     swap_ss_space(src, dest, board.solid_ss);
     swap_ss_space(src, dest, board.iron_ss);
     swap_ss_space(src, dest, board.tall_ss);
+    swap_ss_space(src, dest, board.royal_ss);
     swap_ss_space(src, dest, board.passive_burn_ss);
     swap_ss_space(src, dest, board.burn_immune_ss);
     swap_ss_space(src, dest, board.constant_spawn_ss);

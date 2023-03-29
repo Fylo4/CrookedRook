@@ -24,7 +24,7 @@ function refresh_moves() {
             }
             //Cannot land on occupied sanctuaries
             board.can_move_ss[sq].ande(ss_and(game_data.sanctuary, ss_or(board.white_ss, board.black_ss)).inverse());
-            //Cannot land on enemy if on pacifst
+            //Cannot land on enemy if on pacifist
             if (game_data.pacifist.get(sq)) {
                 board.can_move_ss[sq].ande(treat_as_col ? board.white_ss.inverse() : board.black_ss.inverse());
             }
@@ -44,23 +44,69 @@ function refresh_moves() {
             }
 		}
     }
-    //Eliminate any moves that put you in check
-    /*if (game_data.next_turn_win) {
-        //Save the current state
-        let saved_state = cloneBoard();
-        //Make every possible move
-        for (let a = 0; a < game_data.width * game_data.height; a++) {
-            let myMoves = new squareset(board.can_move_ss[a]);
-            for (; !myMoves.is_zero(); myMoves.pop()) {
-                let dst = myMoves.get_ls1b();
-                let promote_to = find_promotions(identify_piece(a), a, dst, board.white_ss.get(a), board.black_ss.get(a));
-                //The more I think about this problem the more impossible it seems
+    find_attackers();
+    //Attributes that require attack squares to be calculated
+    for (let a = 0; a < game_data.all_pieces.length; a ++){
+        //Child
+        if (game_data.all_pieces[a].attributes.includes(attrib.child)) {
+            let all_pieces = new squareset(board.piece_ss[a]);
+            for (; !all_pieces.is_zero(); all_pieces.pop()) {
+                let sq = all_pieces.get_ls1b();
+                let treat_as_col = (board.turn && board.black_ss.get(sq)) || !board.white_ss.get(sq);
+                board.can_move_ss[sq].ande(treat_as_col ? board.black_attack_ss : board.white_attack_ss);
             }
         }
-        board = cloneBoard(saved_state);
-    }*/
+        //Coward
+        if (game_data.all_pieces[a].attributes.includes(attrib.coward)) {
+            let all_pieces = new squareset(board.piece_ss[a]);
+            for (; !all_pieces.is_zero(); all_pieces.pop()) {
+                let sq = all_pieces.get_ls1b();
+                let treat_as_col = (board.turn && board.black_ss.get(sq)) || !board.white_ss.get(sq);
+                board.can_move_ss[sq].ande((treat_as_col ? board.white_attack_ss : board.black_attack_ss).inverse());
+            }
+        }
+    }
 }
-function parse_term(term, term_index, sq, piece, col, angle) {
+function find_attackers() {
+	//Clear all attackers
+	board.white_attack_ss.zero();
+    board.black_attack_ss.zero();
+	//Find the attack spaces for each piece
+    for (let a = 0; a < game_data.all_pieces.length; a ++){
+        //Skip if we're peaceful
+        if (game_data.all_pieces[a].attributes.includes(attrib.peaceful)) {
+            continue;
+        }
+        for (let b = new squareset(board.piece_ss[a]); !b.is_zero(); b.pop()){
+            let sq = b.get_ls1b();
+            //Don't add attack if on pacifist
+            if (game_data.pacifist.get(sq)) {
+                continue;
+            }
+            let step_num = 0;
+            let step = game_data.all_pieces[a].move[step_num];
+            let treat_as_col = board.black_ss.get(sq) && (board.turn || !board.white_ss.get(sq));
+            let my_attack = new squareset(game_data.width * game_data.height);
+            for (let c = 0; c < step.length; c++) {
+                let add = parse_term(step[c], 0, sq, a, treat_as_col, undefined, true);
+                if (step[c][0].type === "sub") {
+                    my_attack.ande(add.inverse());
+                }
+                else {
+                    my_attack.ore(add);
+                }
+            }
+            //Add to the ss
+            treat_as_col ?
+                board.black_attack_ss.ore(my_attack):
+                board.white_attack_ss.ore(my_attack);
+            //Cannot attack sanctuaries
+            board.black_attack_ss.ande(game_data.sanctuary.inverse());
+            board.white_attack_ss.ande(game_data.sanctuary.inverse());
+		}
+    }
+}
+function parse_term(term, term_index, sq, piece, col, angle, is_attack = false) {
     //Neutral pieces are whoever's turn it is; non-neutral pieces are their color
     if (angle === undefined) {
         angle = col ? 4 : 0;
@@ -75,12 +121,22 @@ function parse_term(term, term_index, sq, piece, col, angle) {
             if (typeof (term[a].data) === "function" && term[a].data(col, sq, piece)) {
                 return ss_or(ret, saved_ss);
             }
-
         } else if (term[a].type === "post") {
             //Filter squares in ret
             if (typeof (term[a].data) === "function") {
-                let req_ss = term[a].data(col, sq, ret);
-                ret.ande(req_ss.inverse());
+                if (!is_attack || term[a].at === undefined) {
+                    let req_ss = term[a].data(col, sq, ret);
+                    ret.ande(req_ss.inverse());
+                }
+                else if(term.findIndex((e, i) => e.type === "mol" && i > a) === -1) {
+                    if (term[a].at) {
+                        ret.zero();
+                    }
+                }
+                else if(!term[a].at) {
+                    let req_ss = term[a].data(col, sq, ret);
+                    ret.ande(req_ss.inverse());
+                }
             }
 
         } else if (term[a].type === "mol") {
@@ -96,7 +152,7 @@ function parse_term(term, term_index, sq, piece, col, angle) {
                     let new_sq = b.get_ls1b();
                     let cx = sq % game_data.width, cy = Math.floor(sq / game_data.width); //current x and y
                     let nx = new_sq % game_data.width, ny = Math.floor(new_sq / game_data.width); //new x and y
-                    let new_ss = parse_term(term, a, new_sq, piece, col, angle_to(nx - cx, ny - cy));
+                    let new_ss = parse_term(term, a, new_sq, piece, col, angle_to(nx - cx, ny - cy), is_attack);
                     resulting_spaces.ore(new_ss);
                 }
                 //Since it's called recursively, the rest of the term has already been processed
