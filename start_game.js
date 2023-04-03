@@ -161,6 +161,7 @@ function start_game(json_data, seed) {
         turn_count: 1,
         last_moved_src: -1,
         last_moved_dest: -1,
+        last_moved_col: false,
 
         is_piece_locked: false,
         promotion_locked: false,
@@ -286,26 +287,21 @@ function start_game(json_data, seed) {
         }
     }
     //Load all piece sprites
-    for (let a = 0; a < game_data.all_pieces.length; a++) {
-        add_image("pieces", game_data.all_pieces[a].sprite);
-        if(game_data.all_pieces[a].mini_sprite != undefined) {
-            add_image("pieces", game_data.all_pieces[a].mini_sprite);
-        }
-    }
+    let piece_sprites = game_data.all_pieces.map(e => e.sprite);
+    piece_sprites.push(...game_data.all_pieces.filter(e => e.mini_sprite).map(e => e.mini_sprite));
+    add_pieces_then_reload(piece_sprites);
     //Style data
     if (game_data.flip_colors) { style_data.flip_colors = true; }
+    circles = [];
+    lines = [];
 
     fix_canvas_height();
     refresh_moves();
     move_history = [];
     board_history = [cloneBoard()];
     view_move = 0;
-    render_board();
     render_extras();
-    //The sprites might not be loaded yet, reload every 50ms for the next half second
-    for (let a = 1; a < 11; a++) {
-        setTimeout(() => { render_board(); }, 50*a);
-    }
+    render_board();
 }
 
 function to_magic_numbers(arr, ref, str) {
@@ -480,7 +476,12 @@ function string_to_term(string, mols) {
         else if (string[a] === "b") { term.push({ type: "post", at: false,
             data: () => { return ss_or(board.white_ss, board.black_ss).inverse() } }); }
         else if (string[a] === "c") { term.push({ type: "post", at: false,
-            data: () => {return ss_and(ss_or(board.white_ss, board.black_ss).inverse(), board.ep_mask.inverse());} }); }
+            data: (col) => {
+                return board.last_moved_col === col ? ss_or(board.white_ss, board.black_ss).inverse() :
+                    ss_and(ss_or(board.white_ss, board.black_ss).inverse(), board.ep_mask.inverse());
+            }
+        });
+        }
         else if (string[a] === "P") {
             let piece_data = pieces_in_bracket(string, a + 1);
             let data = lambda_on_pieces(piece_data.pieces, true);
@@ -647,6 +648,7 @@ function generate_move_ss(string_orig) {
     string = string.replaceAll("[B]", "[1 1 4 -1]");
     string = string.replaceAll("[R]", "[1 0 4 -1]");
     string = string.replaceAll("[Q]", "[1 1 8 -1]");
+    string = string.replaceAll("[P]", "([1 1 1 1],[-1 1 1 1])");
 
     let ret = [];
     if (string === "U") {

@@ -35,7 +35,7 @@ preset_variants[folders.historical].push({
             description: "Moves to the first diagonal, then optionally outwards like a rook.",
             sprite: "griffin",
             symbol: "G",
-            move: "[F]ase([1 1 1 -1],[-1 1 1 -1])Ba",
+            move: "[F]ase([1 1 1 -1],[-1 1 1 -1])Ba"
         },
         {
             name: "Unicorn",

@@ -14,6 +14,10 @@
 
     let brd = board_history[view_move];
 
+    if (brd === undefined) {
+        return;
+    }
+
     //Clear with background color
     ctx.fillStyle = style_data.bg_col;
     ctx.fillRect(0, 0, c.width, c.height);
@@ -164,25 +168,38 @@
     }
     for (let a = 0; a < circles.length; a ++) {
         let x = ((circles[a].sq % game_data.width)+ 0.5) * width_px;
-        let y = (Math.floor(circles[a].sq / game_data.width)+ 0.5) * height_px;
+        let y = (Math.floor(circles[a].sq / game_data.width) + 0.5) * height_px;
+        if (game_data.has_hand) {
+            y += height_px;
+        }
         draw_tcr_circle(x, y, circles[a].col);
     }
     for (let a = 0; a < lines.length; a ++) {
         let x1 = ((lines[a].sq1 % game_data.width)+ 0.5) * width_px;
         let y1 = (Math.floor(lines[a].sq1 / game_data.width)+ 0.5) * height_px;
         let x2 = ((lines[a].sq2 % game_data.width)+ 0.5) * width_px;
-        let y2 = (Math.floor(lines[a].sq2 / game_data.width)+ 0.5) * height_px;
+        let y2 = (Math.floor(lines[a].sq2 / game_data.width) + 0.5) * height_px;
+        if (game_data.has_hand) {
+            y1 += height_px;
+            y2 += height_px;
+        }
         draw_tcr_arrow(x1, y1, x2, y2, lines[a].col);
     }
     if (down_sq != -1) {
         let x = ((down_sq % game_data.width)+ 0.5) * width_px;
-        let y = (Math.floor(down_sq / game_data.width)+ 0.5) * height_px;
+        let y = (Math.floor(down_sq / game_data.width) + 0.5) * height_px;
+        if (game_data.has_hand) {
+            y += height_px;
+        }
         if (down_sq === mouse_sq) {
             draw_tcr_circle(x, y, line_col);
         }
         else if(mouse_sq != -1) {
             let mx = ((mouse_sq % game_data.width)+ 0.5) * width_px;
-            let my = (Math.floor(mouse_sq / game_data.width)+ 0.5) * height_px;
+            let my = (Math.floor(mouse_sq / game_data.width) + 0.5) * height_px;
+            if (game_data.has_hand) {
+                my += height_px;
+            }
             draw_tcr_arrow(x, y, mx, my, line_col);
         }
     }
@@ -339,23 +356,29 @@ function highlighted_hand_piece(brd) {
 }
 
 function draw_sprite(sprite, x, y, width, height, color) {
-    let c = document.getElementById("board_canvas");
-    let ctx = c.getContext("2d");
-    if (!color || color === 'rgb(255,255,255)') {
-        ctx.drawImage(sprite, x, y, width, height);
+    try {
+        let c = document.getElementById("board_canvas");
+        let ctx = c.getContext("2d");
+        if (!color || color === 'rgb(255,255,255)') {
+            ctx.drawImage(sprite, x, y, width, height);
+        }
+        else {
+            let c2 = document.getElementById("blend_canvas");
+            let ctx2 = c2.getContext("2d");
+            ctx2.clearRect(0, 0, c2.width, c2.height);
+            ctx2.drawImage(sprite, 0, 0, width, height);
+            ctx2.globalCompositeOperation = "multiply";
+            ctx2.fillStyle = color;
+            ctx2.fillRect(0, 0, width, height);
+            ctx2.globalCompositeOperation = "destination-in";
+            ctx2.drawImage(sprite, 0, 0, width, height);
+            ctx2.globalCompositeOperation = "source-over";
+            ctx.drawImage(c2, 0, 0, width, height, x, y, width, height);
+        }
     }
-    else {
-        let c2 = document.getElementById("blend_canvas");
-        let ctx2 = c2.getContext("2d");
-        ctx2.clearRect(0, 0, c2.width, c2.height);
-        ctx2.drawImage(sprite, 0, 0, width, height);
-        ctx2.globalCompositeOperation = "multiply";
-        ctx2.fillStyle = color;
-        ctx2.fillRect(0, 0, width, height);
-        ctx2.globalCompositeOperation = "destination-in";
-        ctx2.drawImage(sprite, 0, 0, width, height);
-        ctx2.globalCompositeOperation = "source-over";
-        ctx.drawImage(c2, 0, 0, width, height, x, y, width, height);
+    catch (e) {
+        //Do nothing, this is fine
+        console.log("Sprite rendering failed");
     }
 }
 

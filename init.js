@@ -19,6 +19,26 @@ function change_zoom(amount) {
     fix_canvas_height();
 }
 
+function add_pieces_then_reload(images) {
+    images = [...new Set(images)];
+    images = images.filter(e => !document.getElementById("img_" + e));
+    let to_load = images.length;
+    for (let a = 0; a < images.length; a++) {
+        let img1 = new Image();
+        img1.onload = function () {
+            to_load--;
+            if (to_load === 0) {
+                render_board();
+            }
+        }
+        img1.onerror = () => {
+            show_error(`Error loading image '${images[a]}'`);
+        }
+        img1.src = "images/pieces/" + images[a] + ".png";
+        img1.id = "img_" + images[a];
+        document.getElementById("imageDiv").appendChild(img1);
+    }
+}
 function add_image(dname, fname) {
     if (!document.getElementById("img_" + fname)) {
         let img1 = new Image();

@@ -398,6 +398,7 @@ function validate_drop(piece, color, dest) {
 }
 
 function post_move(src, dest, history_record) {
+    board.last_moved_col = board.turn;
     board.turn_pos++;
     if (board.turn_pos >= game_data.turn_list.length) {
         board.turn_pos = 0;

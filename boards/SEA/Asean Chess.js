@@ -1,7 +1,7 @@
 preset_variants[folders.SEA].push(JSON.parse(`{
 	"name": "Asean Chess",
 	"author": "ASEAN-Chess Council",
-	"description": "ASEAN Chess is a Southeast Asian variant developed by the ASEAN-Chess Council. Queen and bishop is move differrently Pawn start on the 3rd rank.",
+	"description": "ASEAN Chess is a Southeast Asian variant developed by the ASEAN-Chess Council. Queen and bishop move differrently. Queen moves one step diagonally. Bishop moves one step diagonal or forward. Pawn start on the 3rd rank.",
 	"width": 8,
 	"height": 8,
 	"all_pieces": [
@@ -30,7 +30,7 @@ preset_variants[folders.SEA].push(JSON.parse(`{
       "move": "[N]a"
     },
     {
-      "name": "Nobleman",
+      "name": "Bishop",
       "description": "Moves one step diagonal or forward",
       "sprite": "bishop",
       "symbol": "B",
