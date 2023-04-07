@@ -240,8 +240,10 @@
     //Draw squares indicating possible moves
     if (brd.victory === -1) {
         if (temp_data.hand_selected) {
-            let drop_zone = get_drop_zone(temp_data.selected_position, temp_data.selected_side);
-            draw_ss(ss_and(drop_zone, ss_or(brd.white_ss, brd.black_ss).inverse()), document.getElementById('img_sq_canmove_sel'));
+            let drop_zone = temp_data.selected_side ?
+                board.can_drop_piece_to.black[temp_data.selected_position]:
+                board.can_drop_piece_to.white[temp_data.selected_position];
+            draw_ss(drop_zone, document.getElementById('img_sq_canmove_sel'));
         }
         else if (temp_data.selected) {
             draw_ss(brd.can_move_ss[temp_data.selected_position], document.getElementById('img_sq_canmove_sel'));
@@ -254,9 +256,10 @@
             if(hover.piece != -1 && slots_left(hover.piece, hover.color, brd)) {
                 let type = (hover.color === brd.turn) ? 'img_sq_canmove' : 'img_sq_canmove_turn';
                 if(in_multiplayer_game &&  brd.turn != my_col) { type = 'img_sq_canmove_turn'; }
-                let drop_zone = get_drop_zone(hover.piece, hover.color);
-                let ss = ss_and(drop_zone, ss_or(brd.white_ss, brd.black_ss).inverse());
-                draw_ss(ss, document.getElementById(type));
+                let drop_zone = hover.color ?
+                    board.can_drop_piece_to.black[hover.piece]:
+                    board.can_drop_piece_to.white[hover.piece];
+                draw_ss(drop_zone, document.getElementById(type));
             }
         }
         else {
@@ -298,13 +301,6 @@
             draw_sprite(img, start_width + width_px * a, start_height, width_px, height_px);
         }
     }
-}
-
-function get_drop_zone(piece_id, color) {
-    let piece = game_data.all_pieces[piece_id];
-    return piece.drop_to_zone ? game_data.zones[color ? piece.drop_to_zone.black : piece.drop_to_zone.white] :
-        game_data.drop_to_zone ? game_data.zones[color ? game_data.drop_to_zone.black : game_data.drop_to_zone.white] :
-        game_data.active_squares;
 }
 
 function fill_triangle(x1, y1, x2, y2, x3, y3, color) {

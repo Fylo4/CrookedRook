@@ -1,6 +1,6 @@
 preset_variants[folders.shogi].push({
     name: "Shogi",
-    description: "Japanese Chess. You can drop pieces after you capture them. Drop restrictions and some endgame rules are not implemented.",
+    description: "Japanese Chess. You can drop pieces after you capture them. Some niche rules are not implemented",
 	width: 9,
 	height: 9,
 	has_hand: true,
@@ -14,6 +14,7 @@ preset_variants[folders.shogi].push({
             symbol: "p",
             notation: "",
 			move: "[S]a",
+            file_limit: 1,
             promotions: [{ white: 0, black: 1, to: ["Pawn", "+Pawn"], on: [events.enter, events.exit, events.between] }],
 		},
 		{

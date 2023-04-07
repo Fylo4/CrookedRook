@@ -179,6 +179,7 @@ function start_game(json_data, seed) {
         constant_spawn_ss: new squareset(size),
 
         can_move_ss: [],
+        can_drop_piece_to: {white: [], black: []},
         has_moved_ss: new squareset(size),
         ep_mask: new squareset(size),
 
@@ -360,6 +361,10 @@ function cloneBoard(brd) {
     }
     for (let a = 0; a < ret.piece_ss.length; a++) {
         Object.setPrototypeOf(ret.piece_ss[a], squareset.prototype);
+    }
+    for (let a = 0; a < ret.can_drop_piece_to.white.length; a++) {
+        Object.setPrototypeOf(ret.can_drop_piece_to.white[a], squareset.prototype);
+        Object.setPrototypeOf(ret.can_drop_piece_to.black[a], squareset.prototype);
     }
     return ret;
 }

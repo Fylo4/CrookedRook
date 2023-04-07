@@ -385,7 +385,9 @@ function validate_drop(piece, color, dest) {
         show_error("Trying to drop a piece on another piece");
         return false;
     }
-    let drop_zone = get_drop_zone(piece, color);
+    let drop_zone = color ?
+        board.can_drop_piece_to.black[piece]:
+        board.can_drop_piece_to.white[piece];
     if(!drop_zone.get(dest)) {
         show_error("Trying to drop a piece outside of your drop zone");
         return false;

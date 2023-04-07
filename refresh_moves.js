@@ -66,6 +66,7 @@ function refresh_moves() {
             }
         }
     }
+    reload_can_drop_piece_to();
 }
 function find_attackers() {
 	//Clear all attackers
@@ -165,6 +166,50 @@ function parse_term(term, term_index, sq, piece, col, angle, is_attack = false) 
         }
     }
     return ss_or(ret, saved_ss);
+}
+function reload_can_drop_piece_to() {
+    board.can_drop_piece_to = {white: [], black: []};
+    for (let a = 0; a < game_data.all_pieces.length; a ++) {
+        board.can_drop_piece_to.white.push(new squareset(game_data.width * game_data.height, 1));
+        board.can_drop_piece_to.black.push(new squareset(game_data.width * game_data.height, 1));
+        //File limit
+        if (game_data.all_pieces[a].file_limit) {
+            for (let b = 0; b < game_data.width; b ++) {
+                //Count how many pieces of this type and color are in the column
+                let in_col = {white: 0, black: 0};
+                for (let c = 0; c < game_data.height; c ++) {
+                    let sq = b + c * game_data.width;
+                    if (board.piece_ss[a].get(sq)) {
+                        board.white_ss.get(sq) && in_col.white ++;
+                        board.black_ss.get(sq) && in_col.black ++;
+                    }
+                }
+                if (in_col.white >= game_data.all_pieces[a].file_limit) {
+                    for(let c = 0; c < game_data.height; c ++) {
+                        board.can_drop_piece_to.white[a].set_off(b + c * game_data.width);
+                    }
+                }
+                if (in_col.black >= game_data.all_pieces[a].file_limit) {
+                    for(let c = 0; c < game_data.height; c ++) {
+                        board.can_drop_piece_to.black[a].set_off(b + c * game_data.width);
+                    }
+                }
+            }
+        }
+        //Zone limit
+        board.can_drop_piece_to.white[a].ande(get_drop_zone(a, false));
+        board.can_drop_piece_to.black[a].ande(get_drop_zone(a, true));
+        //Can't land on other pieces
+        board.can_drop_piece_to.white[a].ande(ss_or(board.white_ss, board.black_ss).inverse());
+        board.can_drop_piece_to.black[a].ande(ss_or(board.white_ss, board.black_ss).inverse());
+    }
+}
+function get_drop_zone(piece_id, color) {
+    //console.log(`id: ${piece_id}, color: ${color}`)
+    let piece = game_data.all_pieces[piece_id];
+    return (!isNaN(piece.drop_to_zone)) ? game_data.zones[color ? piece.drop_to_zone.black : piece.drop_to_zone.white] :
+        (!isNaN(game_data.drop_to_zone)) ? game_data.zones[color ? game_data.drop_to_zone.black : game_data.drop_to_zone.white] :
+        game_data.active_squares;
 }
 
 function angle_to_diagonal(dx, dy) {

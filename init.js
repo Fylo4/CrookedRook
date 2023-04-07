@@ -289,7 +289,9 @@ function handle_mouse_click() {
     }
     else if (temp_data.hand_selected) {
         if (mouse_sq >= 0 && mouse_sq < game_data.width * game_data.height) {
-            let drop_zone = get_drop_zone(temp_data.selected_position, temp_data.selected_side);
+            let drop_zone = temp_data.selected_side ?
+                board.can_drop_piece_to.black[temp_data.selected_position]:
+                board.can_drop_piece_to.white[temp_data.selected_position];
             if (drop_zone.get(mouse_sq) && !brd.white_ss.get(mouse_sq) && !brd.black_ss.get(mouse_sq)) {
                 //Piece, color, dest
                 if(validate_drop(temp_data.selected_position, temp_data.selected_side, mouse_sq)) {
