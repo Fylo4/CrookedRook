@@ -16,7 +16,7 @@ preset_variants[folders.SEA].push({
             sprite: "peasant",
             symbol: "p",
             notation: "",
-			move: "[0 1 1 1]ae+([1 1 1 1],[-1 1 1 1])ba+z{1 0}r{G}[0]+ur{G}[0]",
+			move: "[S]ae+[P]ba+z{1 0}r{G}[0]+ur{G}[0]",
             promotions: [{ white: 6, black: 6, to: ["G"], on: [events.self] }],
 		},
 		{
@@ -39,7 +39,7 @@ preset_variants[folders.SEA].push({
             description: "Moves one step diagonal or forward",
             sprite: "star5",
 			symbol: "E",
-			move: "([F],[0 1 1 1])a",
+			move: "([F],[S])a",
 		},
 		{
             name: "General",

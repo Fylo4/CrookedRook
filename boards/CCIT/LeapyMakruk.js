@@ -11,7 +11,7 @@ preset_variants[folders.ccit].push({
             sprite: "peasant",
             symbol: "p",
             notation: "",
-			move: "[0 1 1 1]ae+([1 1 1 1],[-1 1 1 1])ca",
+			move: "[S]ae+[P]ca",
             promotions: [{ white: 0, black: 1, to: ["NSNR"], on: [events.enter] }],
 		},
 		{

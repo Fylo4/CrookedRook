@@ -451,7 +451,7 @@ firebase.auth().onAuthStateChanged((user) => {
                 let all_matches = snapshot.val();
                 for (let mid in all_matches) {
                     let match = all_matches[mid]
-                    if ((match.o && match.o.uid === user_id) || (match.j && match.j.uid === user_id)) {
+                    if ((match.o && match.o.uid === user_id && !match.o.res) || (match.j && match.j.uid === user_id && !match.j.res)) {
                         //Join this match
                         let owner = (match.o && match.o.uid === user_id);
                         let me = owner ? match.o : match.j, them = owner ? match.j : match.o;

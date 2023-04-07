@@ -68,8 +68,8 @@ squareset.prototype.get_ls1b = function(){
 }
 squareset.prototype.is_zero = function() {
     for (let a = 0; a < this.backingArray.length; a++){
-	if(this.backingArray[a] != 0){
-		return false;
+        if(this.backingArray[a] != 0){
+            return false;
 		}
 	}
 	return true;

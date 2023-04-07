@@ -14,7 +14,7 @@ preset_variants[folders.xiangqi].push({
             sprite: "peasant",
             symbol: "p",
             notation: "",
-			move: "([0 1 1 1],[1 0 2 1])a",
+			move: "([S],[1 0 2 1])a",
         },
         {
             name: "Rook",
@@ -36,7 +36,7 @@ preset_variants[folders.xiangqi].push({
             description: "Blockable Knight",
             sprite: "knight",
 			symbol: "N",
-			move: "[W]ae([1 1 1 1],[-1 1 1 1])a",
+			move: "[W]ae[P]a",
 		},
 		{
             name: "King",

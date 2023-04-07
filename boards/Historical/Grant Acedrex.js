@@ -13,7 +13,7 @@ preset_variants[folders.historical].push({
             sprite: "peasant",
             symbol: "p",
             notation: "",
-			move: "[0 1 1 1]ae+([1 1 1 1],[-1 1 1 1])ba",
+			move: "[S]ae+[P]ba",
             promotions: [
                 { white: 1, black: 0, to: ["R"], on: [events.enter] },
                 { white: 3, black: 2, to: ["L"], on: [events.enter] },
@@ -35,7 +35,7 @@ preset_variants[folders.historical].push({
             description: "Moves to the first diagonal, then optionally outwards like a rook.",
             sprite: "griffin",
             symbol: "G",
-            move: "[F]ase([1 1 1 -1],[-1 1 1 -1])Ba"
+            move: "[F]ase[Gr]Ba"
         },
         {
             name: "Unicorn",
@@ -60,17 +60,17 @@ preset_variants[folders.historical].push({
         },
 		{
             name: "Bishop",
-            description: "Jumps to the second diagonal",
-            sprite: "elephant",
+            description: "Moves diagonally",
+            sprite: "bishop",
 			symbol: "B",
-			move: "[A]a",
+			move: "[B]Ba",
 		},
 		{
             name: "King",
             description: "Moves one step in any direction. Can be checked and checkmated. On its first move, it can jump to the second orthogonal or diagonal.",
             sprite: "king",
 			symbol: "K",
-			move: "[K]a+i([A],[F])a",
+			move: "[K]a+i([A],[D])a",
 			attributes: [attrib.royal],
 		},
     ],

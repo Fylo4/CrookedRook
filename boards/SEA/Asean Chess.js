@@ -11,7 +11,7 @@ preset_variants[folders.SEA].push(JSON.parse(`{
 	  "sprite": "pawn",
 	  "symbol": "p",
 	  "notation": "",
-	  "move": "[0 1 1 1]ae+([1 1 1 1],[-1 1 1 1])ba",
+	  "move": "[S]ae+[P]ba",
 	  "promotions": [{ "white": 1, "black": 0, "to": ["NSNR"], "on": ["enter"] }]
 	},
     {
@@ -34,7 +34,7 @@ preset_variants[folders.SEA].push(JSON.parse(`{
       "description": "Moves one step diagonal or forward",
       "sprite": "bishop",
       "symbol": "B",
-      "move": "([F],[0 1 1 1])a"
+      "move": "([F],[S])a"
     },
     {
       "name": "Queen",

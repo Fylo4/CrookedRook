@@ -649,6 +649,8 @@ function generate_move_ss(string_orig) {
     string = string.replaceAll("[R]", "[1 0 4 -1]");
     string = string.replaceAll("[Q]", "[1 1 8 -1]");
     string = string.replaceAll("[P]", "([1 1 1 1],[-1 1 1 1])");
+    string = string.replaceAll("[S]", "[0 1 1 1]");
+    string = string.replaceAll("[Gr]", "([1 1 1 -1],[-1 1 1 -1])");
 
     let ret = [];
     if (string === "U") {
@@ -691,6 +693,9 @@ function generate_move_ss(string_orig) {
 }
 
 function set_piece_space(piece, col, pos, rand, apply_fischer = false) {
+    if (pos >= game_data.width * game_data.height) {
+        show_error("Trying to place a piece out of the board bounds. Make sure your piece setup doesn't exceed the board's width * height.")
+    }
     //If this is a fischer random space, set its position randomly
     if (apply_fischer) {
         let my_fischer_zone = new squareset(game_data.width * game_data.height);

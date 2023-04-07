@@ -11,7 +11,7 @@ preset_variants[folders.SEA].push(JSON.parse(`{
 	  "sprite": "courier-pawn",
 	  "symbol": "p",
 	  "notation": "",
-	  "move": "[0 1 1 1]ae+([1 1 1 1],[-1 1 1 1])ba",
+	  "move": "[S]ae+[P]ba",
 	  "promotions": [{ "white": 1, "black": 0, "to": ["P"], "on": ["enter"] },{ "white": 3, "black": 2, "to": ["R"], "on": ["enter"]}]
 	},
 	{
@@ -19,7 +19,7 @@ preset_variants[folders.SEA].push(JSON.parse(`{
 	  "description": "Moves passively vertically one step, captures one step forward-diagonally, and promote when reaching the main diagonal line to according piece of same file.",
 	  "sprite": "courier-king",
 	  "symbol": "P",
-	  "move": "[0 1 2 1]ae+([1 1 1 1],[-1 1 1 1])ba",
+	  "move": "[0 1 2 1]ae+[P]ba",
 	  "promotions": [{ "white": 5, "black": 4, "to": ["H"], "on": ["enter"] },{ "white": 7, "black": 6, "to": ["E"], "on": ["enter"] },{ "white": 9, "black": 8, "to": ["G"], "on": ["enter"] }]
 	},
     {
@@ -42,7 +42,7 @@ preset_variants[folders.SEA].push(JSON.parse(`{
       "description": "Moves one step diagonal or forward",
       "sprite": "cook",
       "symbol": "E",
-      "move": "([F],[0 1 1 1])a"
+      "move": "([F],[S])a"
     },
     {
       "name": "Seed",

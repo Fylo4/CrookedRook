@@ -14,7 +14,7 @@ preset_variants[folders.shogi].push({
             mini_sprite: "knight",
             symbol: "p",
             notation: "",
-			move: "[0 1 1 1]a",
+			move: "[S]a",
             attributes: [attrib.promote_on_attack],
             held_piece: "N"
 		},
@@ -64,7 +64,7 @@ preset_variants[folders.shogi].push({
             sprite: "star5",
             mini_sprite: "spear",
             symbol: "S",
-            move: "([F],[0 1 1 1])a",
+            move: "([F],[S])a",
             attributes: [attrib.promote_on_attack],
             held_piece: "L"
         },

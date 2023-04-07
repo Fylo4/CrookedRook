@@ -12,7 +12,7 @@ preset_variants[folders.shogi].push({
             sprite: "peasant",
             symbol: "p",
             notation: "",
-			move: "[0 1 1 1]a",
+			move: "[S]a",
             promotions: [{ white: 0, black: 1, to: ["Pawn", "Gold"], on: [events.enter, events.exit, events.between] }],
 		},
         {
@@ -36,7 +36,7 @@ preset_variants[folders.shogi].push({
             description: "Moves one step diagonally or forward. Promotes to Gold.",
             sprite: "star5",
             symbol: "S",
-            move: "([F],[0 1 1 1])a",
+            move: "([F],[S])a",
             promotions: [{ white: 0, black: 1, to: ["Silver", "Gold"], on: [events.enter, events.exit, events.between] }]
         },
         {

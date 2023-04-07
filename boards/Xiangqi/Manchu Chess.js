@@ -11,7 +11,7 @@ preset_variants[folders.xiangqi].push({
             sprite: "peasant",
             symbol: "p",
             notation: "",
-			move: "[0 1 1 1]a+z{0 1}[1 0 2 1]a",
+			move: "[S]a+z{0 1}[1 0 2 1]a",
         },
         {
             name: "Rook",
@@ -32,7 +32,7 @@ preset_variants[folders.xiangqi].push({
             description: "Blockable Knight",
             sprite: "knight",
 			symbol: "N",
-			move: "[W]ae([1 1 1 1],[-1 1 1 1])a",
+			move: "[W]ae[P]a",
 		},
 		{
             name: "Elephant",
@@ -61,7 +61,7 @@ preset_variants[folders.xiangqi].push({
             description: "Moves like a Rook, Knight, or Cannon",
             sprite: "lion",
 			symbol: "S",
-			move: "[R]Ba+[W]ae([1 1 1 1],[-1 1 1 1])a+[R]Bb[0 1 1 -1]Bab",
+			move: "[R]Ba+[W]ae[P]a+[R]Bb[0 1 1 -1]Bab",
 		},
 	],
     setup: "bR bN bE bA bK bA bE bN bR 10. bC 5. bC . bp . bp . bp . bp . bp 18. wp . wp . wp . wp . wp 18. wS . wE wA wK wA wE",

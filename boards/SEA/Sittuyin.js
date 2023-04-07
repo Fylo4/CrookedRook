@@ -15,7 +15,7 @@ preset_variants[folders.SEA].push(JSON.parse(`{
       "sprite": "courier-pawn",
       "symbol": "p",
       "notation": "",
-      "move": "[0 1 1 1]ae+([1 1 1 1],[-1 1 1 1])ba+z{1 0}r{G}[0]+ur{G}[0]",
+      "move": "[S]ae+[P]ba+z{1 0}r{G}[0]+ur{G}[0]",
       "promotions": [
         { "white": 6, "black": 6, "to": ["G"], "on": ["self"] }
       ]
@@ -40,7 +40,7 @@ preset_variants[folders.SEA].push(JSON.parse(`{
       "description": "Moves one step diagonal or forward",
       "sprite": "elephant",
       "symbol": "E",
-      "move": "([F],[0 1 1 1])a"
+      "move": "([F],[S])a"
     },
     {
       "name": "General",

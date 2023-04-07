@@ -13,7 +13,7 @@ preset_variants[folders.other].push({
             sprite: "pawn",
             symbol: "p",
             notation: "",
-			move: "i[0 1 1 2]Bae+[0 1 1 1]ae+([1 1 1 1],[-1 1 1 1])ca",
+			move: "i[0 1 1 2]Bae+[S]ae+[P]ca",
 		},
 		{
             name: "Rook",

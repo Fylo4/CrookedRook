@@ -16,7 +16,7 @@ preset_variants[folders.other].push({
             sprite: "peasant",
             symbol: "p",
             notation: "",
-			move: "z{2 3}[0 1 1 1]ae+z{2 3}([1 1 1 1],[-1 1 1 1])ca+h[0 1 1 1]ae+h([1 1 1 1],[-1 1 1 1])ca",
+			move: "z{2 3}[S]ae+z{2 3}[P]ca+h[S]ae+h[P]ca",
             promotions: [{ white: 1, black: 0, to: [], on: [events.enter] }],
             attributes: [attrib.promote_from_opp_hand, attrib.destroy_on_capture],
 		},

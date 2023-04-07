@@ -9,7 +9,7 @@ preset_variants[folders.xiangqi].push(JSON.parse(`{
       "description": "Moves one step forwards or sideways.",
       "sprite": "peasant",
       "symbol": "P",
-      "move": "T{2}([1 0 2 1],[0 1 1 1])a+z{0 0}([1 1 1 1],[-1 1 1 1])aZ{0 0}"
+      "move": "T{2}([1 0 2 1],[S])a+z{0 0}[P]aZ{0 0}"
     },
     {
       "name": "Chariot",
@@ -30,7 +30,7 @@ preset_variants[folders.xiangqi].push(JSON.parse(`{
       "description": "Blockable Knight",
       "sprite": "knight",
       "symbol": "H",
-      "move": "t{3}i[1 0 2 1]mP{E}+t{3}i[0]+T{2}[W]ae([1 1 1 1],[-1 1 1 1])a"
+      "move": "t{3}i[1 0 2 1]mP{E}+t{3}i[0]+T{2}[W]ae[P]a"
     },
     {
       "name": "Elephant",
