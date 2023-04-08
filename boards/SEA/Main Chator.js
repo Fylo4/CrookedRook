@@ -27,8 +27,7 @@ preset_variants[folders.SEA].push(JSON.parse(`{
       "description": "Moves sideways and vertically as many spaces as it wants",
       "sprite": "rook",
       "symbol": "R",
-      "move": "[R]Ba",
-      "drop_to_zone": { "white": 4, "black": 5 }
+      "move": "[R]Ba"
     },
     {
       "name": "Horse",

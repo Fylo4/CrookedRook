@@ -206,10 +206,21 @@ function reload_can_drop_piece_to() {
 }
 function get_drop_zone(piece_id, color) {
     //console.log(`id: ${piece_id}, color: ${color}`)
+    let zone_id = undefined;
     let piece = game_data.all_pieces[piece_id];
-    return (!isNaN(piece.drop_to_zone)) ? game_data.zones[color ? piece.drop_to_zone.black : piece.drop_to_zone.white] :
-        (!isNaN(game_data.drop_to_zone)) ? game_data.zones[color ? game_data.drop_to_zone.black : game_data.drop_to_zone.white] :
-        game_data.active_squares;
+    if (piece.drop_to_zone != undefined && !isNaN(piece.drop_to_zone.white)) {
+        zone_id = color ? piece.drop_to_zone.black : piece.drop_to_zone.white;
+    }
+    else if (game_data.drop_to_zone != undefined && !isNaN(game_data.drop_to_zone.white)) {
+        zone_id = color ? game_data.drop_to_zone.black : game_data.drop_to_zone.white;
+    }
+    else {
+        return game_data.active_squares;
+    }
+    if (game_data.zones.length <= zone_id) {
+        show_error(`Zone ${zone_id} is undefined (found in drop_to_zone for ${game_data.all_pieces[piece_id].name})`)
+    }
+    return game_data.zones[zone_id];
 }
 
 function angle_to_diagonal(dx, dy) {
