@@ -14,7 +14,7 @@ preset_variants[folders.xiangqi].push({
             sprite: "peasant",
             symbol: "p",
             notation: "",
-			move: "([S],[1 0 2 1])a",
+			move: "([So])a",
         },
         {
             name: "Rook",

@@ -343,6 +343,7 @@ function make_drop_move(piece, color, dest, promotion) {
     let piece_symbol = game_data.all_pieces[promotion ?? piece].notation ?? game_data.all_pieces[promotion ?? piece].symbol;
     let notation = piece_symbol + "'" + file(dest % game_data.width) + rank(Math.floor(dest / game_data.width));
 
+    board.ep_mask.zero(); //Dropped pieces can't be captured EP
     post_move(-1, dest, { piece: piece, color: color, dest: dest, turn: board.turn_count, drop: true, notation: notation });
 }
 

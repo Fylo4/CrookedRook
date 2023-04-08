@@ -639,23 +639,31 @@ function read_number(string, pos) {
 function generate_move_ss(string_orig) {
     let string = string_orig;
     //Replace all letters with the correct numbers
-    string = string.replaceAll("[0]", "[0 0 1 1]");
-    string = string.replaceAll("[W]", "[1 0 4 1]");
-    string = string.replaceAll("[F]", "[1 1 4 1]");
-    string = string.replaceAll("[D]", "[2 0 4 1]");
-    string = string.replaceAll("[N]", "[2 1 8 1]");
-    string = string.replaceAll("[A]", "[2 2 4 1]");
-    string = string.replaceAll("[H]", "[3 0 4 1]");
-    string = string.replaceAll("[C]", "[3 1 8 1]");
-    string = string.replaceAll("[Z]", "[3 2 8 1]");
-    string = string.replaceAll("[G]", "[3 3 4 1]");
-    string = string.replaceAll("[K]", "[1 1 8 1]");
-    string = string.replaceAll("[B]", "[1 1 4 -1]");
-    string = string.replaceAll("[R]", "[1 0 4 -1]");
-    string = string.replaceAll("[Q]", "[1 1 8 -1]");
-    string = string.replaceAll("[P]", "([1 1 1 1],[-1 1 1 1])");
-    string = string.replaceAll("[S]", "[0 1 1 1]");
-    string = string.replaceAll("[Gr]", "([1 1 1 -1],[-1 1 1 -1])");
+    let replace_strings = [
+        { a: "[0]", b: "[0 0 1 1]"},
+        { a: "[W]", b: "[1 0 4 1]"},
+        { a: "[F]", b: "[1 1 4 1]"},
+        { a: "[D]", b: "[2 0 4 1]"},
+        { a: "[N]", b: "[2 1 8 1]"},
+        { a: "[A]", b: "[2 2 4 1]"},
+        { a: "[H]", b: "[3 0 4 1]"},
+        { a: "[C]", b: "[3 1 8 1]"},
+        { a: "[Z]", b: "[3 2 8 1]"},
+        { a: "[G]", b: "[3 3 4 1]"},
+        { a: "[K]", b: "[1 1 8 1]"},
+        { a: "[B]", b: "[1 1 4 -1]"},
+        { a: "[R]", b: "[1 0 4 -1]"},
+        { a: "[Q]", b: "[1 1 8 -1]"},
+        { a: "[P]", b: "([1 1 1 1],[-1 1 1 1])"}, //Pawn
+        { a: "[S]", b: "[0 1 1 1]"}, //Step
+        { a: "[Gr]", b: "([1 1 1 -1],[-1 1 1 -1])"}, //Griffin
+        { a: "[So]", b: "([0 1 1 1],[1 0 2 1])"}, //Soldier
+        { a: "[Si]", b: "([1 1 4 1],[0 1 1 1])"}, //Silver
+        { a: "[Go]", b: "([0 1 4 1],[1 1 1 1],[-1 1 1 1])"}, //Gold
+    ];
+    for(let i = 0; i < replace_strings.length; i ++) {
+        string = string.replaceAll(replace_strings[i].a, replace_strings[i].b)
+    }
 
     let ret = [];
     if (string === "U") {
