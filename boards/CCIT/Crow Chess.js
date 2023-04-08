@@ -41,7 +41,7 @@ preset_variants[folders.ccit].push({
         sprite: "sultan",
         symbol: "K",
         move: "[F]a",
-        attribute: [attrib.royal]
+        attributes: [attrib.royal]
       }
     ],
     setup: "bN bC bK bC bN bC 3bF bC 5bp",
