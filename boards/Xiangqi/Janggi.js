@@ -3,6 +3,8 @@ preset_variants[folders.xiangqi].push({
   description: "Korean Chess",
   width: 9,
   height: 10,
+  wins: [ends.royal_capture, ends.stalemate],
+  
   all_pieces: [
     {
       name: "Peasant",

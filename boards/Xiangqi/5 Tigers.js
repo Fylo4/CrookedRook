@@ -1,8 +1,9 @@
 preset_variants[folders.xiangqi].push({
-    name: "Manchu Chess",
-    description: "Xiangqi, but one side has a super-chariot, which moves like a rook, knight, or cannon",
+    name: "5 Tigers",
+    description: "Like Xiangqi mixed with Monster Chess. White has only 5 pawns, 2 elephants, 2 advisors, and a king against Black's entire army. Note that in the original version only the pawns can be double-moved, all other pieces can only single-move. This is currently impossible in TCR. If you have ideas about how to better balance this game let me know in the discord.",
 	width: 9,
 	height: 10,
+    turn_list: ["w", "w", "b"],
     wins: [ends.royal_capture, ends.stalemate],
 
 	all_pieces: [
@@ -18,58 +19,52 @@ preset_variants[folders.xiangqi].push({
             name: "Rook",
             description: "Moves sideways and vertically as many spaces as it wants",
             sprite: "rook",
-            symbol: "R",
+            symbol: "r",
             move: "[R]Ba",
         },
         {
             name: "Cannon",
             description: "Xiangqi Cannon",
             sprite: "cannon",
-            symbol: "C",
+            symbol: "c",
             move: "[R]Bb[L]Bab+[R]Bae",
         },
 		{
             name: "Mao",
             description: "Blockable Knight",
             sprite: "knight",
-			symbol: "N",
+			symbol: "n",
 			move: "[W]ae[P]a",
 		},
 		{
             name: "Elephant",
             description: "Moves exactly 2 spaces diagonally. Can be blocked. Cannot cross the river.",
             sprite: "elephant",
-			symbol: "E",
+			symbol: "e",
 			move: "[1 1 4 2]BaZ{1 0}+-[F]",
 		},
 		{
             name: "Advisor",
             description: "Moves 1 space diagonally. Must stay in the palace.",
             sprite: "prince",
-			symbol: "A",
+			symbol: "a",
 			move: "[F]aZ{3 2}",
 		},
 		{
             name: "King",
             description: "Moves one step cardinally. Must stay in the palace. Can fly to kill opposing king.",
             sprite: "king",
-			symbol: "K",
+			symbol: "k",
 			move: "[W]aZ{3 2}+[R]BP{King}",
             attributes: [attrib.royal]
 		},
-		{
-            name: "Super Chariot",
-            description: "Moves like a Rook, Knight, or Cannon",
-            sprite: "lion",
-			symbol: "S",
-			move: "[R]Ba+[W]ae[P]a+[R]Bb[L]Bab",
-		},
 	],
-    setup: "bR bN bE bA bK bA bE bN bR 10. bC 5. bC . bp . bp . bp . bp . bp 18. wp . wp . wp . wp . wp 18. wS . wE wA wK wA wE",
+    setup: "br bn be ba bk ba be bn br 10. bc 5. bc . bp . bp . bp . bp . bp 18. wp . wp . wp . wp . wp 20. we wa wk wa we",
     zones: [
         "111111111 111111111 111111111 111111111 111111111 000000000 000000000 000000000 000000000 000000000",
         "000000000 000000000 000000000 000000000 000000000 111111111 111111111 111111111 111111111 111111111",
         "000111000 000111000 000111000 000000000 000000000 000000000 000000000 000000000 000000000 000000000",
         "000000000 000000000 000000000 000000000 000000000 000000000 000000000 000111000 000111000 000111000",
 	],
+    highlight: "000111000 000111000 000111000 000000000 000000000 000000000 000000000 000111000 000111000 000111000"
 });

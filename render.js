@@ -399,14 +399,14 @@ function render_extras() {
         }
     }
 
-    //Name and Description
+    //Name, Author, Description
     document.getElementById("board_name_header").innerHTML = DOMPurify.sanitize(game_data.name);
-    if (game_data.description) {
-        document.getElementById("board_description_header").innerHTML = DOMPurify.sanitize(game_data.description);
-    }
-    if (game_data.author) {
-        document.getElementById("board_author_header").innerHTML = DOMPurify.sanitize("Author: "+game_data.author);
-    }
+    let desc_elem = document.getElementById("board_description_header"), show_desc = !!game_data.description;
+    let author_elem = document.getElementById("board_author_header"), show_author = !!game_data.author;
+    desc_elem.innerHTML = show_desc ? DOMPurify.sanitize(game_data.description) : "No description";
+    desc_elem.style.display = show_desc ? "block" : "none";
+    author_elem.innerHTML = show_author ? DOMPurify.sanitize("Author: "+game_data.author) : "No author";
+    author_elem.style.display = show_author ? "block" : "none";
 
     //Move history
     let hist_div = document.getElementById("move_history");
