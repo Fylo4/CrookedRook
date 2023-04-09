@@ -34,7 +34,7 @@ preset_variants[folders.shogi].push({
         {
             name: "Silver",
             description: "Moves one step diagonally or forward. Promotes to Gold.",
-            sprite: "silver",
+            sprite: "hidetchi_silver",
             symbol: "S",
             move: "[Si]a",
             promotions: [{ white: 0, black: 1, to: ["Silver", "Gold"], on: [events.enter, events.exit, events.between] }]
@@ -42,7 +42,7 @@ preset_variants[folders.shogi].push({
         {
             name: "Gold",
             description: "Moves one step cardinally or forward-diagonal.",
-            sprite: "gold",
+            sprite: "hidetchi_gold",
             symbol: "G",
             move: "[Go]a"
         },

@@ -281,10 +281,10 @@ function start_game(json_data, seed) {
     for (let a = 0; a < game_data.all_pieces.length; a++) {
         let piece = game_data.all_pieces[a];
         if (piece.held_move && typeof(piece.held_move) === "string") {
-            console.log(piece.held_move);
-            console.log(all_molecules);
+            //console.log(piece.held_move);
+            //console.log(all_molecules);
             piece.held_move = string_to_mol_num(piece.held_move, all_molecules);
-            console.log(piece.held_move);
+            //console.log(piece.held_move);
         }
     }
     //Load all piece sprites

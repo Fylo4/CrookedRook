@@ -21,7 +21,7 @@ preset_variants[folders.shogi].push({
         {
             name: "Silver",
             description: "Moves one step diagonally or forward. Promotes to Gold.",
-            sprite: "silver",
+            sprite: "hidetchi_silver",
             symbol: "s",
             move: "[Si]a",
             promotions: [{ white: 0, black: 1, to: ["s", "S"], on: [events.enter, events.exit, events.between] }]
@@ -29,7 +29,7 @@ preset_variants[folders.shogi].push({
         {
             name: "Gold",
             description: "Moves one step cardinally or forward-diagonal.",
-            sprite: "gold",
+            sprite: "hidetchi_gold",
             symbol: "G",
             move: "[Go]a"
         },
@@ -44,7 +44,7 @@ preset_variants[folders.shogi].push({
         {
             name: "+Pawn",
             description: "Promoted pawn. Moves as a Gold.",
-            sprite: "gold",
+            sprite: "hidetchi_gold",
             mini_sprite: "peasant",
             symbol: "P",
             move: "[Go]a",
@@ -54,8 +54,8 @@ preset_variants[folders.shogi].push({
         {
             name: "+Silver",
             description: "Promoted silver. Moves as a Gold.",
-            sprite: "gold",
-            mini_sprite: "silver",
+            sprite: "hidetchi_gold",
+            mini_sprite: "hidetchi_silver",
             symbol: "S",
             move: "[Go]a",
             attributes: [attrib.transform_on_death],

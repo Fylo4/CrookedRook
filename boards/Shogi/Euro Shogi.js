@@ -47,7 +47,7 @@ preset_variants[folders.shogi].push({
         {
             name: "Gold",
             description: "Moves one step cardinally or forward-diagonal.",
-            sprite: "gold",
+            sprite: "hidetchi_gold",
             symbol: "G",
             move: "[Go]a"
         },
@@ -62,7 +62,7 @@ preset_variants[folders.shogi].push({
         {
             name: "+Pawn",
             description: "Promoted pawn. Moves as a Gold.",
-            sprite: "gold",
+            sprite: "hidetchi_gold",
             mini_sprite: "peasant",
             symbol: "P",
             move: "[Go]a",
@@ -90,7 +90,7 @@ preset_variants[folders.shogi].push({
         {
             name: "+Knight",
             description: "Promoted knight. Moves as a Gold.",
-            sprite: "gold",
+            sprite: "hidetchi_gold",
             mini_sprite: "knight",
             symbol: "N",
             move: "[Go]a",

@@ -1,22 +1,13 @@
 preset_variants[folders.shogi].push({
-    name: "Shogi",
-    description: "Japanese Chess. You can drop pieces after you capture them. Some niche rules are not implemented",
-	width: 9,
-	height: 9,
+    name: "Rocket Shogi",
+    author: "Itsubaki Yoshihisa",
+    description: "A Shogi variant with all the normal pieces, except for pawns. Drop and promotion rules are the same as normal Shogi, promotion in last 3 ranks.",
+	width: 5,
+	height: 7,
 	has_hand: true,
 	wins: [ends.royal_capture, ends.stalemate],
 
 	all_pieces: [
-		{
-			name: "Pawn",
-			description: "Moves and captures forward one step. Promotes to Gold.",
-            sprite: "kasa_peasant",
-            symbol: "p",
-            notation: "",
-			move: "[S]a",
-            file_limit: 1,
-            promotions: [{ white: 0, black: 1, to: ["Pawn", "+Pawn"], on: [events.enter, events.exit, events.between] }],
-		},
 		{
             name: "Rook",
             description: "Moves sideways and vertically as many spaces as it wants",
@@ -73,16 +64,6 @@ preset_variants[folders.shogi].push({
             attributes: [attrib.royal]
         },
         {
-            name: "+Pawn",
-            description: "Promoted pawn. Moves as a Gold.",
-            sprite: "hidetchi_gold",
-            mini_sprite: "peasant",
-            symbol: "P",
-            move: "[Go]a",
-            attributes: [attrib.transform_on_death],
-            held_piece: "p"
-        },
-        {
             name: "+Rook",
             description: "Dragon King. Moves as Rook or King.",
             sprite: "dragon",
@@ -131,12 +112,10 @@ preset_variants[folders.shogi].push({
             held_piece: "s"
         }
 	],
-    setup: "bl bn bs bG bK bG bs bn bl . br 5. bb . 9bp",
+    setup: "bn br bK bb bn . bG . bs 3. bl",
     copy: "rotate",
     zones: [
-        "111111111 111111111 111111111 000000000 000000000 000000000 000000000 000000000 000000000",
-        "000000000 000000000 000000000 000000000 000000000 000000000 111111111 111111111 111111111"
-    ],
-    highlight: "111111111 111111111 111111111 000000000 000000000 000000000 111111111 111111111 111111111",
-    starting_hands: {white: [], black: []}
+        "11111 11111 11111 00000 00000 00000 00000",
+        "00000 00000 00000 00000 11111 11111 11111"
+    ]
 });

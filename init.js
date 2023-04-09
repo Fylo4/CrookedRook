@@ -166,7 +166,7 @@ function add_files_to_dropdown() {
         for (let a = 0; a < preset_variants[cat_num].length; a++) {
             let temp = new Option();
             temp.value = a;
-            temp.innerHTML = preset_variants[cat_num][a].name;
+            temp.innerHTML = DOMPurify.sanitize(preset_variants[cat_num][a].name);
             variant_dropdown.appendChild(temp);
         }
     }
@@ -200,6 +200,17 @@ function load_variant() {
         start_game(preset_variants[category][document.getElementById('variantField').value]);
     }
 }
+function load_random_variant() {
+    let all_variants = [];
+    for (let a = 0; a < preset_variants.length; a ++) {
+        for (let b = 0; b < preset_variants[a].length; b ++) {
+            all_variants.push({a, b});
+        }
+    }
+    let index = Math.floor(Math.random()*all_variants.length);
+    let category = all_variants[index].a, file = all_variants[index].b;
+    start_game(preset_variants[category][file]);
+}
 
 function load_board_textures() {
     add_image("board", "sq_dark");
@@ -215,6 +226,11 @@ function load_board_textures() {
     add_image("board", "attack_white");
     add_image("board", "attack_black");
     add_image("board", "movable");
+}
+
+function handle_inspect_button() {
+    temp_data.inspect = true;
+    document.getElementById("inspect_text").style.display="inline";
 }
 
 function handle_make_move(src_x, src_y, dst_x, dst_y, prom) {
@@ -264,6 +280,15 @@ function handle_mouse_click() {
             temp_data.selected = false;
         }
         temp_data.waiting_for_promotion = false;
+    }
+    else if (temp_data.inspect) {
+        document.getElementById("inspect_text").style.display="none";
+        temp_data.inspect = false;
+        let piece = identify_piece(mouse_sq);
+        if (piece >= 0) {
+            let p = game_data.all_pieces[piece];
+            alert(DOMPurify.sanitize(`${p.name}\n${p.description}`));
+        }
     }
     else if (temp_data.selected) {
         if (game_data.active_squares.get(mouse_sq)) {

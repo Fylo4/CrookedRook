@@ -25,7 +25,7 @@ preset_variants[folders.xiangqi].push({
             description: "Xiangqi Cannon",
             sprite: "cannon",
             symbol: "c",
-            move: "[R]Bb[0 1 1 -1]Bab+[R]Bae",
+            move: "[R]Bb[L]Bab+[R]Bae",
         },
 		{
             name: "Mao",

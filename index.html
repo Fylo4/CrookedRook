@@ -1,6 +1,8 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
+    <!--import * as DOMPurify from 'dompurify';-->
+    <script type="text/javascript" src="purify.min.js"></script>
     <script src="Squareset.js"></script>
     <script src="Constants.js"></script>
     <script src="bnb_ep_init.js"></script>
@@ -20,8 +22,21 @@
     <script src="boards/CCIT/Honey Rush.js"></script>
     <script src="boards/CCIT/Segiztas Peak.js"></script>
 
+    <script src="boards/Chess/Atomic Chess.js"></script>
+    <script src="boards/Chess/Berolina Chess.js"></script>
     <script src="boards/Chess/Chess.js"></script>
     <script src="boards/Chess/Chess5040.js"></script>
+    <script src="boards/Chess/Crazyhouse.js"></script>
+    <script src="boards/Chess/King of the Hill.js"></script>
+    <script src="boards/Chess/Knightmate.js"></script>
+    <script src="boards/Chess/Los Alamos.js"></script>
+    <script src="boards/Chess/Maharajah.js"></script>
+    <script src="boards/Chess/Marseillais Chess.js"></script>
+    <script src="boards/Chess/Monster Chess.js"></script>
+    <script src="boards/Chess/Omega Chess.js"></script>
+    <script src="boards/Chess/Pocket Knight Chess.js"></script>
+    <script src="boards/Chess/Spartan Chess.js"></script>
+    <script src="boards/Chess/Wildebeest Chess.js"></script>
 
     <script src="boards/Historical/Chaturanga.js"></script>
     <script src="boards/Historical/Courier Chess.js"></script>
@@ -33,22 +48,30 @@
     <script src="boards/Xiangqi/MiniXiangqi.js"></script>
     <script src="boards/Xiangqi/Manchu Chess.js"></script>
 
-    <script src="boards/Shogi/Shogi.js"></script>
-    <script src="boards/Shogi/Heian Shogi.js"></script>
-    <script src="boards/Shogi/Sho Shogi.js"></script>
+    <script src="boards/Shogi/Dobutsu.js"></script>
+    <script src="boards/Shogi/Simple Shogi.js"></script>
     <script src="boards/Shogi/Micro Shogi.js"></script>
     <script src="boards/Shogi/Mini Shogi.js"></script>
-    <script src="boards/Shogi/Judkins Shogi.js"></script>
-    <script src="boards/Shogi/Yari Shogi.js"></script>
+    <script src="boards/Shogi/Kyoto Shogi.js"></script>
     <script src="boards/Shogi/Goro-Goro Shogi.js"></script>
+    <script src="boards/Shogi/Rocket Shogi.js"></script>
+    <script src="boards/Shogi/Judkins Shogi.js"></script>
+    <script src="boards/Shogi/Tori Shogi.js"></script>
+    <script src="boards/Shogi/Yari Shogi.js"></script>
     <script src="boards/Shogi/Euro Shogi.js"></script>
+    <script src="boards/Shogi/Heian Shogi.js"></script>
+    <script src="boards/Shogi/Shogi.js"></script>
+    <script src="boards/Shogi/Sho Shogi.js"></script>
+    <script src="boards/Shogi/Wa Shogi.js"></script>
 
+    <script src="boards/Compound Chess/Almost Chess.js"></script>
     <script src="boards/Compound Chess/Bird's Chess.js"></script>
-    <script src="boards/Compound Chess/Carrera's Chess.js"></script>
     <script src="boards/Compound Chess/Capablanca Chess.js"></script>
-    <script src="boards/Compound Chess/Gothic Chess.js"></script>
-    <script src="boards/Compound Chess/Embassy Chess.js"></script>
+    <script src="boards/Compound Chess/Carrera's Chess.js"></script>
     <script src="boards/Compound Chess/Compound Shuffle Chess.js"></script>
+    <script src="boards/Compound Chess/Embassy Chess.js"></script>
+    <script src="boards/Compound Chess/Gothic Chess.js"></script>
+    <script src="boards/Compound Chess/Grand Chess.js"></script>
     <script src="boards/Compound Chess/Shogun Chess.js"></script>
 
     <script src="boards/SEA/Makruk.js"></script>
@@ -57,7 +80,10 @@
     <script src="boards/SEA/Main Chator.js"></script>
     <script src="boards/SEA/Asean Chess.js"></script>
 
+    <script src="boards/other/Congo.js"></script>
     <script src="boards/other/Dragonfly.js"></script>
+    <script src="boards/other/Metamachy.js"></script>
+    <script src="boards/other/Shako.js"></script>
     <script src="boards/Style.js"></script>
 
     <title>The Crooked Rook</title>
@@ -118,7 +144,7 @@
     <!-- Header -->
     <div style="width: 100%; overflow:auto;">
         <div style="width: 50%; float: left;">
-            <p><b style="font-size: 30px">The Crooked Rook</b>Pre-Release 0.6.5</p>
+            <p><b style="font-size: 30px">The Crooked Rook</b>Pre-Release 0.6.6</p>
             <p><a href="https://discord.gg/NJNXUXqyvr">Discord</a> | <a href="https://drive.google.com/drive/folders/1yB_Elymo0vY33n6xQHWzukDGGkANqPQl">Documentation</a> | <a href="#" onclick="toggle_credits()">Credits</a></p>
         </div>
         <div style="width: max-content; float: right;">
@@ -135,7 +161,9 @@
         <p><b>Credits</b></p>
         <p>Created by Fylo</p>
         <p>Most sprites come from <a href="https://gitlab.com/zulban/chesscraft-creative-commons/-/tree/master/pieces">ChessCraft Creative Commons</a></p>
-        <p>Silver and Gold sprites by <a href="https://boardgamegeek.com/user/jureboga">jureboga</a>, adapted from Hidetchi's designs. <a href="https://boardgamegeek.com/filepage/241678/shogi-more-chess-hidetchis-internationalized-piece">Link</a></p>
+        <p>Hidetchi sprites by <a href="https://boardgamegeek.com/user/jureboga">jureboga</a>, adapted from Hidetchi's designs. <a href="https://boardgamegeek.com/filepage/241678/shogi-more-chess-hidetchis-internationalized-piece">Link</a></p>
+        <p>SEA boards created by skyhistory</p>
+        <p>All other default boards by Fylo or Ristet</p>
     </div>
 
     <button onclick="board_page()">Board</button>
@@ -182,6 +210,7 @@
             <input type="file" id="variant_file" style="display: none" accept=".json"/>
             <button onclick="load_variant();">Load</button>
             <button onclick="download_variant();">Download</button>
+            <button onclick="load_random_variant();">Load Random</button>
             <br /> <br />
         </div>
         <button onclick="document.getElementById('history').value = export_history();">Export History</button>
@@ -190,8 +219,11 @@
         <br />
 
         <h2 id="board_name_header">Board Name</h2>
+        <p id="board_author_header">Board Author</p>
         <p id="board_description_header">Board Description</p>
         <button onclick="style_toggle()">Style</button>
+        <button onclick="handle_inspect_button()">🔍</button>
+        <p id="inspect_text" style="display: none">Click on any piece to inspect it</p>
         <div id="style_buttons" style="display:none">
             <button onClick="change_zoom(1);  render_board();">+</button>
             <button onClick="change_zoom(-1); render_board();">-</button>

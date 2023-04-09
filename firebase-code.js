@@ -30,7 +30,7 @@ function show_error(message) {
     new_p.id = "message_"+message_count;
     message_count ++;
     new_p.style.background = "red";
-    new_p.innerHTML = `<button onclick="remove_p('${new_p.id}')">x</button> ${message}`;
+    new_p.innerHTML = DOMPurify.sanitize(`<button onclick="remove_p('${new_p.id}')">x</button> ${message}`);
     document.getElementById("message_div").appendChild(new_p);
 }
 function show_message (message) {
@@ -38,7 +38,7 @@ function show_message (message) {
     let new_p = document.createElement("p");
     new_p.id = "message_"+message_count;
     message_count ++;
-    new_p.innerHTML = `<button onclick="remove_p('${new_p.id}')">x</button> ${message}`;
+    new_p.innerHTML = DOMPurify.sanitize(`<button onclick="remove_p('${new_p.id}')">x</button> ${message}`);
     document.getElementById("message_div").appendChild(new_p);
 }
 
@@ -409,13 +409,13 @@ all_lobbies_ref.on("value", (snapshot) => {
             row_v.owner_col === 'r' ? "Random" :
             row_v.owner_col === 'w' ? "White" :
             row_v.owner_col === 'b' ? "Black" : "Error";
-        table.innerHTML += `
+        table.innerHTML += DOMPurify.sanitize(`
         <tr>
             <td>${row_v.board_name}</td>
             <td>${row_v.owner_name}</td>
             <td>${col}</td>
             <td><button onclick="join_game('${row}')">Join</button></td>
-        </tr>`;
+        </tr>`);
     }
 });
 
@@ -433,7 +433,7 @@ firebase.auth().onAuthStateChanged((user) => {
             else {
                 show_db_get("Getting my user info", this_user);
                 let name_p = document.getElementById("name_p");
-                name_p.innerHTML = "Name: "+this_user.name;
+                name_p.innerHTML = DOMPurify.sanitize("Name: "+this_user.name);
             }
         });
         

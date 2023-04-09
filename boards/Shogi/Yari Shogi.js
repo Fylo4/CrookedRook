@@ -61,7 +61,7 @@ preset_variants[folders.shogi].push({
         {
             name: "+Pawn",
             description: "Promoted pawn. Moves as a forward/forward-diagonal one step, or backwards indefinitely",
-            sprite: "silver",
+            sprite: "hidetchi_silver",
             symbol: "P",
             move: "([S],[P],[0 -1 1 -1])Ba",
             attributes: [attrib.transform_on_death],
@@ -79,7 +79,7 @@ preset_variants[folders.shogi].push({
         {
             name: "+Bishop",
             description: "Promoted Bishop. Moves as a Gold or backwards indefinitely.",
-            sprite: "gold",
+            sprite: "hidetchi_gold",
             mini_sprite: "bishop",
             symbol: "B",
             move: "([Go],[0 -1 1 -1])Ba",
@@ -89,7 +89,7 @@ preset_variants[folders.shogi].push({
         {
             name: "+Knight",
             description: "Promoted Knight. Moves as a Gold or backwards indefinitely.",
-            sprite: "gold",
+            sprite: "hidetchi_gold",
             mini_sprite: "knight",
             symbol: "N",
             move: "([Go],[0 -1 1 -1])Ba",

@@ -338,7 +338,7 @@ function highlighted_hand_piece(brd) {
     let hover_side = (mouse_sq_pos.y === -1);
     let real_mouse_x = style_data.flip_board ? (game_data.width - mouse_sq_pos.x - 1) : mouse_sq_pos.x;
     let this_hand = hover_side ? brd.hands.black : brd.hands.white;
-    let col = 0;
+    let col = 0; //column
     let hover_piece = -1;
     for (let a = 0; a < this_hand.length; a++) {
         if (this_hand[a] > 0) {
@@ -400,8 +400,13 @@ function render_extras() {
     }
 
     //Name and Description
-    document.getElementById("board_name_header").innerHTML = game_data.name;
-    document.getElementById("board_description_header").innerHTML = game_data.description;
+    document.getElementById("board_name_header").innerHTML = DOMPurify.sanitize(game_data.name);
+    if (game_data.description) {
+        document.getElementById("board_description_header").innerHTML = DOMPurify.sanitize(game_data.description);
+    }
+    if (game_data.author) {
+        document.getElementById("board_author_header").innerHTML = DOMPurify.sanitize("Author: "+game_data.author);
+    }
 
     //Move history
     let hist_div = document.getElementById("move_history");
@@ -414,7 +419,7 @@ function render_extras() {
     let num = 1, row = "";
     for (let a = 0; a < move_history.length; a++) {
         if (move_history[a].turn != num) {
-            hist_div.innerHTML += "<p>" + num + " - " + row + "</p>";
+            hist_div.innerHTML += DOMPurify.sanitize("<p>" + num + " - " + row + "</p>");
             num++;
             row = "";
         }
@@ -428,7 +433,7 @@ function render_extras() {
         }
     }
     if (row != "") {
-        hist_div.innerHTML += "<p>" + num + " - " + row + "</p>";
+        hist_div.innerHTML += DOMPurify.sanitize("<p>" + num + " - " + row + "</p>");
         num++;
         row = "";
     }
@@ -441,8 +446,8 @@ function render_extras() {
             let black_name = "Black: " + (my_col ? my_name : opp_name);
             document.getElementById("top_player_label").style.display = "block";
             document.getElementById("bottom_player_label").style.display = "block";
-            document.getElementById("top_player_label").innerHTML = style_data.flip_board ? white_name : black_name;
-            document.getElementById("bottom_player_label").innerHTML = style_data.flip_board ? black_name : white_name;
+            document.getElementById("top_player_label").innerHTML = DOMPurify.sanitize(style_data.flip_board ? white_name : black_name);
+            document.getElementById("bottom_player_label").innerHTML = DOMPurify.sanitize(style_data.flip_board ? black_name : white_name);
         }
         else {
             document.getElementById("top_player_label").style.display = "none";

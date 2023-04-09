@@ -25,7 +25,7 @@ preset_variants[folders.xiangqi].push({
             description: "Xiangqi Cannon",
             sprite: "cannon",
             symbol: "C",
-            move: "[R]Bb[0 1 1 -1]Bab+[R]Bae",
+            move: "[R]Bb[L]Bab+[R]Bae",
         },
 		{
             name: "Mao",
@@ -39,7 +39,7 @@ preset_variants[folders.xiangqi].push({
             description: "Moves exactly 2 spaces diagonally. Can be blocked. Cannot cross the river.",
             sprite: "elephant",
 			symbol: "E",
-			move: "[1 1 4 2]BaZ{1 0}+-[1 1 4 1]",
+			move: "[1 1 4 2]BaZ{1 0}+-[F]",
 		},
 		{
             name: "Advisor",
@@ -61,7 +61,7 @@ preset_variants[folders.xiangqi].push({
             description: "Moves like a Rook, Knight, or Cannon",
             sprite: "lion",
 			symbol: "S",
-			move: "[R]Ba+[W]ae[P]a+[R]Bb[0 1 1 -1]Bab",
+			move: "[R]Ba+[W]ae[P]a+[R]Bb[L]Bab",
 		},
 	],
     setup: "bR bN bE bA bK bA bE bN bR 10. bC 5. bC . bp . bp . bp . bp . bp 18. wp . wp . wp . wp . wp 18. wS . wE wA wK wA wE",

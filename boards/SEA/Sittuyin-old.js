@@ -37,7 +37,7 @@ preset_variants[folders.SEA].push({
 		{
             name: "Elephant",
             description: "Moves one step diagonal or forward",
-            sprite: "silver",
+            sprite: "hidetchi_silver",
 			symbol: "E",
 			move: "([F],[S])a",
 		},
