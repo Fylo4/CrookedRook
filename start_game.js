@@ -1,9 +1,11 @@
+let last_loaded_board;
 function start_game(json_data, seed) {
     if(seed === undefined) {
         seed = cyrb128(time_as_string())[0];
     }
     let rand = mulberry32(seed);
     game_data = JSON.parse(JSON.stringify(json_data));
+    last_loaded_board = JSON.parse(JSON.stringify(json_data));
     game_data.seed = seed;
     if (game_data.name === undefined) { show_error("Variant must have a name"); return; }
     if (game_data.description === undefined) { game_data.description = ""; }
@@ -180,6 +182,7 @@ function start_game(json_data, seed) {
 
         can_move_ss: [],
         can_drop_piece_to: {white: [], black: []},
+        can_drop: {white: false, black: false},
         has_moved_ss: new squareset(size),
         ep_mask: new squareset(size),
 

@@ -321,12 +321,17 @@ function can_move(color, brd) {
     }
     //If game_data.force_drop and you have pieces in your hand, you can't move normally
     if (game_data.force_drop && game_data.has_hand) {
-        let my_hand = color ? board.hands.black : board.hands.white;
-        for (let a = 0; a < my_hand.length; a ++) {
-            if (my_hand[a] > 0) {
-                return false;
-            }
+        if ((color && board.can_drop.black) || (!color && board.can_drop.white)) {
+            return false;
         }
+        /*let my_hand = color ? board.hands.black : board.hands.white;
+        if(color ? board.can_drop.black : board.can_drop.white) {
+            for (let a = 0; a < my_hand.length; a ++) {
+                if (my_hand[a] > 0) {
+                    return false;
+                }
+            }
+        }*/
     }
     return true;
 }

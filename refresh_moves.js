@@ -169,6 +169,7 @@ function parse_term(term, term_index, sq, piece, col, angle, is_attack = false) 
 }
 function reload_can_drop_piece_to() {
     board.can_drop_piece_to = {white: [], black: []};
+    board.can_drop = {white: false, black: false};
     for (let a = 0; a < game_data.all_pieces.length; a ++) {
         board.can_drop_piece_to.white.push(new squareset(game_data.width * game_data.height, 1));
         board.can_drop_piece_to.black.push(new squareset(game_data.width * game_data.height, 1));
@@ -202,6 +203,13 @@ function reload_can_drop_piece_to() {
         //Can't land on other pieces
         board.can_drop_piece_to.white[a].ande(ss_or(board.white_ss, board.black_ss).inverse());
         board.can_drop_piece_to.black[a].ande(ss_or(board.white_ss, board.black_ss).inverse());
+        //Set if we can drop or not
+        if (!board.can_drop_piece_to.white[a].is_zero() && board.hands.white[a] > 0) {
+            board.can_drop.white = true;
+        }
+        if (!board.can_drop_piece_to.black[a].is_zero() && board.hands.black[a] > 0) {
+            board.can_drop.black = true;
+        }
     }
 }
 function get_drop_zone(piece_id, color) {

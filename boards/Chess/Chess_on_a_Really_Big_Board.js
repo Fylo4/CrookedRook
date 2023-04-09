@@ -65,7 +65,7 @@ preset_variants[folders.chess].push({
       description: "Moves like a Knight in a circular motion",
       sprite: "censor",
       symbol: "O",
-      move: "[N]ase^[2 1 1 1]ase+[N]ase^[-1 -2 1 1]ase"
+      move: "[N]ase^[2 1 1 1]ase+[N]ase^[-1 2 1 1]ase"
     },
     {
       name: "Superknight",

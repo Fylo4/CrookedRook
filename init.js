@@ -137,17 +137,21 @@ function download_all_boards() {
         }
     }
 }
-function download_board(folder, index) {
-    let str = JSON.stringify(stringify_consts(preset_variants[folder][index]), null, 2);
-    let file = new File([str], preset_variants[folder][index].name);
+function download_json(json) {
+    let str = JSON.stringify(stringify_consts(json), null, 2);
+    let file = new File([str], json.name);
     let url = URL.createObjectURL(file);
     const anchor = document.createElement("a");
     anchor.href = url;
-    anchor.download = preset_variants[folder][index].name+".json";
+    anchor.download = json.name+".json";
     document.body.appendChild(anchor);
     anchor.click();
     document.body.removeChild(anchor);
     URL.revokeObjectURL(url);
+}
+
+function download_board(folder, index) {
+    download_json(preset_variants[folder][index]);
 }
 
 function add_files_to_dropdown() {
@@ -172,9 +176,12 @@ function add_files_to_dropdown() {
     }
 }
 function download_variant() {
-    let folder = Number(document.getElementById("categoryField").value);
-    let file = Number(document.getElementById('variantField').value);
-    download_board(folder, file)
+    if (last_loaded_board === undefined) {
+        show_error("No board loaded");
+    }
+    else {
+        download_json(last_loaded_board);
+    }
 }
 function load_variant() {
     let category = Number(document.getElementById("categoryField").value);
@@ -229,8 +236,14 @@ function load_board_textures() {
 }
 
 function handle_inspect_button() {
-    temp_data.inspect = true;
-    document.getElementById("inspect_text").style.display="inline";
+    if (temp_data.inspect) {
+        temp_data.inspect = false;
+        document.getElementById("inspect_text").style.display="none";
+    }
+    else {
+        temp_data.inspect = true;
+        document.getElementById("inspect_text").style.display="inline";
+    }
 }
 
 function handle_make_move(src_x, src_y, dst_x, dst_y, prom) {

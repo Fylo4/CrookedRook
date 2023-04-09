@@ -148,8 +148,8 @@
     <!-- Header -->
     <div style="width: 100%; overflow:auto;">
         <div style="width: 50%; float: left;">
-            <p><b style="font-size: 30px">The Crooked Rook</b>Pre-Release 0.6.7</p>
-            <p><a href="https://discord.gg/NJNXUXqyvr">Discord</a> | <a href="https://drive.google.com/drive/folders/1yB_Elymo0vY33n6xQHWzukDGGkANqPQl">Documentation</a> | <a href="#" onclick="toggle_credits()">Credits</a></p>
+            <p><b style="font-size: 30px">The Crooked Rook</b></p>
+            <p><a href="https://discord.gg/NJNXUXqyvr">Discord</a> | <a href="https://drive.google.com/drive/folders/1yB_Elymo0vY33n6xQHWzukDGGkANqPQl">Documentation</a> | <a href="#" onclick="toggle_credits()">Credits</a> | Pre-Release 0.6.8</p>
         </div>
         <div style="width: max-content; float: right;">
             <p id="name_p">Name:</p>
@@ -213,7 +213,6 @@
             <select id="variantField" name="variantField"></select>
             <input type="file" id="variant_file" style="display: none" accept=".json"/>
             <button onclick="load_variant();">Load</button>
-            <button onclick="download_variant();">Download</button>
             <button onclick="load_random_variant();">Load Random</button>
             <br /> <br />
         </div>
@@ -264,6 +263,8 @@
         </div>
         <button id="resign_btn" onclick="resign()" style="display: none;">Resign</button>
         <br />
+        <button onclick="download_variant();">Download this Board</button>
+        <br>
 
         <div id="style_div" style="display:none;">
             <h2>Style Menu</h2>
@@ -314,7 +315,6 @@
         <button onclick="right_arrow_click();">&rarr;</button>
         <button onclick="down_arrow_click();">&darr;</button>
         <div id="move_history"></div>
-        <p>If you see blank spaces when loading a board, move your mouse on the canvas and it should reload</p>
     </div>
 
     <div id="imageDiv" style="Display: none"></div>
