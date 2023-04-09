@@ -10,7 +10,7 @@ preset_variants[folders.shogi].push({
 		{
 			name: "Pawn",
 			description: "Moves and captures forward one step. Promotes to Gold.",
-            sprite: "peasant",
+            sprite: "kasa_peasant",
             symbol: "p",
             notation: "",
 			move: "[S]a",
@@ -38,7 +38,7 @@ preset_variants[folders.shogi].push({
             description: "Moves up as many spaces as it wants",
             sprite: "spear",
             symbol: "l",
-            move: "[0 1 1 -1]Ba",
+            move: "[L]Ba",
             promotions: [{ white: 0, black: 1, to: ["Lance", "+Lance"], on: [events.enter, events.exit, events.between] }]
         },
 		{
@@ -46,23 +46,23 @@ preset_variants[folders.shogi].push({
             description: "Japanese Knight. Jumps forward two spaces and sideways one. Promotes to Gold.",
             sprite: "knight",
 			symbol: "n",
-            move: "([1 2 1 1],[-1 2 1 1])a",
+            move: "[JN]a",
             promotions: [{ white: 0, black: 1, to: ["Knight", "+Knight"], on: [events.enter, events.exit, events.between] }]
         },
         {
             name: "Silver",
             description: "Moves one step diagonally or forward. Promotes to Gold.",
-            sprite: "star5",
+            sprite: "silver",
             symbol: "s",
-            move: "([F],[S])a",
+            move: "[Si]a",
             promotions: [{ white: 0, black: 1, to: ["Silver", "+Silver"], on: [events.enter, events.exit, events.between] }]
         },
         {
             name: "Gold",
             description: "Moves one step cardinally or forward-diagonal.",
-            sprite: "shield",
+            sprite: "gold",
             symbol: "G",
-            move: "([W],[-1 1 1 1],[1 1 1 1])a"
+            move: "[Go]a"
         },
 		{
             name: "King",
@@ -75,11 +75,12 @@ preset_variants[folders.shogi].push({
         {
             name: "+Pawn",
             description: "Promoted pawn. Moves as a Gold.",
-            sprite: "shield",
+            sprite: "gold",
+            mini_sprite: "peasant",
             symbol: "P",
-            move: "([W],[-1 1 1 1],[1 1 1 1])a",
+            move: "[Go]a",
             attributes: [attrib.transform_on_death],
-            held_piece: 0
+            held_piece: "p"
         },
         {
             name: "+Rook",
@@ -88,7 +89,7 @@ preset_variants[folders.shogi].push({
             symbol: "R",
             move: "([R],[K])Ba",
             attributes: [attrib.transform_on_death],
-            held_piece: 1
+            held_piece: "r"
         },
         {
             name: "+Bishop",
@@ -97,34 +98,37 @@ preset_variants[folders.shogi].push({
             symbol: "B",
             move: "([B],[K])Ba",
             attributes: [attrib.transform_on_death],
-            held_piece: 2
+            held_piece: "b"
         },
         {
             name: "+Lance",
             description: "Promoted lance. Moves as a Gold.",
-            sprite: "shield",
+            sprite: "gold",
+            mini_sprite: "spear",
             symbol: "L",
-            move: "([W],[-1 1 1 1],[1 1 1 1])a",
+            move: "[Go]a",
             attributes: [attrib.transform_on_death],
-            held_piece: 3
+            held_piece: "l"
         },
         {
             name: "+Knight",
             description: "Promoted knight. Moves as a Gold.",
-            sprite: "shield",
+            sprite: "gold",
+            mini_sprite: "knight",
             symbol: "N",
-            move: "([W],[-1 1 1 1],[1 1 1 1])a",
+            move: "[Go]a",
             attributes: [attrib.transform_on_death],
-            held_piece: 4
+            held_piece: "n"
         },
         {
             name: "+Silver",
             description: "Promoted silver. Moves as a Gold.",
-            sprite: "shield",
+            sprite: "gold",
+            mini_sprite: "silver",
             symbol: "S",
-            move: "([W],[-1 1 1 1],[1 1 1 1])a",
+            move: "[Go]a",
             attributes: [attrib.transform_on_death],
-            held_piece: 5
+            held_piece: "s"
         }
 	],
     setup: "bl bn bs bG bK bG bs bn bl . br 5. bb . 9bp",
@@ -133,5 +137,6 @@ preset_variants[folders.shogi].push({
         "111111111 111111111 111111111 000000000 000000000 000000000 000000000 000000000 000000000",
         "000000000 000000000 000000000 000000000 000000000 000000000 111111111 111111111 111111111"
     ],
+    highlight: "111111111 111111111 111111111 000000000 000000000 000000000 111111111 111111111 111111111",
     starting_hands: {white: [], black: []}
 });

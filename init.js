@@ -110,6 +110,17 @@ function stringify_consts(json) {
     }
     return ret;
 }
+
+function toggle_credits() {
+    let div = document.getElementById("credits_div");
+    if (div.style.display === "none") {
+        div.style.display = "block";
+    }
+    else {
+        div.style.display = "none";
+    }
+}
+
 function download_all_boards() {
     for(let a = 0; a < preset_variants.length; a++) {
         for(let b = 0; b < preset_variants[a].length; b++) {
@@ -153,17 +164,22 @@ function add_files_to_dropdown() {
         variant_dropdown.style.display="inline";
         variant_dropdown.innerHTML = "";
         for (let a = 0; a < preset_variants[cat_num].length; a++) {
-            var temp = new Option();
+            let temp = new Option();
             temp.value = a;
             temp.innerHTML = preset_variants[cat_num][a].name;
             variant_dropdown.appendChild(temp);
         }
     }
 }
+function download_variant() {
+    let folder = Number(document.getElementById("categoryField").value);
+    let file = Number(document.getElementById('variantField').value);
+    download_board(folder, file)
+}
 function load_variant() {
     let category = Number(document.getElementById("categoryField").value);
     if(category < 0) {
-        var file = document.getElementById("variant_file").files[0];
+        let file = document.getElementById("variant_file").files[0];
         if (file) {
             let reader = new FileReader();
             reader.readAsText(file, "UTF-8");

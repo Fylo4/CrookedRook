@@ -38,6 +38,10 @@
     <script src="boards/Shogi/Sho Shogi.js"></script>
     <script src="boards/Shogi/Micro Shogi.js"></script>
     <script src="boards/Shogi/Mini Shogi.js"></script>
+    <script src="boards/Shogi/Judkins Shogi.js"></script>
+    <script src="boards/Shogi/Yari Shogi.js"></script>
+    <script src="boards/Shogi/Goro-Goro Shogi.js"></script>
+    <script src="boards/Shogi/Euro Shogi.js"></script>
 
     <script src="boards/Compound Chess/Bird's Chess.js"></script>
     <script src="boards/Compound Chess/Carrera's Chess.js"></script>
@@ -114,8 +118,8 @@
     <!-- Header -->
     <div style="width: 100%; overflow:auto;">
         <div style="width: 50%; float: left;">
-            <p><b style="font-size: 30px">The Crooked Rook</b>Pre-Release 0.6.4</p>
-            <p><a href="https://discord.gg/NJNXUXqyvr">Discord</a> | <a href="https://drive.google.com/drive/folders/1yB_Elymo0vY33n6xQHWzukDGGkANqPQl">Documentation</a></p>
+            <p><b style="font-size: 30px">The Crooked Rook</b>Pre-Release 0.6.5</p>
+            <p><a href="https://discord.gg/NJNXUXqyvr">Discord</a> | <a href="https://drive.google.com/drive/folders/1yB_Elymo0vY33n6xQHWzukDGGkANqPQl">Documentation</a> | <a href="#" onclick="toggle_credits()">Credits</a></p>
         </div>
         <div style="width: max-content; float: right;">
             <p id="name_p">Name:</p>
@@ -124,11 +128,18 @@
             <br />
         </div>
     </div>
-    <div id="message_div">
-        
+    <div id="message_div"></div>
+
+    <!--Credits-->
+    <div id="credits_div" style="display:none">
+        <p><b>Credits</b></p>
+        <p>Created by Fylo</p>
+        <p>Most sprites come from <a href="https://gitlab.com/zulban/chesscraft-creative-commons/-/tree/master/pieces">ChessCraft Creative Commons</a></p>
+        <p>Silver and Gold sprites by <a href="https://boardgamegeek.com/user/jureboga">jureboga</a>, adapted from Hidetchi's designs. <a href="https://boardgamegeek.com/filepage/241678/shogi-more-chess-hidetchis-internationalized-piece">Link</a></p>
     </div>
-        <button onclick="board_page()">Board</button>
-        <button onclick="lobby_page()">Lobby</button>
+
+    <button onclick="board_page()">Board</button>
+    <button onclick="lobby_page()">Lobby</button>
     <br /> <br />
 
     <div id="lobby_section">
@@ -170,6 +181,7 @@
             <select id="variantField" name="variantField"></select>
             <input type="file" id="variant_file" style="display: none" accept=".json"/>
             <button onclick="load_variant();">Load</button>
+            <button onclick="download_variant();">Download</button>
             <br /> <br />
         </div>
         <button onclick="document.getElementById('history').value = export_history();">Export History</button>
@@ -202,6 +214,8 @@
             <label for="movable_pieces_cb">Movable pieces</label>
             <input type="checkbox" id="last_moved_cb" checked onchange="refresh_checkboxes()">
             <label for="last_moved_cb">Last moved piece</label>
+            <input type="checkbox" id="highlight_cb" checked onchange="refresh_checkboxes()">
+            <label for="highlight_cb">Show Highlighted Squares</label>
         </div>
         <!-- <button onClick="">End turn</button> -->
         <br /> <br />

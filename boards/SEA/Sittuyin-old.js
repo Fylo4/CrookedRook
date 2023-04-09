@@ -37,7 +37,7 @@ preset_variants[folders.SEA].push({
 		{
             name: "Elephant",
             description: "Moves one step diagonal or forward",
-            sprite: "star5",
+            sprite: "silver",
 			symbol: "E",
 			move: "([F],[S])a",
 		},

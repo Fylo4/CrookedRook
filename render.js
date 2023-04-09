@@ -30,7 +30,7 @@
             if (!on_board(a, b)) { continue; }
             let is_dark = (a + b + style_data.flip_colors) % 2;
             let sq = b * game_data.width + a;
-            if (game_data.highlight.get(sq)) { ctx.fillStyle = is_dark ? style_data.dark_highlight_col : style_data.light_highlight_col; }
+            if (game_data.highlight.get(sq) && style_data.show_highlights) { ctx.fillStyle = is_dark ? style_data.dark_highlight_col : style_data.light_highlight_col; }
             else if (game_data.mud.get(sq)) { ctx.fillStyle = is_dark ? style_data.dark_mud_col : style_data.light_mud_col; }
             else if (game_data.ethereal.get(sq)) { ctx.fillStyle = is_dark ? style_data.dark_ethereal_col : style_data.light_ethereal_col; }
             else if (game_data.pacifist.get(sq)) { ctx.fillStyle = is_dark ? style_data.dark_pacifist_col : style_data.light_pacifist_col; }

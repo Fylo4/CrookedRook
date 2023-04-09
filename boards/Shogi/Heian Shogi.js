@@ -9,7 +9,7 @@ preset_variants[folders.shogi].push({
 		{
 			name: "Pawn",
 			description: "Moves and captures forward one step. Promotes to Gold.",
-            sprite: "peasant",
+            sprite: "kasa_peasant",
             symbol: "p",
             notation: "",
 			move: "[S]a",
@@ -20,7 +20,7 @@ preset_variants[folders.shogi].push({
             description: "Moves up as many spaces as it wants",
             sprite: "spear",
             symbol: "L",
-            move: "[0 1 1 -1]Ba",
+            move: "[L]Ba",
             promotions: [{ white: 0, black: 1, to: ["Lance", "Gold"], on: [events.enter, events.exit, events.between] }]
         },
 		{
@@ -28,23 +28,23 @@ preset_variants[folders.shogi].push({
             description: "Japanese Knight. Jumps forward two spaces and sideways one. Promotes to Gold.",
             sprite: "knight",
 			symbol: "N",
-            move: "([1 2 1 1],[-1 2 1 1])a",
+            move: "[JN]a",
             promotions: [{ white: 0, black: 1, to: ["Knight", "Gold"], on: [events.enter, events.exit, events.between] }]
         },
         {
             name: "Silver",
             description: "Moves one step diagonally or forward. Promotes to Gold.",
-            sprite: "star5",
+            sprite: "silver",
             symbol: "S",
-            move: "([F],[S])a",
+            move: "[Si]a",
             promotions: [{ white: 0, black: 1, to: ["Silver", "Gold"], on: [events.enter, events.exit, events.between] }]
         },
         {
             name: "Gold",
             description: "Moves one step cardinally or forward-diagonal.",
-            sprite: "shield",
+            sprite: "gold",
             symbol: "G",
-            move: "([W],[-1 1 1 1],[1 1 1 1])a"
+            move: "[Go]a"
         },
 		{
             name: "King",
@@ -61,5 +61,6 @@ preset_variants[folders.shogi].push({
         "11111111 11111111 11111111 00000000 00000000 00000000 00000000 00000000",
         "00000000 00000000 00000000 00000000 00000000 11111111 11111111 11111111"
     ],
+    highlight: "11111111 11111111 11111111 00000000 00000000 11111111 11111111 11111111",
     starting_hands: {white: [], black: []}
 });

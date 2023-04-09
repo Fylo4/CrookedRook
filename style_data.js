@@ -51,6 +51,7 @@ let style_data = {
     check_indicator: true,
     movable_pieces: false,
     last_moved: true,
+    show_highlights: true,
   }
 
 function style_toggle() {
@@ -68,6 +69,7 @@ function refresh_checkboxes() {
     style_data.check_indicator = document.getElementById("check_indicator_cb").checked;
     style_data.movable_pieces = document.getElementById("movable_pieces_cb").checked;
     style_data.last_moved = document.getElementById("last_moved_cb").checked;
+    style_data.show_highlights = document.getElementById("highlight_cb").checked;
     render_board();
 }
 

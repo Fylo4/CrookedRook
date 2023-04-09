@@ -1,8 +1,9 @@
 preset_variants[folders.shogi].push({
-    name: "Mini Shogi",
-    description: "Small version of Shogi. Pieces promote on the back rank as they normally do in Shogi.",
-	width: 5,
-	height: 5,
+    name: "Euro Shogi",
+    description: "8x8 version of Shogi.",
+    author: "Vladimír Pribylinec",
+	width: 8,
+	height: 8,
 	has_hand: true,
 	wins: [ends.royal_capture, ends.stalemate],
 
@@ -24,7 +25,7 @@ preset_variants[folders.shogi].push({
             sprite: "rook",
 			symbol: "r",
             move: "[R]Ba",
-            promotions: [{ white: 0, black: 1, to: ["Rook", "+Rook"], on: [events.enter, events.exit, events.between] }],
+            promotions: [{ white: 0, black: 1, to: ["+Rook"], on: [events.enter, events.exit, events.between] }],
         },
         {
             name: "Bishop",
@@ -32,15 +33,16 @@ preset_variants[folders.shogi].push({
             sprite: "bishop",
             symbol: "b",
             move: "[B]Ba",
-            promotions: [{ white: 0, black: 1, to: ["Bishop", "+Bishop"], on: [events.enter, events.exit, events.between] }]
+            promotions: [{ white: 0, black: 1, to: ["+Bishop"], on: [events.enter, events.exit, events.between] }]
         },
-        {
-            name: "Silver",
-            description: "Moves one step diagonally or forward. Promotes to Gold.",
-            sprite: "silver",
-            symbol: "s",
-            move: "[Si]a",
-            promotions: [{ white: 0, black: 1, to: ["Silver", "+Silver"], on: [events.enter, events.exit, events.between] }]
+		{
+            name: "Knight",
+            description: "Japanese Knight, with the added ability to move one step sideways",
+            sprite: "knight",
+			symbol: "n",
+            move: "([JN],[1 0 2 1])a",
+            drop_to_zone: {white: 4, black: 5},
+            promotions: [{ white: 0, black: 1, to: ["+Knight"], on: [events.enter, events.exit, events.between] }]
         },
         {
             name: "Gold",
@@ -61,7 +63,7 @@ preset_variants[folders.shogi].push({
             name: "+Pawn",
             description: "Promoted pawn. Moves as a Gold.",
             sprite: "gold",
-            mini_sprite: "pawn",
+            mini_sprite: "peasant",
             symbol: "P",
             move: "[Go]a",
             attributes: [attrib.transform_on_death],
@@ -86,24 +88,25 @@ preset_variants[folders.shogi].push({
             held_piece: "b"
         },
         {
-            name: "+Silver",
-            description: "Promoted silver. Moves as a Gold.",
+            name: "+Knight",
+            description: "Promoted knight. Moves as a Gold.",
             sprite: "gold",
-            mini_sprite: "silver",
-            symbol: "S",
-            move: "[Si]a",
+            mini_sprite: "knight",
+            symbol: "N",
+            move: "[Go]a",
             attributes: [attrib.transform_on_death],
-            held_piece: "s"
-        }
+            held_piece: "n"
+        },
 	],
-    setup: "br bb bs bG bK 4. bp",
+    setup: ". bn bb bG bK bG bn 2. br 4. bb . 8bp",
     copy: "rotate",
     zones: [
-        "11111 00000 00000 00000 00000",
-        "00000 00000 00000 00000 11111",
-        "00000 11111 11111 11111 11111",
-        "11111 11111 11111 11111 00000",
+        "11111111 11111111 11111111 00000000 00000000 00000000 00000000 00000000",
+        "00000000 00000000 00000000 00000000 00000000 11111111 11111111 11111111",
+        "00000000 11111111 11111111 11111111 11111111 11111111 11111111 11111111",
+        "11111111 11111111 11111111 11111111 11111111 11111111 11111111 00000000",
+        "00000000 00000000 11111111 11111111 11111111 11111111 11111111 11111111",
+        "11111111 11111111 11111111 11111111 11111111 11111111 00000000 00000000"
     ],
-    highlight: "11111 00000 00000 00000 11111",
-    starting_hands: {white: [], black: []}
+    highlight: "11111111 11111111 11111111 00000000 00000000 11111111 11111111 11111111"
 });

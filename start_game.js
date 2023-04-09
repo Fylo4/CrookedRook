@@ -636,6 +636,29 @@ function read_number(string, pos) {
     return { num: isNegative ? -num : num, pos: pos };
 }
 
+function remove_nested_parenthases(string, open_char="(", close_char=")") {
+    let parenth_layers = 0;
+    let ret = "";
+    for (let a = 0; a < string.length; a ++) {
+        if (string[a] === open_char) {
+            parenth_layers ++;
+            if (parenth_layers === 1) {
+                ret += open_char;
+            }
+        }
+        else if (string[a] === close_char) {
+            parenth_layers --;
+            if(parenth_layers === 0) {
+                ret += close_char;
+            }
+        }
+        else {
+            ret += string[a];
+        }
+    }
+    return ret;
+}
+
 function generate_move_ss(string_orig) {
     let string = string_orig;
     //Replace all letters with the correct numbers
@@ -654,7 +677,9 @@ function generate_move_ss(string_orig) {
         { a: "[B]", b: "[1 1 4 -1]"},
         { a: "[R]", b: "[1 0 4 -1]"},
         { a: "[Q]", b: "[1 1 8 -1]"},
-        { a: "[P]", b: "([1 1 1 1],[-1 1 1 1])"}, //Pawn
+        { a: "[L]", b: "[0 1 1 -1]"}, //Lance
+        { a: "[JN]", b: "([1 2 1 1],[-1 2 1 1])"}, //Japanese Knight
+        { a: "[P]", b: "([1 1 1 1],[-1 1 1 1])"}, //Pawn attack
         { a: "[S]", b: "[0 1 1 1]"}, //Step
         { a: "[Gr]", b: "([1 1 1 -1],[-1 1 1 -1])"}, //Griffin
         { a: "[So]", b: "([0 1 1 1],[1 0 2 1])"}, //Soldier
@@ -664,6 +689,7 @@ function generate_move_ss(string_orig) {
     for(let i = 0; i < replace_strings.length; i ++) {
         string = string.replaceAll(replace_strings[i].a, replace_strings[i].b)
     }
+    string = remove_nested_parenthases(string);
 
     let ret = [];
     if (string === "U") {
