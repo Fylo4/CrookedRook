@@ -1,6 +1,5 @@
 preset_variants[folders.chess].push({
     name: "Chess",
-    author: "Around 1475 in Valencia, Spain",
     description: "Classic Chess, with some slight differences. Some endgame rules (50 move, repetition, etc) aren't implemented. Check/checkmate isn't enforced, you win by capturing the king. Since check isn't detected, you can castle from, through, and into check.",
 	width: 8,
 	height: 8,

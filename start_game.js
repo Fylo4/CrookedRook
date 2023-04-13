@@ -1,11 +1,13 @@
 let last_loaded_board;
-function start_game(json_data, seed) {
+let loaded_from_file = false;
+function start_game(json_data, seed, from_file) {
     if(seed === undefined) {
         seed = cyrb128(time_as_string())[0];
     }
     let rand = mulberry32(seed);
     game_data = JSON.parse(JSON.stringify(json_data));
     last_loaded_board = JSON.parse(JSON.stringify(json_data));
+    loaded_from_file = !!from_file;
     game_data.seed = seed;
     if (game_data.name === undefined) { show_error("Variant must have a name"); return; }
     if (game_data.description === undefined) { game_data.description = ""; }

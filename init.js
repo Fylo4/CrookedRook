@@ -12,6 +12,7 @@ function on_board(x, y) {
 function fix_canvas_height() {
     let ratio = (game_data.height + (game_data.has_hand ? 2 : 0)) / game_data.width;
     canvas.height = canvas.width * ratio;
+    document.getElementById("history_div").style.height = (canvas.height-8)+"px";
 }
 
 function change_zoom(amount) {
@@ -69,7 +70,8 @@ function print_all_boards() {
 function update_all_boards() {
     for(let a = 0; a < preset_variants.length; a++) {
         for(let b = 0; b < preset_variants[a].length; b++) {
-            firebase.database().ref("boards").child(preset_variants[a][b].name).update(preset_variants[a][b]);
+            preset_variants[a][b].code = preset_variants[a][b].name.toLowerCase();
+            firebase.database().ref("boards").child(preset_variants[a][b].name.toLowerCase()).update(preset_variants[a][b]);
         }
     }
 }
@@ -154,17 +156,53 @@ function download_board(folder, index) {
     download_json(preset_variants[folder][index]);
 }
 
+function handle_export_btn() {
+    //document.getElementById('history').value = export_history();
+    let hist = export_history();
+    navigator.clipboard.writeText(hist);
+    alert("History copied to clipboard:\n"+hist);
+}
+function handle_import_btn() {
+    let hist = prompt('Paste the exported history here:');
+    view_move = 0;
+    import_history_firebase(hist);
+    render_board();
+}
+let is_editing_name = false;
+function handle_name_btn() {
+    let name_input = document.getElementById("name_input");
+    let name_p = document.getElementById("name_p");
+    let name_btn = document.getElementById("name_btn");
+    if (is_editing_name) {
+        set_name();
+        name_input.style.display = "none";
+        name_p.style.display = "inline";
+        name_btn.innerHTML = "✏️";
+    }
+    else {
+        name_input.style.display = "inline";
+        name_input.value = name_p.innerHTML;
+        name_p.style.display = "none";
+        name_btn.innerHTML = "✔️";
+    }
+    is_editing_name ^= 1;
+}
+
+function handle_upload_btn() {
+    upload_board();
+}
+
 function add_files_to_dropdown() {
     let variant_dropdown = document.getElementById("variantField");
-    let variant_file = document.getElementById("variant_file");
+    let variant_file_label = document.getElementById("variant_file_label");
     let category = document.getElementById("categoryField");
     let cat_num = Number(category.value);
     if(cat_num < 0) {
-        variant_file.style.display="inline";
+        variant_file_label.style.display="inline";
         variant_dropdown.style.display="none";
     }
     else {
-        variant_file.style.display="none";
+        variant_file_label.style.display="none";
         variant_dropdown.style.display="inline";
         variant_dropdown.innerHTML = "";
         for (let a = 0; a < preset_variants[cat_num].length; a++) {
@@ -192,7 +230,7 @@ function load_variant() {
             reader.readAsText(file, "UTF-8");
             reader.onload = function (evt) {
                 try {
-                    start_game(JSON.parse(evt.target.result))
+                    start_game(JSON.parse(evt.target.result), undefined, true)
                 }
                 catch (error){
                     show_error(error.message)
@@ -409,10 +447,14 @@ function handle_mouse_leave() {
 function board_page() {
     document.getElementById("board_section").style.display = "block";
     document.getElementById("lobby_section").style.display = "none";
+    document.getElementById("board_page_button").style.display = "none";
+    document.getElementById("lobby_page_button").style.display = "block";
 }
 function lobby_page() {
     document.getElementById("board_section").style.display = "none";
     document.getElementById("lobby_section").style.display = "block";
+    document.getElementById("board_page_button").style.display = "block";
+    document.getElementById("lobby_page_button").style.display = "none";
 }
 
 function handle_mouse_move(e) {
@@ -517,6 +559,13 @@ function page_init() {
     canvas = document.getElementById("board_canvas");
     add_files_to_dropdown();
     load_board_textures();
+    document.getElementById("upload_name").value="";
+
+    document.getElementById("variant_file").addEventListener('change', e => {
+        let fileName = '';
+        fileName = String(e.target.value).slice(12);
+        document.getElementById("file-selected").innerHTML=fileName;
+    })
 
     canvas.addEventListener('mousemove', e => {
         handle_mouse_move(e);
@@ -545,18 +594,10 @@ function page_init() {
             case 39:
                 right_arrow_click();
                 break;
-            //Up and down scroll - best to only have left and right
-            /*case 38:
-                up_arrow_click();
-                break;
-            case 40:
-                down_arrow_click();
-                break;*/
-            case 67: //c for circle
-                add_circle();
         }
     };
     board_page();
+    start_game(preset_variants[folders.chess][0]);
     refresh_checkboxes();
     reload_style_inputs();
 }

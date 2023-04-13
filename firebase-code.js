@@ -30,7 +30,7 @@ function show_error(message) {
     new_p.id = "message_"+message_count;
     message_count ++;
     new_p.style.background = "red";
-    new_p.innerHTML = DOMPurify.sanitize(`<button onclick="remove_p('${new_p.id}')">x</button> ${message}`);
+    new_p.innerHTML = `<button onclick="remove_p('${new_p.id}')">x</button> ${DOMPurify.sanitize(message)}`;
     document.getElementById("message_div").appendChild(new_p);
 }
 function show_message (message) {
@@ -38,12 +38,13 @@ function show_message (message) {
     let new_p = document.createElement("p");
     new_p.id = "message_"+message_count;
     message_count ++;
-    new_p.innerHTML = DOMPurify.sanitize(`<button onclick="remove_p('${new_p.id}')">x</button> ${message}`);
+    new_p.innerHTML = `<button onclick="remove_p('${new_p.id}')">x</button> ${DOMPurify.sanitize(message)}`;
     document.getElementById("message_div").appendChild(new_p);
 }
 
 let all_boards_ref = firebase.database().ref(`boards`);
 function set_board(board_name, seed) {
+    board_name = board_name.toLowerCase();
     if(seed === undefined) {
         seed = cyrb128(time_as_string())[0];
     }
@@ -145,6 +146,48 @@ function close_match() {
     //Todo: Don't have permission to set this
     my_match_ref.remove();
     switch_to_single_player();
+}
+
+function upload_board() {
+    let code = document.getElementById("upload_name").value;
+    //Must only contain lowercase letters, numbers, or space
+    let valid_chars = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ' '];
+    for (let a = 0; a < code.length; a ++) {
+        if (!valid_chars.includes(code[a])) {
+            show_error("Board code must only contain lowercase letters, numbers, or space");
+            return;
+        }
+    }
+
+    //Can't start or end with space
+    if (code[0] === " " || code[code.length-1] === " ") {
+        show_error("Board code can't begin or end with space");
+        return;
+    }
+
+    //Can't contain double spaces
+    if (code.includes("  ")) {
+        show_error("Board code can't include 2 consecutive spaces");
+        return;
+    }
+
+    //Try to upload
+    try {
+        all_boards_ref.child(code).child("name").once("value", (snapshot) => {
+            if (snapshot.val()) {
+                show_error("Board code already exists");
+                return;
+            }
+            else {
+                last_loaded_board.code = code;
+                all_boards_ref.child(code).update(last_loaded_board);
+                show_message("Upload successful");
+            }
+        });
+    }
+    catch (error) {
+        show_error(error);
+    }
 }
 
 function switch_to_single_player() {
@@ -362,7 +405,7 @@ function add_lobby() {
         show_error("Trying to add a lobby while you are in a game");
         return;
     }
-    let board_name = document.getElementById("board_name").value;
+    let board_name = document.getElementById("board_name").value.toLowerCase();
     document.getElementById("board_name").value = "";
     let owner_col = document.getElementById("color_sel").value;
     //Check if this board exists
@@ -409,13 +452,13 @@ all_lobbies_ref.on("value", (snapshot) => {
             row_v.owner_col === 'r' ? "Random" :
             row_v.owner_col === 'w' ? "White" :
             row_v.owner_col === 'b' ? "Black" : "Error";
-        table.innerHTML += DOMPurify.sanitize(`
+        table.innerHTML += `
         <tr>
-            <td>${row_v.board_name}</td>
-            <td>${row_v.owner_name}</td>
-            <td>${col}</td>
-            <td><button onclick="join_game('${row}')">Join</button></td>
-        </tr>`);
+            <td>${DOMPurify.sanitize(row_v.board_name)}</td>
+            <td>${DOMPurify.sanitize(row_v.owner_name)}</td>
+            <td>${DOMPurify.sanitize(col)}</td>
+            <td><button onclick="join_game('${DOMPurify.sanitize(row)}')">Join</button></td>
+        </tr>`;
     }
 });
 
@@ -433,7 +476,7 @@ firebase.auth().onAuthStateChanged((user) => {
             else {
                 show_db_get("Getting my user info", this_user);
                 let name_p = document.getElementById("name_p");
-                name_p.innerHTML = DOMPurify.sanitize("Name: "+this_user.name);
+                name_p.innerHTML = DOMPurify.sanitize(this_user.name);
             }
         });
         

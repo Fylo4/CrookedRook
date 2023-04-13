@@ -468,6 +468,14 @@ function render_extras() {
         document.getElementById("choose_section").style.display = "block";
         document.getElementById("resign_btn").style.display = "none";
     }
+
+    //Upload button
+    if (loaded_from_file) {
+        document.getElementById("upload_div").style.display = "block";
+    }
+    else {
+        document.getElementById("upload_div").style.display = "none";
+    }
 }
 function print_history() {
     let total = "";
