@@ -165,7 +165,12 @@ function handle_export_btn() {
 function handle_import_btn() {
     let hist = prompt('Paste the exported history here:');
     view_move = 0;
-    import_history_firebase(hist);
+    if (!hist) {
+        show_error("Imported history was blank");
+    } 
+    else {
+        import_history_firebase(hist);
+    }
     render_board();
 }
 let is_editing_name = false;

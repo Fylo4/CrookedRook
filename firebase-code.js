@@ -86,7 +86,7 @@ let my_prop;
 
 function import_history_firebase(history) {
     let name_and_seed = history.substring(0, history.indexOf("[")).split(",");
-    all_boards_ref.child(name_and_seed[0]).once("value", (snapshot) => {
+    all_boards_ref.child(name_and_seed[0].toLowerCase()).once("value", (snapshot) => {
         start_game(snapshot.val(), Number(name_and_seed[1]));
         import_history(history.substring(history.indexOf("[")));
     });
