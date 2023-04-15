@@ -14,6 +14,9 @@ function refresh_moves() {
             let step = game_data.all_pieces[a].move[step_num];
             let treat_as_col = board.black_ss.get(sq) && (board.turn || !board.white_ss.get(sq));
             for (let c = 0; c < step.length; c++) {
+                if (step[c].length === 0) {
+                    continue;
+                }
                 let add = parse_term(step[c], 0, sq, a, treat_as_col);
                 if (step[c][0].type === "sub") {
                     board.can_move_ss[sq].ande(add.inverse());
@@ -89,6 +92,9 @@ function find_attackers() {
             let treat_as_col = board.black_ss.get(sq) && (board.turn || !board.white_ss.get(sq));
             let my_attack = new squareset(game_data.width * game_data.height);
             for (let c = 0; c < step.length; c++) {
+                if (step[c].length === 0) {
+                    continue;
+                }
                 let add = parse_term(step[c], 0, sq, a, treat_as_col, undefined, true);
                 if (step[c][0].type === "sub") {
                     my_attack.ande(add.inverse());

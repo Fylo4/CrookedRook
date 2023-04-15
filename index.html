@@ -99,7 +99,7 @@
     <div style="width: 100%; overflow:auto;">
         <div style="width: max-content; float: left;">
             <p id="title">The Crooked Rook</p>
-            <p><a href="https://discord.gg/NJNXUXqyvr">Discord</a> | <a href="https://drive.google.com/drive/folders/1yB_Elymo0vY33n6xQHWzukDGGkANqPQl">Documentation</a> | <a href="#" onclick="toggle_credits()">Credits</a> | Pre-Release 0.7.2</p>
+            <p><a href="https://discord.gg/NJNXUXqyvr">Discord</a> | <a href="https://drive.google.com/drive/folders/1yB_Elymo0vY33n6xQHWzukDGGkANqPQl">Documentation</a> | <a href="#" onclick="toggle_credits()">Credits</a> | Pre-Release 0.7.3</p>
             <br />
             <button id="board_page_button" onclick="board_page()" style="display: none;">Board</button>
             <button id="lobby_page_button" onclick="lobby_page()">Lobby</button>
@@ -186,6 +186,7 @@
             <button onClick="change_zoom(-1); render_board();" class="sq_btn">-</button>
             <button onClick="style_data.flip_board ^= 1; render_board()">Flip</button>
             <button onClick="style_data.name_squares ^= 1; render_board()">Square Names</button>
+            <button href="#" id="download_btn" onClick="handle_download_btn()" download="image.png">📷</button>
             <br /> <br />
             <button onClick="clear_lines_circles();">Clear Lines / Circles</button>
             <button onClick="line_col='red'"><div class='box red'></div></button>
@@ -215,7 +216,7 @@
                 <!--Board-->
                 <canvas id="board_canvas" width="400" height="0" oncontextmenu="return false;"></canvas>
                 <!--Move history-->
-                <div id="history_div">
+                <div id="history_div" style="height:50px;">
                     <button onclick="up_arrow_click();" class="arrow_btn">&uarr;</button>
                     <button onclick="left_arrow_click();" class="arrow_btn">&larr;</button>
                     <button onclick="right_arrow_click();" class="arrow_btn">&rarr;</button>

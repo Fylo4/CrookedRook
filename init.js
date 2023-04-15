@@ -10,9 +10,13 @@ function on_board(x, y) {
 }
 
 function fix_canvas_height() {
+    //Find and set canvas height
     let ratio = (game_data.height + (game_data.has_hand ? 2 : 0)) / game_data.width;
     canvas.height = canvas.width * ratio;
-    document.getElementById("history_div").style.height = (canvas.height-8)+"px";
+    //Set history height
+    let history = document.getElementById("history_div");
+    let h = Number(history.style.height.substring(0, history.style.height.length-2));
+    history.style.height = (canvas.offsetHeight-history.offsetHeight+h)+"px";
 }
 
 function change_zoom(amount) {
@@ -111,6 +115,15 @@ function stringify_consts(json) {
         }
     }
     return ret;
+}
+
+function handle_download_btn(){
+    let canvas = document.getElementById("board_canvas");
+    let link = document.createElement('a');
+    link.download = 'TCR_Board.png';
+    link.href = canvas.toDataURL();
+    link.click();
+    link.delete;
 }
 
 function toggle_credits() {
@@ -347,7 +360,7 @@ function handle_mouse_click() {
         }
     }
     else if (temp_data.selected) {
-        if (game_data.active_squares.get(mouse_sq)) {
+        //if (game_data.active_squares.get(mouse_sq)) {
             if (brd.can_move_ss[temp_data.selected_position].get(mouse_sq)) {
                 //See how many promotions are possible
                 let src = temp_data.selected_position, dst = mouse_sq;
@@ -382,7 +395,7 @@ function handle_mouse_click() {
             else {
                 temp_data.selected = false;
             }
-        }
+        //}
     }
     else if (temp_data.hand_selected) {
         if (mouse_sq >= 0 && mouse_sq < game_data.width * game_data.height) {
@@ -464,10 +477,12 @@ function lobby_page() {
 
 function handle_mouse_move(e) {
     let rect = e.currentTarget.getBoundingClientRect();
-    mouse_pos.x = e.clientX - rect.left;
-    mouse_pos.y = e.clientY - rect.top;
+    let x_offset = canvas.clientWidth - canvas.offsetWidth;
+    let y_offset = canvas.clientHeight - canvas.offsetHeight;
+    mouse_pos.x = e.clientX - rect.left + x_offset/2;
+    mouse_pos.y = e.clientY - rect.top + y_offset/2;
     if (game_data.width != undefined) {
-        mouse_sq_pos.x = Math.floor(mouse_pos.x * game_data.width / canvas.width);
+        mouse_sq_pos.x = Math.min(Math.floor(mouse_pos.x * game_data.width / canvas.width), game_data.width-1);
         mouse_sq_pos.y = Math.floor(mouse_pos.y * (game_data.height + game_data.has_hand * 2) / canvas.height) - game_data.has_hand;
         if (style_data.flip_board) {
             mouse_sq_pos.x = game_data.width - mouse_sq_pos.x - 1;
@@ -506,25 +521,30 @@ function up_arrow_click() {
     render_extras();
 }
 function add_circle(circle) {
-    if (circle.sq != undefined && circle.sq > -1) {
-        let index = circles.findIndex(e => e.sq === circle.sq);
-        if (index != -1) {
-            if (circles[index].col === line_col) {
-                circles.splice(index, 1);
-            }
-            else {
-                circles.splice(index, 1);
-                circles.push(circle);
-            }
+    if (circle.sq === undefined || circle.sq < 0) {
+        return;
+    }
+    let index = circles.findIndex(e => e.sq === circle.sq);
+    if (index != -1) {
+        if (circles[index].col === line_col) {
+            circles.splice(index, 1);
         }
         else {
+            circles.splice(index, 1);
             circles.push(circle);
         }
+    }
+    else {
+        circles.push(circle);
     }
     render_board();
 }
 //Line is an object like {sq1: number, sq2: number}
 function add_line(line) {
+    let max = game_data.width * game_data.height;
+    if(line === undefined || line.sq1 < 0 || line.sq1 >=  max || line.sq2 < 0 || line.sq2 >= max) {
+        return;
+    }
     let index = lines.findIndex(e => (e.sq1 === line.sq1 && e.sq2 === line.sq2));
     if (index > -1) {
         if (lines[index].col === line_col) {

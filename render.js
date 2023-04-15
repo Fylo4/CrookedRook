@@ -185,7 +185,7 @@
         }
         draw_tcr_arrow(x1, y1, x2, y2, lines[a].col);
     }
-    if (down_sq != -1) {
+    if (down_sq >= 0 && down_sq < game_data.width * game_data.height) {
         let x = ((down_sq % game_data.width)+ 0.5) * width_px;
         let y = (Math.floor(down_sq / game_data.width) + 0.5) * height_px;
         if (game_data.has_hand) {
@@ -266,7 +266,7 @@
             let highlight = square_x + square_y * game_data.width;
             let color = (brd.black_ss.get(highlight) && brd.white_ss.get(highlight)) ? brd.turn : board.black_ss.get(highlight);
             if (can_move(color, brd) && highlight >= 0 &&
-                highlight < game_data.width * game_data.height && on_board(square_x, square_y)) {
+                highlight < game_data.width * game_data.height) {
                 let type = 'img_sq_canmove_turn';
                 if ((!brd.turn && brd.white_ss.get(highlight)) || (brd.turn && brd.black_ss.get(highlight))) {
                     type = 'img_sq_canmove';
