@@ -1,6 +1,5 @@
 preset_variants[folders.chess].push({
   name: "Horde Chess",
-  author: "Unknown",
   description: "An unequal Chess variant. White has several pawns.",
   width: 8,
   height: 8,

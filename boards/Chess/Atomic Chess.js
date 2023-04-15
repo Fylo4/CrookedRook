@@ -1,6 +1,5 @@
 preset_variants[folders.chess].push({
   name: "Atomic Chess",
-  author: "Unknown",
   description: "Chess, but every capture is an explosion. Pawns are immune to the explosions.",
   width: 8,
   height: 8,

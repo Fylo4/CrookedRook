@@ -1,6 +1,6 @@
 preset_variants[folders.other].push({
     name: "Dragonfly",
-    author: "Christian Freeling (1983)",
+    author: "Christian Freeling",
     description: "Captured pieces go to your hand. You can promote to a piece in your opponent's hand, removing it from their hand. You cannot move a pawn to the last rank if your opponent has no held pieces. Pawns are destroyed.",
 	width: 7,
 	height: 7,

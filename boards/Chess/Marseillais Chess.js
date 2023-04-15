@@ -1,6 +1,5 @@
 preset_variants[folders.chess].push({
   name: "Marseillais Chess",
-  author: "Unknown",
   description: "Double Move Chess",
   width: 8,
   height: 8,

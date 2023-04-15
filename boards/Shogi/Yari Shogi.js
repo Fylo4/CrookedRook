@@ -1,7 +1,7 @@
 preset_variants[folders.shogi].push({
     name: "Yari Shogi",
     description: "",
-    author: "Christian Freeling (1981)",
+    author: "Christian Freeling",
 	width: 7,
 	height: 9,
 	has_hand: true,

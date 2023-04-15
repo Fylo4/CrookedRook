@@ -1,6 +1,5 @@
 preset_variants[folders.chess].push({
   name: "King of the Hill",
-  author: "Unknown",
   description: "Chess but you can win by putting your King into the center",
   width: 8,
   height: 8,

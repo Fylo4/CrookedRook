@@ -1,6 +1,5 @@
 preset_variants[folders.chess].push({
   name: "Pocket Knight Chess",
-  author: "Unknown",
   description: "Chess but you have a Knight you can put anywhere anytime",
   width: 8,
   height: 8,

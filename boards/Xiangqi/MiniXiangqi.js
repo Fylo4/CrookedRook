@@ -1,6 +1,6 @@
 preset_variants[folders.xiangqi].push({
     name: "MiniXiangqi",
-    author: "S. Kusumoto (1973)",
+    author: "S. Kusumoto",
     description: "7x7 version of Chinese Chess",
 	width: 7,
 	height: 7,

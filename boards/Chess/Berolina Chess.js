@@ -1,6 +1,5 @@
 preset_variants[folders.chess].push({
   name: "Berolina Chess",
-  author: "Unknown",
   description: "Classic Chess but with opposite pawns",
   width: 8,
   height: 8,

@@ -1,6 +1,5 @@
 preset_variants[folders.chess].push({
   name: "Los Alamos",
-  author: "Unknown",
   description: "A 6x6 Chess variant with no Bishops. 1st Chess variant to be played by computers.",
   width: 6,
   height: 6,
