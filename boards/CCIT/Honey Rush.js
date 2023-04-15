@@ -12,7 +12,7 @@ preset_variants[folders.ccit].push({
             sprite: "bishop",
             symbol: "B",
             notation: "BS",
-            move: "[B]ba+[S]ae",
+            move: "[B]Ba+[S]ae",
         },
         {
             name: "Bomber",
