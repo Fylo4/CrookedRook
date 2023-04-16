@@ -365,7 +365,7 @@ function draw_sprite(sprite, x, y, width, height, color, angle = 0) {
         ctx.rotate(angle * Math.PI / 180);
 
         if (!color || color === 'rgb(255,255,255)') {
-            ctx.drawImage(sprite, 0, 0, width, height, -width/2, -height/2, width, height);
+            ctx.drawImage(sprite, -width/2, -height/2, width, height);
         }
         else {
             let c2 = document.getElementById("blend_canvas");
