@@ -17,7 +17,7 @@ preset_variants[folders.ccit].push({
 		{
             name: "Basilisk",
             description: "Acts cardinally up to 5 spaces away",
-            sprite: "trocular",
+            sprite: "warden",
 			symbol: "B",
 			move: "[0 1 4 5]Ba"
 		},

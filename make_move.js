@@ -507,6 +507,11 @@ function find_victory() {
             break;
         }
     }
+    if (game_data.has_hand) {
+        has_possible_moves.white |= board.can_drop.white;
+        has_possible_moves.black |= board.can_drop.black;
+    }
+    console.log(has_possible_moves);
     if (game_data.wins.includes(ends.stalemate) || game_data.draws.includes(ends.stalemate)) {
         if (!board.turn && !has_possible_moves.white) {
             if (game_data.draws.includes(ends.stalemate)) {

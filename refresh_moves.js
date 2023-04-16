@@ -6,6 +6,53 @@ function refresh_moves() {
     if (board.victory != -1) {
         return; //Nothing can move if you already won
     }
+    //Find what pieces are immobilized
+    let non_attackers = ss_and(game_data.pacifist, ss_or(board.white_ss, board.black_ss));
+    let non_movers = new squareset(game_data.width * game_data.height);
+    for (let a = 0; a < game_data.all_pieces.length; a ++) {
+        let p = game_data.all_pieces[a];
+        if (p.attributes.includes(attrib.glue_curse) || p.attributes.includes(attrib.peace_curse)) {
+            for (let piece_ss = new squareset(board.piece_ss[a]); !piece_ss.is_zero(); piece_ss.pop()) {
+                let sq = piece_ss.get_ls1b();
+                let treat_as_col = !board.white_ss.get(sq) || (board.turn && board.black_ss.get(sq));
+                let my_pieces = treat_as_col ? board.black_ss : board.white_ss;
+                let opp_pieces = treat_as_col ? board.white_ss : board.black_ss;
+                let hm = game_data.move_ss[p.held_move][sq][treat_as_col ? 4 : 0];
+                if (p.attributes.includes(attrib.glue_curse)) {
+                    non_movers.ore(ss_and(opp_pieces, hm));
+                    if (p.attributes.includes(attrib.curse_allies)) {
+                        non_movers.ore(ss_and(my_pieces, hm));
+                    }
+                }
+                if (p.attributes.includes(attrib.peace_curse)) {
+                    non_attackers.ore(ss_and(opp_pieces, hm));
+                    if (p.attributes.includes(attrib.curse_allies)) {
+                        non_attackers.ore(ss_and(my_pieces, hm));
+                    }
+                }
+            }
+        }
+    }
+    //Find which pieces are iron
+    let iron = new squareset(board.iron_ss);
+    for (let a = 0; a < game_data.all_pieces.length; a ++) {
+        let p = game_data.all_pieces[a];
+        if (p.attributes.includes(attrib.iron_bless)) {
+            for (let piece_ss = new squareset(board.piece_ss[a]); !piece_ss.is_zero(); piece_ss.pop()) {
+                let sq = piece_ss.get_ls1b();
+                let treat_as_col = !board.white_ss.get(sq) || (board.turn && board.black_ss.get(sq));
+                let my_pieces = treat_as_col ? board.black_ss : board.white_ss;
+                let opp_pieces = treat_as_col ? board.white_ss : board.black_ss;
+                let hm = game_data.move_ss[p.held_move][sq][treat_as_col ? 4 : 0];
+                iron.ore(ss_and(my_pieces, hm));
+                if (p.attributes.includes(attrib.bless_enemies)) {
+                    iron.ore(ss_and(opp_pieces, hm));
+                }
+            }
+        }
+    }
+    iron.ore(ss_and(game_data.sanctuary, ss_or(board.white_ss, board.black_ss)));
+    //Other metals will probably go here
 	//Find the move board for each piece
     for (let a = 0; a < game_data.all_pieces.length; a ++){
         for (let b = new squareset(board.piece_ss[a]); !b.is_zero(); b.pop()){
@@ -25,14 +72,16 @@ function refresh_moves() {
                     board.can_move_ss[sq].ore(add);
                 }
             }
-            //Cannot land on occupied sanctuaries
-            board.can_move_ss[sq].ande(ss_and(game_data.sanctuary, ss_or(board.white_ss, board.black_ss)).inverse());
-            //Cannot land on enemy if on pacifist
-            if (game_data.pacifist.get(sq)) {
+            //Cannot land on enemy if non-attacker
+            if (non_attackers.get(sq)) {
                 board.can_move_ss[sq].ande(treat_as_col ? board.white_ss.inverse() : board.black_ss.inverse());
             }
+            //Cannot land on blank if non-mover
+            if (non_movers.get(sq)) {
+                board.can_move_ss[sq].ande(ss_or(board.black_ss, board.white_ss));
+            }
             //Cannot land on iron enemies
-            board.can_move_ss[sq].ande(ss_and(board.iron_ss, treat_as_col ? board.white_ss : board.black_ss).inverse());
+            board.can_move_ss[sq].ande(ss_and(iron, treat_as_col ? board.white_ss : board.black_ss).inverse());
             //Berzerk
             if (game_data.all_pieces[a].attributes.includes(attrib.berzerk)) {
                 let treat_as_col = board.black_ss.get(sq) && (!board.white_ss.get(sq) || board.turn);
@@ -47,7 +96,7 @@ function refresh_moves() {
             }
 		}
     }
-    find_attackers();
+    find_attackers(non_attackers);
     //Attributes that require attack squares to be calculated
     for (let a = 0; a < game_data.all_pieces.length; a ++){
         //Child
@@ -71,7 +120,8 @@ function refresh_moves() {
     }
     reload_can_drop_piece_to();
 }
-function find_attackers() {
+//Currently attackers doesn't consider iron - should this change?
+function find_attackers(non_attackers) {
 	//Clear all attackers
 	board.white_attack_ss.zero();
     board.black_attack_ss.zero();
@@ -83,8 +133,8 @@ function find_attackers() {
         }
         for (let b = new squareset(board.piece_ss[a]); !b.is_zero(); b.pop()){
             let sq = b.get_ls1b();
-            //Don't add attack if on pacifist
-            if (game_data.pacifist.get(sq)) {
+            //Don't add attack if we're on a non-attack space
+            if (non_attackers.get(sq)) {
                 continue;
             }
             let step_num = 0;

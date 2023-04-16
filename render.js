@@ -113,18 +113,19 @@
 
     //Draw the pieces
     for (let a = 0; a < game_data.all_pieces.length; a++) {
-        let img = document.getElementById("img_" + game_data.all_pieces[a].sprite);
+        let p = game_data.all_pieces[a];
+        let img = document.getElementById("img_" + p.sprite);
         let neutral_pieces = ss_and(brd.white_ss, brd.black_ss, brd.piece_ss[a]);
         let white_pieces = ss_and(brd.white_ss, brd.black_ss.inverse(), brd.piece_ss[a]);
         let black_pieces = ss_and(brd.white_ss.inverse(), brd.black_ss, brd.piece_ss[a]);
-        draw_ss(white_pieces, img, style_data.white_col);
-        draw_ss(black_pieces, img, style_data.black_col);
-        draw_ss(neutral_pieces, img, style_data.neutral_col);
-        if(game_data.all_pieces[a].mini_sprite != undefined) {
-            img = document.getElementById("img_" + game_data.all_pieces[a].mini_sprite);
-            draw_ss(white_pieces, img, style_data.white_col, true);
-            draw_ss(black_pieces, img, style_data.black_col, true);
-            draw_ss(neutral_pieces, img, style_data.neutral_col, true);
+        draw_ss(white_pieces, img, style_data.white_col, false, p.angle);
+        draw_ss(black_pieces, img, style_data.black_col, false, p.angle);
+        draw_ss(neutral_pieces, img, style_data.neutral_col, false, p.angle);
+        if(p.mini_sprite != undefined) {
+            img = document.getElementById("img_" + p.mini_sprite);
+            draw_ss(white_pieces, img, style_data.white_col, true, p.angle);
+            draw_ss(black_pieces, img, style_data.black_col, true, p.angle);
+            draw_ss(neutral_pieces, img, style_data.neutral_col, true, p.angle);
         }
     }
     //Circles and Lines
@@ -356,12 +357,15 @@ function highlighted_hand_piece(brd) {
     return {piece: hover_piece, color: hover_side};
 }
 
-function draw_sprite(sprite, x, y, width, height, color) {
-    try {
+function draw_sprite(sprite, x, y, width, height, color, angle = 0) {
+    //try {
         let c = document.getElementById("board_canvas");
         let ctx = c.getContext("2d");
+        ctx.translate(x + width / 2, y + height / 2);
+        ctx.rotate(angle * Math.PI / 180);
+
         if (!color || color === 'rgb(255,255,255)') {
-            ctx.drawImage(sprite, x, y, width, height);
+            ctx.drawImage(sprite, 0, 0, width, height, -width/2, -height/2, width, height);
         }
         else {
             let c2 = document.getElementById("blend_canvas");
@@ -374,13 +378,16 @@ function draw_sprite(sprite, x, y, width, height, color) {
             ctx2.globalCompositeOperation = "destination-in";
             ctx2.drawImage(sprite, 0, 0, width, height);
             ctx2.globalCompositeOperation = "source-over";
-            ctx.drawImage(c2, 0, 0, width, height, x, y, width, height);
+            ctx.drawImage(c2, 0, 0, width, height, -width/2, -height/2, width, height);
         }
-    }
-    catch (e) {
-        //Do nothing, this is fine
-        console.log("Sprite rendering failed");
-    }
+
+        ctx.rotate(-angle * Math.PI / 180);
+        ctx.translate(-x - width / 2, -y - height / 2);
+    // }
+    // catch (e) {
+    //     //Do nothing, this is fine
+    //     console.log(`Sprite rendering failed. Sprite: ${sprite}, x: ${x}, y: ${y}, width: ${width}, height: ${height}, color: ${color}`);
+    // }
 }
 
 function render_extras() {
@@ -549,7 +556,7 @@ function draw_text_on_hand(txt, x, is_black) {
     ctx.fillText(txt, pos_x + 4, pos_y + 12);
 }
 
-function draw_ss(ss, img, col, is_mini = false) {
+function draw_ss(ss, img, col, is_mini = false, angle = 0) {
     let width_px = canvas.width / game_data.width;
     let height_px = canvas.height / (game_data.height + (game_data.has_hand ? 2 : 0));
     for (let a = 0; a < Math.min(ss.length, game_data.width * game_data.height); a++) {
@@ -562,7 +569,7 @@ function draw_ss(ss, img, col, is_mini = false) {
             }
             let width = is_mini ? width_px * 0.4 : width_px;
             let height = is_mini ? height_px * 0.4 : height_px;
-            draw_sprite(img, pos_x, pos_y, width, height, col);
+            draw_sprite(img, pos_x, pos_y, width, height, col, angle);
         }
     }
 }
