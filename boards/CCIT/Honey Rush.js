@@ -52,7 +52,7 @@ preset_variants[folders.ccit].push({
             sprite: "snake",
             symbol: "S",
             move: "[0 1 8 2]Bae",
-            attributes: ["glue_curse", "peace_curse"],
+            attributes_hidden: ["glue_curse", "peace_curse"],
             held_move: "[K]"
         },
         {
