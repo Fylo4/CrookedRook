@@ -1,92 +1,92 @@
 preset_variants[folders.shogi].push({
-  name: "Tori Shogi",
-  description: "Bird-themed Shogi variant",
-  width: 7,
-  height: 7,
-  has_hand: true,
-  wins: ["royal_capture", "stalemate"],
   all_pieces: [
     {
       name: "Swallow",
       description: "Moves and captures forward one step. Promotes to Goose.",
-      sprite: "peasant",
-      symbol: "S",
+      sprite: "kasa_peasant",
+      file_limit: 2,
       move: "[S]a",
-	    file_limit: 2,
       promotions: [
-        { white: 0, black: 1, to: ["Goose"], on: [ "enter", "exit", "between"] }
-      ]
+        { black: 1, to: [ "Goose" ], white: 0, on: [ "enter", "exit", "between" ] }
+      ],
+      symbol: "S"
     },
-	{
+    {
       name: "Goose",
       description: "Jumps 2 squares forward-diagonal or 2 steps backward",
-      sprite: "elephant",
-      symbol: "G",
+      sprite: "crow",
+      attributes: ["transform_on_death"],
+      held_piece: "S",
       move: "([2 2 1 1],[-2 2 1 1],[0 -2 1 1])a",
-	    held_piece: "S",
-      attributes: ["transform_on_death"]
+      symbol: "G"
     },
     {
       name: "Left Quail",
       description: "Moves forward and down-right indefinitely and one space down-left",
-      sprite: "triangle_ne",
+      sprite: "triangle_corner",
       symbol: "L",
       move: "([0 1 1 -1],[1 -1 1 -1])Ba+[-1 -1 1 1]a"
     },
     {
       name: "Right Quail",
       description: "Moves forward and down-left indefinitely and one space down-right",
-      sprite: "triangle_nw",
+      sprite: "triangle_corner",
+      angle: 270,
       symbol: "R",
       move: "([0 1 1 -1],[-1 -1 1 -1])Ba+[1 -1 1 1]a"
     },
     {
       name: "Pheasant",
       description: "Jumps one square backward-diagonally or two squares forward",
-      sprite: "archangel",
+      sprite: "star3",
       symbol: "H",
       move: "([1 -1 1 1],[-1 -1 1 1],[0 2 1 1])a"
     },
     {
       name: "Crane",
       description: "Moves like a King except sideways",
-      sprite: "warden",
+      sprite: "star6",
       symbol: "C",
       move: "([F],[0 1 2 1])a"
     },
     {
       name: "Falcon",
       description: "Moves like a King except backwards",
-      sprite: "commoner",
-      symbol: "F",
+      sprite: "elephant",
       move: "([F],[0 1 1 1],[1 0 2 1])a",
+      symbol: "F",
       promotions: [
-        { white: 0, black: 1, to: ["Eagle"], on: [ "enter", "exit", "between"] }
+        { black: 1, on: [ "enter", "exit", "between" ], to: [ "Eagle" ], white: 0 }
       ]
     },
     {
       name: "Eagle",
       description: "Moves forward-diagonal or backwards indefinitely, two steps backward-diagonally, or 1 square sideways or forwards",
-      sprite: "princess",
+      sprite: "eagle",
       symbol: "E",
       move: "([W],[0 -1 1 -1],[1 1 4 2],[1 1 1 -1],[-1 1 1 -1])Ba",
-	    held_piece: "F",
-      attributes: ["transform_on_death"]
+      attributes: [ "transform_on_death" ],
+      held_piece: "F"
     },
     {
-      name: "Phoenix",
+      attributes: ["royal"],
       description: "Moves one step in any direction. Can be checked and checkmated.",
-      sprite: "king",
-      symbol: "P",
       move: "[K]a",
-      attributes: ["royal"]
+      name: "Phoenix",
+      sprite: "king",
+      symbol: "P"
     }
   ],
-  setup: "bR bH bC bP bC bH bL 3. bF 3. 7bS 2. bS",
   copy: "rotate",
+  description: "Bird-themed Shogi variant. Swallows (Pawns) promote on the last 2 ranks.",
+  has_hand: true,
+  height: 7,
+  name: "Tori Shogi",
+  setup: "bR bH bC bP bC bH bL 3. bF 3. 7bS 2. bS",
+  width: 7,
+  wins: [ "royal_capture", "stalemate" ],
   zones: [
     "1111111 1111111 0000000 0000000 0000000 0000000 0000000",
     "0000000 0000000 0000000 0000000 0000000 1111111 1111111"
-  ],
-  starting_hands: { "white": [], "black": [] }
+  ]
 });

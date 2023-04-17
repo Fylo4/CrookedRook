@@ -83,8 +83,9 @@ const attrib_str = ["ally_static", "enemy_static", "kill_ally", "save_enemy", "f
 "copycat", "attacker_moves", "defender_moves", "tall", "iron", "silver", "bronze", "royal", "ghost",
 "flip_on_passive", "forced_step", "retreat", "bloodlust", "promote_on_attack", "kill_between",
 "muddy", "ghost_caster", "defender", "pacifier", "anchor", "empower", "random_promotion", "dont_flip_on_death",
-"destroy_on_capture", "destroy_on_burn", "promote_from_opp_hand", "peaceful", "glue_curse", "peace_curse",
-"curse_allies", "iron_bless", "bless_enemies", "copy_move", "copy_attrib"];
+"destroy_on_capture", "destroy_on_burn", "promote_from_opp_hand", "peaceful"];
+//, "glue_curse", "peace_curse",
+//"curse_allies", "iron_bless", "bless_enemies", "copy_move", "copy_attrib"
 const folders = {
 	chess: 0,
 	shogi: 1,

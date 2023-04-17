@@ -31,7 +31,8 @@ preset_variants[folders.shogi].push({
 	{
       name: "Blind Dog",
       description: "Moves 1 step orthogonally except forwards or diagonally forwards",
-      sprite: "half_circle_bottom",
+      sprite: "half_circle",
+      angle: 180,
       symbol: "d",
       notation: "BD",
       move: "([W],[P])a+-[S]",
@@ -126,7 +127,8 @@ preset_variants[folders.shogi].push({
 	{
       name: "Swallow's Wings",
       description: "Moves sideways as many spaces as it wants and 1 step vertically",
-      sprite: "rhombus_wide",
+      sprite: "rhombus",
+      angle: 90,
       symbol: "G",
 	    notation: "SW",
       move: "[1 0 2 -1]Ba+[0 1 2 1]a",
@@ -136,7 +138,8 @@ preset_variants[folders.shogi].push({
     {
       name: "Swallow's Wings",
       description: "Moves sideways as many spaces as it wants and 1 step vertically",
-      sprite: "rhombus_wide",
+      sprite: "rhombus",
+      angle: 90,
       symbol: "s",
 	    notation: "SW",
       move: "[1 0 2 -1]Ba+[0 1 2 1]a",
@@ -270,7 +273,7 @@ preset_variants[folders.shogi].push({
     {
       name: "Flying Cock",
       description: "Moves one step sideways or diagonally forwards",
-      sprite: "half_circle_top",
+      sprite: "half_circle",
       symbol: "y",
 	    notation: "FC",
       move: "([P],[1 0 2 1])a",
@@ -281,7 +284,7 @@ preset_variants[folders.shogi].push({
 	{
       name: "Raiding Falcon",
       description: "Moves verically indefinitely and one step sideways or diagonally forwards",
-      sprite: "ellipse_tall",
+      sprite: "ellipse",
       symbol: "Y",
 	    notation: "RF",
       move: "[0 1 2 -1]Ba+([P],[1 0 2 1])a",

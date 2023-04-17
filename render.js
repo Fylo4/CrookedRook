@@ -378,6 +378,7 @@ function draw_sprite(sprite, x, y, width, height, color, angle = 0) {
             ctx2.globalCompositeOperation = "destination-in";
             ctx2.drawImage(sprite, 0, 0, width, height);
             ctx2.globalCompositeOperation = "source-over";
+            //Nothing besides piece sprites will be colored
             ctx.drawImage(c2, 0, 0, width, height, -width/2, -height/2, width, height);
         }
 
