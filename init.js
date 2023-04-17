@@ -169,11 +169,23 @@ function download_board(folder, index) {
     download_json(preset_variants[folder][index]);
 }
 
+function hideExportDiv() {
+    document.getElementById("export_div").style.display = "none";
+}
+
+function copy_history_p() {
+    let hist = document.getElementById("export_p").innerHTML;
+    navigator.clipboard.writeText(hist);
+}
+
 function handle_export_btn() {
     //document.getElementById('history').value = export_history();
     let hist = export_history();
     navigator.clipboard.writeText(hist);
     alert("History copied to clipboard:\n"+hist);
+    
+    document.getElementById("export_div").style.display = "block";
+    document.getElementById("export_p").innerHTML = hist;
 }
 function handle_import_btn() {
     let hist = prompt('Paste the exported history here:');
