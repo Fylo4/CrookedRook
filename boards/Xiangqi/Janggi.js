@@ -1,6 +1,6 @@
 preset_variants[folders.xiangqi].push({
   name: "Janggi",
-  description: "Korean Chess",
+  description: "Korean version of Xiangqi. Point rules aren't implemented.",
   width: 9,
   height: 10,
   wins: [ends.royal_capture, ends.stalemate],
@@ -11,7 +11,7 @@ preset_variants[folders.xiangqi].push({
       description: "Moves one step forwards or sideways.",
       sprite: "peasant",
       symbol: "P",
-      move: "T{2}([1 0 2 1],[S])a+z{0 0}[P]aZ{0 0}"
+      move: "T{2}[So]a+z{0 0}[P]aZ{0 0}"
     },
     {
       name: "Chariot",
@@ -53,7 +53,7 @@ preset_variants[folders.xiangqi].push({
       description: "Moves one step cardinally. Must stay in the palace. Can fly to kill opposing king. Can move along palace lines.",
       sprite: "king",
       symbol: "G",
-      move: "T{2}[W]aZ{2 1}+[R]BP{King}+T{2}z{0 0}[F]aZ{0 0}+T{2}[0]",
+      move: "T{2}[W]aZ{2 1}+[R]BP{General}+T{2}z{0 0}[F]aZ{0 0}+T{2}[0]",
       attributes: ["royal"]
     }
   ],
