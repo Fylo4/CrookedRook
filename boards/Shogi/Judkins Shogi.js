@@ -2,6 +2,7 @@ preset_variants[folders.shogi].push({
     name: "Judkins Shogi",
     description: "Small version of Shogi. All promotions and drop rules are the same as Shogi. Promotion is the last 2 ranks.",
 	author: "Paul Judkins",
+    style: "uncheckered",
     width: 6,
 	height: 6,
 	has_hand: true,

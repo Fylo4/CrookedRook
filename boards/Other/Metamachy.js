@@ -2,6 +2,7 @@ preset_variants[folders.other].push(JSON.parse(`{
 	"name": "Metamachy",
 	"author": "Jean-Louis Cazaux",
 	"description": "A board that features pieces from various regional Chess variants. On TCR, the opening setup is randomly determined; in a real game, Black would choose the opening setup.",
+	"style": "checkered",
 	"width": 12,
 	"height": 12,
 	"wins": [

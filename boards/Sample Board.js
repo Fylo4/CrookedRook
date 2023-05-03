@@ -1,6 +1,7 @@
 preset_variants[folders.chess].push({
     name: "Chess",
     description: "If you insist...",
+    style: "checkered",
 	width: 8,
 	height: 8,
 	has_hand: false,

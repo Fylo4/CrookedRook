@@ -1,6 +1,7 @@
 preset_variants[folders.shogi].push({
     name: "Shogi",
     description: "Japanese Chess. You can drop pieces after you capture them. Some niche rules are not implemented",
+    style: "uncheckered",
 	width: 9,
 	height: 9,
 	has_hand: true,

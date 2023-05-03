@@ -2,6 +2,7 @@ preset_variants[folders.SEA].push(JSON.parse(`{
 	"name": "Main Chator",
 	"author": "Malay Archipelago",
 	"description": "Main Chator, or Malay Chess, is a classic board game native to Malay Archipelago and is closely descended from Chaturanga, the same ancestor as Chess. Queen and bishop is replaced by general and elephant. When a pawn reaches last rank, move backward to main diagonal line to promote to according piece of same file.",
+  "style": "uncheckered",
 	"width": 8,
 	"height": 8,
 	"all_pieces": [

@@ -1,6 +1,7 @@
 preset_variants[folders.shogi].push({
     name: "Dobutsu Shogi",
     description: "A simple variant to teach Shogi",
+    style: "uncheckered",
     width: 3,
     height: 4,
     has_hand: true,

@@ -2,6 +2,7 @@ preset_variants[folders.compound].push({
   name: "Almost Chess",
   author: "Ralph Betza",
   description: "Chess but Queens are replaced by Chancellors",
+	style: "checkered",
   width: 8,
   height: 8,
   wins: ["royal_capture"],

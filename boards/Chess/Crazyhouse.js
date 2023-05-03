@@ -1,6 +1,7 @@
 preset_variants[folders.chess].push({
   name: "Crazyhouse",
   description: "Classic Chess but you can use pieces you capture.",
+	style: "checkered",
   width: 8,
   height: 8,
   wins: ["royal_capture"],

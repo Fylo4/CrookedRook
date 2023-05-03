@@ -1,6 +1,7 @@
 preset_variants[folders.shogi].push({
   name: "Wa Shogi",
   description: "Animal themed Shogi variant",
+  style: "uncheckered",
   width: 11,
   height: 11,
   has_hand: true,

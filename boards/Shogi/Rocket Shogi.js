@@ -2,6 +2,7 @@ preset_variants[folders.shogi].push({
     name: "Rocket Shogi",
     author: "Itsubaki Yoshihisa",
     description: "A Shogi variant with all the normal pieces, except for pawns. Drop and promotion rules are the same as normal Shogi, promotion in last 3 ranks.",
+    style: "uncheckered",
 	width: 5,
 	height: 7,
 	has_hand: true,

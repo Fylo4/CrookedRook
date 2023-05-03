@@ -1,6 +1,7 @@
 preset_variants[folders.xiangqi].push({
   name: "Janggi",
   description: "Korean version of Xiangqi. Point rules aren't implemented.",
+  style: "intersection",
   width: 9,
   height: 10,
   wins: [ends.royal_capture, ends.stalemate],

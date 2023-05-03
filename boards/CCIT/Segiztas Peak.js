@@ -1,6 +1,7 @@
 preset_variants[folders.ccit].push({
     name: "Segiztas Peak",
     description: "Above Sekirgishqulaq Fields there's a mountain called Segiztas. It's peak is full of rare minerals that two kingdoms fought, fight, and will fight for. And so they fight again. This time there are no unique tiles.",
+	style: "checkered",
 	width: 6,
 	height: 6,
 

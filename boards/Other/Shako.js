@@ -2,6 +2,7 @@ preset_variants[folders.other].push({
   name: "Shako",
   author: "Jean-Louis Cazaux",
   description: "A Chess variant featuring pieces inspired by Xiangqi",
+	style: "checkered",
   width: 10,
   height: 10,
   wins: ["royal_capture"],

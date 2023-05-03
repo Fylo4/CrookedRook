@@ -1,7 +1,7 @@
 preset_variants[folders.shogi].push({
     name: "Simple Shogi",
     author: "Yoshihisa Itsubaki",
-    description: "",
+    style: "uncheckered",
 	width: 3,
 	height: 5,
 	has_hand: true,

@@ -2,6 +2,7 @@ preset_variants[folders.chess].push({
   name: "Wildebeest Chess",
   author: "R. Wayne Schmittberger",
   description: "An 11x10 Chess variant with Camels and Wildebeests",
+	style: "checkered",
   width: 11,
   height: 10,
   wins: ["royal_capture"],

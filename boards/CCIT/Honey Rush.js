@@ -2,6 +2,7 @@ preset_variants[folders.ccit].push({
     name: "Honey Rush",
     author: "SamG_007",
     description: "A 9x6 board featuring the Bear. There are the King, the Pawn, the Bishop Switch (can change its square color by moving one step forward), the Rook (can't castle), the Bear, the Honey Bowl, the Snake (it's different from the default chesscraft Snake), and the Bomber. Some tips for this board: Keep a solid pawn structure, and don't move the Honey Bowls too early. It's better to promote the pawn-type units only in the endgame. Don't sacrifice too early important pieces, like the Bear and the Snake, and always keep an eye on the enemy Bombers' trajectory. Have fun :)\nNOTE: Restrictors aren't yet implemented in The Crooked Rook.",
+	style: "checkered",
     width: 6,
 	height: 9,
 
@@ -28,7 +29,7 @@ preset_variants[folders.ccit].push({
             description: "Acts like a bear sideways forward. Promotes to bear.",
             sprite: "cauldron",
             symbol: "H",
-            promotions: [{ white: 2, black: 1, to: ["E"], on: [events.enter] }],
+            promotions: [{ white: "black_rank_3", black: "white_rank_3", to: ["E"] }],
             move: "([2 1 1 1],[-2 1 1 1],[3 1 1 1],[-3 1 1 1])a",
         },
         {
@@ -52,7 +53,7 @@ preset_variants[folders.ccit].push({
             sprite: "snake",
             symbol: "S",
             move: "[0 1 8 2]Bae",
-            attributes_hidden: ["glue_curse", "peace_curse"],
+            attributes: ["glue_curse", "peace_curse"],
             held_move: "[K]"
         },
         {
@@ -62,7 +63,7 @@ preset_variants[folders.ccit].push({
             symbol: "p",
             notation: "",
             move: "i[0 1 1 2]Bae+[S]ae+[P]ca",
-            promotions: [{ white: 0, black: 0, to: ["B", "O", "R", "S"], on: [events.enter] }],
+            promotions: [{ white: "black_rank_2", black: "white_rank_2", to: ["B", "O", "R", "S"] }],
             attributes: [attrib.ep_captured, attrib.ep_capturer],
         },
         {
@@ -76,9 +77,4 @@ preset_variants[folders.ccit].push({
 	],
     setup: "bO bS bR bK bB bO bE 4bH bE 6bp",
     copy: "flip",
-	zones: [
-        "000000 111111 000000 000000 000000 000000 000000 111111 000000",
-        "000000 000000 000000 000000 000000 000000 111111 000000 000000",
-        "000000 000000 111111 000000 000000 000000 000000 000000 000000",
-	],
 });

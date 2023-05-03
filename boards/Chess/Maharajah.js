@@ -1,6 +1,7 @@
 preset_variants[folders.chess].push({
   name: "Maharajah and the Sepoys",
   description: "An unequal Chess variant with only one powerful piece for White. Pawns do not promote.",
+	style: "checkered",
   width: 8,
   height: 8,
   wins: ["royal_capture", "stalemate"],

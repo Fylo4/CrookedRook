@@ -2,6 +2,7 @@ preset_variants[folders.compound].push({
     name: "Bird's Chess",
     author: "Henry Bird (1874)",
     description: "Adds 2 pieces, which combine the moves of knight and bishop, and knight and rook. Castling length is 3.",
+	style: "checkered",
 	width: 10,
 	height: 8,
 	wins: [ends.royal_capture],

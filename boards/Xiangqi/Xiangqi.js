@@ -3,6 +3,7 @@ preset_variants[folders.xiangqi].push({
     description: "Chinese Chess",
 	width: 9,
 	height: 10,
+    style: "xiangqi",
     wins: [ends.royal_capture, ends.stalemate],
 
 	all_pieces: [
@@ -47,14 +48,14 @@ preset_variants[folders.xiangqi].push({
             description: "Moves 1 space diagonally. Must stay in the palace.",
             sprite: "prince",
 			symbol: "a",
-			move: "[F]aZ{3 2}",
+			move: "[F]aZ{white_palace black_palace}",
 		},
 		{
             name: "King",
             description: "Moves one step cardinally. Must stay in the palace. Can fly to kill opposing king.",
             sprite: "king",
 			symbol: "k",
-			move: "[W]aZ{3 2}+[R]BP{King}",
+			move: "[W]aZ{white_palace black_palace}+[R]BP{King}",
             attributes: [attrib.royal]
 		},
 	],
@@ -65,5 +66,6 @@ preset_variants[folders.xiangqi].push({
         "000111000 000111000 000111000 000000000 000000000 000000000 000000000 000000000 000000000 000000000",
         "000000000 000000000 000000000 000000000 000000000 000000000 000000000 000111000 000111000 000111000",
 	],
-    highlight: "000111000 000111000 000111000 000000000 000000000 000000000 000000000 000111000 000111000 000111000"
+    highlight:  "000111000 000111000 000111000 000000000 000000000 000000000 000000000 000111000 000111000 000111000",
+    highlight2: "000000000 000000000 010000010 101010101 000000000 000000000 101010101 010000010 000000000 000000000",
 });

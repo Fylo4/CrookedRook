@@ -2,14 +2,10 @@ preset_variants[folders.chess].push({
   name: "Chess on a Really Big Board",
   author: "Ralph Betza",
   description: "Chess on a 16x16 board",
+	style: "checkered",
   width: 16,
   height: 16,
-  wins: [
-    "royal_capture"
-  ],
-  draws: [
-    "stalemate"
-  ],
+  
   castle_length: 6,
   all_pieces: [
     {
@@ -19,22 +15,8 @@ preset_variants[folders.chess].push({
       symbol: "p",
       notation: "",
       move: "i[0 1 1 6]Bae+[S]ae+[P]ca",
-      promotions: [
-        {
-          white: 1,
-          black: 0,
-          to: [
-            "NSNR"
-          ],
-          on: [
-            "enter"
-          ]
-        }
-      ],
-      attributes: [
-        "ep_captured",
-        "ep_capturer"
-      ]
+      promotions: [{ to: ["NSNR"], }],
+      attributes: [ "ep_captured", "ep_capturer" ]
     },
     {
       name: "Rook",
@@ -42,9 +24,7 @@ preset_variants[folders.chess].push({
       sprite: "rook",
       symbol: "R",
       move: "[R]Ba",
-      attributes: [
-        "castle_to"
-      ]
+      attributes: [ "castle_to" ]
     },
     {
       name: "Elephant",
@@ -122,9 +102,5 @@ preset_variants[folders.chess].push({
     }
   ],
   setup: "bR bN bU bE bB bO bA bQ bK bC bS bB bE bU bN bR 16bp",
-  copy: "flip",
-  zones: [
-    "0000000000000000 0000000000000000 0000000000000000 0000000000000000 0000000000000000 0000000000000000 0000000000000000 0000000000000000 0000000000000000 0000000000000000 0000000000000000 0000000000000000 0000000000000000 0000000000000000 0000000000000000 1111111111111111",
-    "1111111111111111 0000000000000000 0000000000000000 0000000000000000 0000000000000000 0000000000000000 0000000000000000 0000000000000000 0000000000000000 0000000000000000 0000000000000000 0000000000000000 0000000000000000 0000000000000000 0000000000000000 0000000000000000"
-  ]
+  copy: "flip"
 });

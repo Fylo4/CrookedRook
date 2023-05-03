@@ -2,6 +2,7 @@ preset_variants[folders.xiangqi].push({
     name: "Ajax Xiangqi",
     description: "Xiangqi, but each piece (besides the pawn) gains the ability to move passively one step in any direction.",
     author: "Jose Carrillo",
+    style: "xiangqi",
 	width: 9,
 	height: 10,
     wins: [ends.royal_capture, ends.stalemate],

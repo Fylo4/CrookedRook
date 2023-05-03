@@ -1,11 +1,10 @@
 preset_variants[folders.chess].push({
   name: "Atomic Chess",
   description: "Chess, but every capture is an explosion. Pawns are immune to the explosions.",
+	style: "checkered",
   width: 8,
   height: 8,
-  wins: ["royal_capture"],
-  draws: ["stalemate"],
-  castle_length: 2,
+  
   all_pieces: [
     {
       name: "Pawn",
@@ -14,9 +13,7 @@ preset_variants[folders.chess].push({
       symbol: "p",
       notation: "",
 			move: "i[0 1 1 2]Bae+[S]ae+[P]ca",
-      promotions: [
-        { white: 1, black: 0, to: ["NSNR"], on: [events.enter] }
-      ],
+      promotions: [{ to: ["NSNR"]  }],
 	    held_move: "[K]",
       attributes: ["ep_captured", "ep_capturer", "fireball", "bomb", "burn_attack", "burn_allies", "burn_immune"]
     },
@@ -68,8 +65,4 @@ preset_variants[folders.chess].push({
   ],
   setup: "bR bN bB bQ bK bB bN bR 8bp",
   copy: "flip",
-  zones: [
-    "00000000 00000000 00000000 00000000 00000000 00000000 00000000 11111111",
-    "11111111 00000000 00000000 00000000 00000000 00000000 00000000 00000000"
-  ]
 });

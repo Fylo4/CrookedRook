@@ -83,6 +83,7 @@ preset_variants[folders.shogi].push({
   height: 7,
   name: "Tori Shogi",
   setup: "bR bH bC bP bC bH bL 3. bF 3. 7bS 2. bS",
+  style: "uncheckered",
   width: 7,
   wins: [ "royal_capture", "stalemate" ],
   zones: [

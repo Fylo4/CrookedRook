@@ -41,7 +41,7 @@ const attrib = {
 	spawn_trail: 24,
 	spawn_constant: 25,
 	spawn_on_death: 26,
-	copycat: 27,
+	EMPTY: 27,
 	attacker_moves: 28,
 	defender_moves: 29,
 	tall: 30,
@@ -56,8 +56,8 @@ const attrib = {
 	bloodlust: 39,
 	promote_on_attack: 40,
 	kill_between: 41,
-	muddy: 42,
-	ghost_caster: 43,
+	mud_curse: 42,
+	ghost_curse: 43,
 	defender: 44,
 	pacifier: 45,
 	anchor: 46,
@@ -74,18 +74,46 @@ const attrib = {
 	iron_bless: 57,
 	bless_enemies: 58,
 	copy_move: 59,
-	copy_attrib: 60
+	copy_attrib: 60,
+	ninja: 61,
+	statue: 62,
 }
 const attrib_str = ["ally_static", "enemy_static", "kill_ally", "save_enemy", "flip_this_on_attack", 
 "dont_flip_enemy", "fireball", "bomb", "save_self", "transform_on_death", "ep_capturer", "ep_captured",
 "castle_from", "castle_to", "pusher", "burn_passive", "burn_peaceful", "burn_attack", "burn_death",
 "burn_allies", "burn_immune", "coward", "child", "berzerk", "spawn_trail", "spawn_constant", "spawn_on_death",
-"copycat", "attacker_moves", "defender_moves", "tall", "iron", "silver", "bronze", "royal", "ghost",
+"EMPTY", "attacker_moves", "defender_moves", "tall", "iron", "silver", "bronze", "royal", "ghost",
 "flip_on_passive", "forced_step", "retreat", "bloodlust", "promote_on_attack", "kill_between",
-"muddy", "ghost_caster", "defender", "pacifier", "anchor", "empower", "random_promotion", "dont_flip_on_death",
-"destroy_on_capture", "destroy_on_burn", "promote_from_opp_hand", "peaceful"];
-//, "glue_curse", "peace_curse",
-//"curse_allies", "iron_bless", "bless_enemies", "copy_move", "copy_attrib"
+"mud_curse", "ghost_curse", "defender", "pacifier", "anchor", "empower", "random_promotion", "dont_flip_on_death",
+"destroy_on_capture", "destroy_on_burn", "promote_from_opp_hand", "peaceful", "glue_curse", "peace_curse",
+"curse_allies", "iron_bless", "bless_enemies", "copy_move", "copy_attrib", "ninja", "statue"];
+
+const preset_move_types = [
+	{ a: "[0]", b: "[0 0 1 1]"},
+	{ a: "[W]", b: "[1 0 4 1]"},
+	{ a: "[F]", b: "[1 1 4 1]"},
+	{ a: "[D]", b: "[2 0 4 1]"},
+	{ a: "[N]", b: "[2 1 8 1]"},
+	{ a: "[Nr]", b: "[2 1 8 -1]"}, //Knightrider
+	{ a: "[A]", b: "[2 2 4 1]"},
+	{ a: "[H]", b: "[3 0 4 1]"},
+	{ a: "[C]", b: "[3 1 8 1]"},
+	{ a: "[Z]", b: "[3 2 8 1]"},
+	{ a: "[G]", b: "[3 3 4 1]"},
+	{ a: "[K]", b: "[1 1 8 1]"},
+	{ a: "[B]", b: "[1 1 4 -1]"},
+	{ a: "[R]", b: "[1 0 4 -1]"},
+	{ a: "[Q]", b: "[1 1 8 -1]"},
+	{ a: "[L]", b: "[0 1 1 -1]"}, //Lance
+	{ a: "[JN]", b: "([1 2 1 1],[-1 2 1 1])"}, //Japanese Knight
+	{ a: "[P]", b: "([1 1 1 1],[-1 1 1 1])"}, //Pawn attack
+	{ a: "[S]", b: "[0 1 1 1]"}, //Step
+	{ a: "[Gr]", b: "([1 1 1 -1],[-1 1 1 -1])"}, //Griffin
+	{ a: "[So]", b: "([0 1 1 1],[1 0 2 1])"}, //Soldier
+	{ a: "[Si]", b: "([1 1 4 1],[0 1 1 1])"}, //Silver
+	{ a: "[Go]", b: "([0 1 4 1],[1 1 1 1],[-1 1 1 1])"}, //Gold
+];
+
 const folders = {
 	chess: 0,
 	shogi: 1,

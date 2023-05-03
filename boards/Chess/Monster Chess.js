@@ -1,6 +1,7 @@
 preset_variants[folders.chess].push({
   name: "Monster Chess",
   description: "An unequal Chess variant. White makes two moves instead of one.",
+	style: "checkered",
   width: 8,
   height: 8,
   wins: ["royal_capture"],

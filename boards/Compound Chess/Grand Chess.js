@@ -2,6 +2,7 @@ preset_variants[folders.compound].push({
   name: "Grand Chess",
   author: "Christian Freeling",
   description: "A 10x10 Chess variant with Capablanca pieces",
+	style: "checkered",
   width: 10,
   height: 10,
   wins: ["royal_capture"],

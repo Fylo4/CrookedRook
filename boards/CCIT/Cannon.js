@@ -2,6 +2,7 @@ preset_variants[folders.ccit].push({
     name: "Cannon :>",
     author: "Wish_Axolotl",
     description: "Simple ; )",
+	style: "checkered",
 	width: 8,
 	height: 9,
 
@@ -13,7 +14,7 @@ preset_variants[folders.ccit].push({
             symbol: "p",
             notation: "",
             move: "[S]ae+[P]ca",
-            promotions: [{ white: 0, black: 1, to: ["N","B","R","C"], on: [events.enter] }],
+            promotions: [{ white: 0, black: 1, to: ["N","B","R","C"] }],
             attributes: [attrib.ep_captured, attrib.ep_capturer],
         },
         {

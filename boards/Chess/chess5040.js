@@ -1,6 +1,7 @@
 preset_variants[folders.chess].push({
     name: "Chess5040",
     description: "The back rank of both players is randomized. Unlike Chess960, there is no restriction on bishop or king placement.",
+	style: "checkered",
 	width: 8,
 	height: 8,
 	wins: [ends.royal_capture],

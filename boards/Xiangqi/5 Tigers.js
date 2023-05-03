@@ -1,6 +1,7 @@
 preset_variants[folders.xiangqi].push({
     name: "5 Tigers",
     description: "Like Xiangqi mixed with Monster Chess. White has only 5 pawns, 2 elephants, 2 advisors, and a king against Black's entire army. Note that in the original version only the pawns can be double-moved, all other pieces can only single-move. This is currently impossible in TCR. If you have ideas about how to better balance this game let me know in the discord.",
+    style: "xiangqi",
 	width: 9,
 	height: 10,
     turn_list: ["w", "w", "b"],

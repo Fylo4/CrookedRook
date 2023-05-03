@@ -2,6 +2,7 @@ preset_variants[folders.compound].push({
     name: "Shogun Chess",
     author: "Couch Tomato",
     description: "Chess with additional compound pieces. Promotion zone is last 3 ranks. Bishop and Rook promote to gain the Knight's abilities (Archbishop and Mortar), Knight and Pawn gains the King's abilities (General and Captain), and Duchess gains the Queen's abilities. Pieces are un-promoted on capture, with the Queen un-promoting to Duchess. Pieces can be dropped to the first 5 ranks. Only one of each Queen, Mortar, Archbishop, and General are allowed per side. This rule is not implemented: 'Pawns cannot promote if capturing by en passant'.",
+	style: "checkered",
 	width: 8,
 	height: 8,
 	wins: [ends.royal_capture],

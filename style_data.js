@@ -4,10 +4,12 @@ let style_data = {
     neutral_col: "rgb(0, 200, 100)",
     light_highlight_col: "rgb(214, 111, 105)",
     dark_highlight_col: "rgb(113, 50, 47)",
+    light_highlight_2_col: "rgb(98, 193, 221)",
+    dark_highlight_2_col: "rgb(50, 101, 109)",
     light_mud_col: "rgb(205, 148, 114)",
     dark_mud_col: "rgb(117, 70, 43)",
-    light_ethereal_col: "rgb(98, 193, 221)",
-    dark_ethereal_col: "rgb(50, 101, 109)",
+    light_ethereal_col: "rgb(160, 100, 220)",
+    dark_ethereal_col: "rgb(80, 30, 130)",
     light_pacifist_col: "rgb(236, 202, 79)",
     dark_pacifist_col: "rgb(116, 100, 44)",
     light_sanctuary_col: "rgb(135, 198, 121)",
@@ -20,12 +22,23 @@ let style_data = {
     flip_board: false,
     name_squares: false,
     border: 0.05,
+    lines: 0.075,
     attacked_squares: false,
     check_indicator: true,
     movable_pieces: false,
     last_moved: true,
     show_highlights: true,
-  }
+    style: "checkered",
+    point_style: "4-corner",
+    rotate_opp: false,
+};
+/* Styles (case insensitive):
+ *   Checkered - Default checkered board
+ *   Uncheckered - Draw squares uncheckered
+ *   Ashtapada - Draw squares uncheckered and 'X' instead of highlight
+ *   Intersection - Draw the intersections instead of the squares and diagonal lines instead of highlights
+ *   Xiangqi - Intersection + Middle row has no vertical lines
+ */
 
 function style_toggle() {
     let style_div = document.getElementById("style_buttons");
@@ -46,15 +59,6 @@ function refresh_checkboxes() {
     render_board();
 }
 
-function show_style_data() {
-    document.getElementById("style_div").style.display = "block";
-    //preset_variants[folders.other].push(style_board);
-    //add_files_to_dropdown();
-}
-function hide_style_data() {
-    document.getElementById("style_div").style.display = "none";
-}
-
 function reload_style_inputs() {
     document.getElementById("style_piece_w").value = style_data.white_col;
     document.getElementById("style_piece_b").value = style_data.black_col;
@@ -64,6 +68,8 @@ function reload_style_inputs() {
     document.getElementById("style_sq_dark").value = style_data.dark_square_col;
     document.getElementById("style_hi_light").value = style_data.light_highlight_col;
     document.getElementById("style_hi_dark").value = style_data.dark_highlight_col;
+    document.getElementById("style_hi2_light").value = style_data.light_highlight_2_col;
+    document.getElementById("style_hi2_dark").value = style_data.dark_highlight_2_col;
     document.getElementById("style_md_light").value = style_data.light_mud_col;
     document.getElementById("style_md_dark").value = style_data.dark_mud_col;
     document.getElementById("style_et_light").value = style_data.light_ethereal_col;
@@ -86,6 +92,8 @@ function set_style() {
     style_data.dark_square_col = document.getElementById("style_sq_dark").value;
     style_data.light_highlight_col = document.getElementById("style_hi_light").value;
     style_data.dark_highlight_col = document.getElementById("style_hi_dark").value;
+    style_data.light_highlight_2_col = document.getElementById("style_hi2_light").value;
+    style_data.dark_highlight_2_col = document.getElementById("style_hi2_dark").value;
     style_data.light_mud_col = document.getElementById("style_md_light").value;
     style_data.dark_mud_col = document.getElementById("style_md_dark").value;
     style_data.light_ethereal_col = document.getElementById("style_et_light").value;

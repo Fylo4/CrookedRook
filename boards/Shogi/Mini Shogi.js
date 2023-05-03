@@ -1,6 +1,7 @@
 preset_variants[folders.shogi].push({
     name: "Mini Shogi",
     description: "Small version of Shogi. Pieces promote on the back rank as they normally do in Shogi.",
+    style: "uncheckered",
 	width: 5,
 	height: 5,
 	has_hand: true,

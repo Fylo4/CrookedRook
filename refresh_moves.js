@@ -1,3 +1,4 @@
+let stoppers;
 function refresh_moves() {
 	//Clear all bitboards
 	for(let a = 0; a < game_data.width*game_data.height; a ++){
@@ -6,27 +7,28 @@ function refresh_moves() {
     if (board.victory != -1) {
         return; //Nothing can move if you already won
     }
+    let can_capture = {white: false, black: false};
     //Find what pieces are immobilized
     let non_attackers = ss_and(game_data.pacifist, ss_or(board.white_ss, board.black_ss));
     let non_movers = new squareset(game_data.width * game_data.height);
     for (let a = 0; a < game_data.all_pieces.length; a ++) {
         let p = game_data.all_pieces[a];
-        if (p.attributes.includes(attrib.glue_curse) || p.attributes.includes(attrib.peace_curse)) {
+        if (get_attributes(p).includes(attrib.glue_curse) || get_attributes(p).includes(attrib.peace_curse)) {
             for (let piece_ss = new squareset(board.piece_ss[a]); !piece_ss.is_zero(); piece_ss.pop()) {
                 let sq = piece_ss.get_ls1b();
                 let treat_as_col = !board.white_ss.get(sq) || (board.turn && board.black_ss.get(sq));
                 let my_pieces = treat_as_col ? board.black_ss : board.white_ss;
                 let opp_pieces = treat_as_col ? board.white_ss : board.black_ss;
-                let hm = game_data.move_ss[p.held_move][sq][treat_as_col ? 4 : 0];
-                if (p.attributes.includes(attrib.glue_curse)) {
+                let hm = get_move_ss(p.held_move, sq, treat_as_col ? 4 : 0);
+                if (get_attributes(p).includes(attrib.glue_curse)) {
                     non_movers.ore(ss_and(opp_pieces, hm));
-                    if (p.attributes.includes(attrib.curse_allies)) {
+                    if (get_attributes(p).includes(attrib.curse_allies)) {
                         non_movers.ore(ss_and(my_pieces, hm));
                     }
                 }
-                if (p.attributes.includes(attrib.peace_curse)) {
+                if (get_attributes(p).includes(attrib.peace_curse)) {
                     non_attackers.ore(ss_and(opp_pieces, hm));
-                    if (p.attributes.includes(attrib.curse_allies)) {
+                    if (get_attributes(p).includes(attrib.curse_allies)) {
                         non_attackers.ore(ss_and(my_pieces, hm));
                     }
                 }
@@ -34,43 +36,89 @@ function refresh_moves() {
         }
     }
     //Find which pieces are iron
-    let iron = new squareset(board.iron_ss);
+    let iron = get_iron_ss();
     for (let a = 0; a < game_data.all_pieces.length; a ++) {
         let p = game_data.all_pieces[a];
-        if (p.attributes.includes(attrib.iron_bless)) {
+        if (get_attributes(p).includes(attrib.iron_bless)) {
             for (let piece_ss = new squareset(board.piece_ss[a]); !piece_ss.is_zero(); piece_ss.pop()) {
                 let sq = piece_ss.get_ls1b();
                 let treat_as_col = !board.white_ss.get(sq) || (board.turn && board.black_ss.get(sq));
                 let my_pieces = treat_as_col ? board.black_ss : board.white_ss;
                 let opp_pieces = treat_as_col ? board.white_ss : board.black_ss;
-                let hm = game_data.move_ss[p.held_move][sq][treat_as_col ? 4 : 0];
+                let hm = get_move_ss(p.held_move, sq, treat_as_col ? 4 : 0);
                 iron.ore(ss_and(my_pieces, hm));
-                if (p.attributes.includes(attrib.bless_enemies)) {
+                if (get_attributes(p).includes(attrib.bless_enemies)) {
                     iron.ore(ss_and(opp_pieces, hm));
                 }
             }
         }
+        if (get_attributes(p).includes(attrib.ninja)) {
+            iron.ore(ss_and(board.has_attacked_ss.inverse(), board.piece_ss[a]));
+        }
+        if (get_attributes(p).includes(attrib.statue)) {
+            iron.ore(ss_and(board.has_moved_ss.inverse(), board.piece_ss[a]));
+        }
     }
     iron.ore(ss_and(game_data.sanctuary, ss_or(board.white_ss, board.black_ss)));
-    //Other metals will probably go here
+    //Find stoppers
+    //Stoppers are all solid pieces, at the end I or-equal with mud squares
+    stoppers = {white: get_solid_ss(), black: get_solid_ss()};
+    stoppers.white.ande(game_data.ethereal.inverse()); stoppers.black.ande(game_data.ethereal.inverse());
+    let mud = {white: new squareset(game_data.mud), black: new squareset(game_data.mud)};
+    for (let a = 0; a < game_data.all_pieces.length; a ++) {
+        let p = game_data.all_pieces[a];
+        if (!get_attributes(p).includes(attrib.mud_curse) && !get_attributes(p).includes(attrib.ghost_curse)) {
+            continue;
+        }
+        for (let s = new squareset(board.piece_ss[a]); !s.is_zero(); s.pop()) {
+            let sq = s.get_ls1b();
+            let treat_as_col = board.black_ss.get(sq) && (board.turn || !board.white_ss.get(sq));
+            if (get_attributes(p).includes(attrib.mud_curse)) {
+                if (treat_as_col || get_attributes(p).includes(attrib.curse_allies)) {
+                    mud.white.ore(get_move_ss(p.held_move, sq, treat_as_col ? 4 : 0));
+                }
+                if (!treat_as_col || get_attributes(p).includes(attrib.curse_allies)) {
+                    mud.black.ore(get_move_ss(p.held_move, sq, treat_as_col ? 4 : 0));
+                }
+            }
+            if (get_attributes(p).includes(attrib.ghost_curse)) {
+                let range = get_move_ss(p.held_move, sq, treat_as_col ? 4 : 0);
+                let ghost_target =
+                    get_attributes(p).includes(attrib.curse_allies) ? range :
+                    ss_and(range, treat_as_col ? board.white_ss : board.black_ss);
+                stoppers.white.ande(ghost_target.inverse());
+                stoppers.black.ande(ghost_target.inverse());
+            }
+        }
+    }
+    stoppers.white.ore(mud.white); stoppers.black.ore(mud.black);
+    //Find attackers- needed for some pre/post conditions
+    find_attackers(non_attackers);
 	//Find the move board for each piece
     for (let a = 0; a < game_data.all_pieces.length; a ++){
         for (let b = new squareset(board.piece_ss[a]); !b.is_zero(); b.pop()){
             let sq = b.get_ls1b();
             let step_num = 0;
-            let step = game_data.all_pieces[a].move[step_num];
+            let steps = [game_data.all_pieces[a].move[step_num]];
+            if (get_attributes(a).includes(attrib.copy_move) && board.copycat_memory >= 0) {
+                steps.push(game_data.all_pieces[board.copycat_memory].move[0]);
+            }
             let treat_as_col = board.black_ss.get(sq) && (board.turn || !board.white_ss.get(sq));
-            for (let c = 0; c < step.length; c++) {
-                if (step[c].length === 0) {
-                    continue;
+            for (let s = 0; s < steps.length; s ++) {
+                let step_add = new squareset(game_data.width * game_data.height);
+                for (let c = 0; c < steps[s].length; c++) {
+                    if (steps[s][c].length === 0) {
+                        continue;
+                    }
+                    let add = parse_term(steps[s][c], 0, sq, a, treat_as_col);
+                    if (steps[s][c][0].type === "sub") {
+                        step_add.ande(add.inverse());
+                    }
+                    else {
+                        step_add.ore(add);
+                    }
                 }
-                let add = parse_term(step[c], 0, sq, a, treat_as_col);
-                if (step[c][0].type === "sub") {
-                    board.can_move_ss[sq].ande(add.inverse());
-                }
-                else {
-                    board.can_move_ss[sq].ore(add);
-                }
+                board.can_move_ss[sq].ore(step_add);
             }
             //Cannot land on enemy if non-attacker
             if (non_attackers.get(sq)) {
@@ -83,7 +131,7 @@ function refresh_moves() {
             //Cannot land on iron enemies
             board.can_move_ss[sq].ande(ss_and(iron, treat_as_col ? board.white_ss : board.black_ss).inverse());
             //Berzerk
-            if (game_data.all_pieces[a].attributes.includes(attrib.berzerk)) {
+            if (get_attributes(a).includes(attrib.berzerk)) {
                 let treat_as_col = board.black_ss.get(sq) && (!board.white_ss.get(sq) || board.turn);
                 let enemies = treat_as_col ? board.white_ss : board.black_ss;
                 if (!ss_and(board.can_move_ss[sq], enemies).is_zero()) {
@@ -91,32 +139,114 @@ function refresh_moves() {
                 }
             }
             //Retreat
-            if (game_data.all_pieces[a].attributes.includes(attrib.retreat)) {
+            if (get_attributes(a).includes(attrib.retreat)) {
                 board.can_move_ss[sq].set_on(sq);
+            }
+            //Can capture
+            if (!ss_and(board.can_move_ss[sq], treat_as_col ? board.white_ss : board.black_ss).is_zero()) {
+                treat_as_col ? can_capture.black = true : can_capture.white = true;
             }
 		}
     }
-    find_attackers(non_attackers);
+    //Berzerk board rule
+    if (game_data.berzerk) {
+        let neutral = ss_and(board.white_ss, board.black_ss);
+        let black = ss_and(board.black_ss, neutral.inverse());
+        let white = ss_and(board.white_ss, neutral.inverse());
+        if (can_capture.black) {
+            for(; !black.is_zero(); black.pop()) {
+                let sq = black.get_ls1b();
+                board.can_move_ss[sq].ande(ss_and(board.white_ss, board.black_ss.inverse()));
+            }
+        }
+        if (can_capture.white) {
+            for(; !white.is_zero(); white.pop()) {
+                let sq = white.get_ls1b();
+                board.can_move_ss[sq].ande(ss_and(board.black_ss, board.white_ss.inverse()));
+            }
+        }
+        if ((board.turn && can_capture.black) || (!board.turn && can_capture.white)) {
+            for(; !neutral.is_zero(); neutral.pop()) {
+                let sq = neutral.get_ls1b();
+                let me  = board.turn ? board.black_ss : board.white_ss;
+                let opp = board.turn ? board.white_ss : board.black_ss;
+                board.can_move_ss[sq].ande(ss_and(opp, me.inverse()));
+            }
+        }
+    }
     //Attributes that require attack squares to be calculated
     for (let a = 0; a < game_data.all_pieces.length; a ++){
         //Child
-        if (game_data.all_pieces[a].attributes.includes(attrib.child)) {
-            let all_pieces = new squareset(board.piece_ss[a]);
-            for (; !all_pieces.is_zero(); all_pieces.pop()) {
-                let sq = all_pieces.get_ls1b();
+        if (get_attributes(a).includes(attrib.child)) {
+            let all_this_piece = new squareset(board.piece_ss[a]);
+            for (; !all_this_piece.is_zero(); all_this_piece.pop()) {
+                let sq = all_this_piece.get_ls1b();
                 let treat_as_col = (board.turn && board.black_ss.get(sq)) || !board.white_ss.get(sq);
                 board.can_move_ss[sq].ande(treat_as_col ? board.black_attack_ss : board.white_attack_ss);
             }
         }
         //Coward
-        if (game_data.all_pieces[a].attributes.includes(attrib.coward)) {
-            let all_pieces = new squareset(board.piece_ss[a]);
-            for (; !all_pieces.is_zero(); all_pieces.pop()) {
-                let sq = all_pieces.get_ls1b();
+        if (get_attributes(a).includes(attrib.coward)) {
+            let all_this_piece = new squareset(board.piece_ss[a]);
+            for (; !all_this_piece.is_zero(); all_this_piece.pop()) {
+                let sq = all_this_piece.get_ls1b();
                 let treat_as_col = (board.turn && board.black_ss.get(sq)) || !board.white_ss.get(sq);
                 board.can_move_ss[sq].ande((treat_as_col ? board.white_attack_ss : board.black_attack_ss).inverse());
             }
         }
+        //Bronze
+        //This feels like a dumb and slow way to handle bronze, maybe improve later
+        if (get_attributes(a).includes(attrib.bronze)) {
+            //No enemies can land on me
+            let all_pieces = new squareset(ss_or(board.white_ss, board.black_ss));
+            for (; !all_pieces.is_zero(); all_pieces.pop()) {
+                let sq = all_pieces.get_ls1b();
+                let treat_as_col = (board.turn && board.black_ss.get(sq)) || !board.white_ss.get(sq);
+                treat_as_col ?
+                    board.can_move_ss[sq].ande(ss_and(board.piece_ss[a], board.white_ss, board.white_attack_ss).inverse()):
+                    board.can_move_ss[sq].ande(ss_and(board.piece_ss[a], board.black_ss, board.black_attack_ss).inverse());
+            }
+        }
+        //Silver
+        //This can also be improved a lot. 
+        if (get_attributes(a).includes(attrib.silver)) {
+            let all_this_piece = new squareset(board.piece_ss[a]);
+            for (; !all_this_piece.is_zero(); all_this_piece.pop()) {
+                let sq = all_this_piece.get_ls1b();
+                let treat_as_col = (board.turn && board.black_ss.get(sq)) || !board.white_ss.get(sq);
+                //Find how many enemies can land on me
+                let enemy_count = 0;
+                let enemies = new squareset(treat_as_col ? board.white_ss : board.black_ss);
+                for (; !enemies.is_zero(); enemies.pop()) {
+                    let e_sq = enemies.get_ls1b();
+                    if (board.can_move_ss[e_sq].get(sq)) {
+                        enemy_count ++;
+                        if (enemy_count >= 2) {
+                            break;
+                        }
+                    }
+                }
+                //If less than 2, no enemies can land on me
+                if (enemy_count < 2) {
+                    enemies = new squareset(treat_as_col ? board.white_ss : board.black_ss);
+                    for (; !enemies.is_zero(); enemies.pop()) {
+                        let e_sq = enemies.get_ls1b();
+                        board.can_move_ss[e_sq].set_off(sq);
+                    }
+                }
+            }
+        }
+    }
+    //Find checked pieces
+    board.checked.white.zero();
+    board.checked.black.zero();
+    for (let wp = new squareset(board.white_ss); !wp.is_zero(); wp.pop()) {
+        let sq = wp.get_ls1b();
+        board.checked.black.ore(ss_and(board.can_move_ss[sq], board.black_ss, get_royal_ss()));
+    }
+    for (let bp = new squareset(board.black_ss); !bp.is_zero(); bp.pop()) {
+        let sq = bp.get_ls1b();
+        board.checked.white.ore(ss_and(board.can_move_ss[sq], board.white_ss, get_royal_ss()));
     }
     reload_can_drop_piece_to();
 }
@@ -128,7 +258,7 @@ function find_attackers(non_attackers) {
 	//Find the attack spaces for each piece
     for (let a = 0; a < game_data.all_pieces.length; a ++){
         //Skip if we're peaceful
-        if (game_data.all_pieces[a].attributes.includes(attrib.peaceful)) {
+        if (get_attributes(a).includes(attrib.peaceful)) {
             continue;
         }
         for (let b = new squareset(board.piece_ss[a]); !b.is_zero(); b.pop()){
@@ -138,20 +268,27 @@ function find_attackers(non_attackers) {
                 continue;
             }
             let step_num = 0;
-            let step = game_data.all_pieces[a].move[step_num];
-            let treat_as_col = board.black_ss.get(sq) && (board.turn || !board.white_ss.get(sq));
             let my_attack = new squareset(game_data.width * game_data.height);
-            for (let c = 0; c < step.length; c++) {
-                if (step[c].length === 0) {
-                    continue;
+            let steps = [game_data.all_pieces[a].move[step_num]];
+            if (get_attributes(a).includes(attrib.copy_move) && board.copycat_memory >= 0) {
+                steps.push(game_data.all_pieces[board.copycat_memory].move[0]);
+            }
+            let treat_as_col = board.black_ss.get(sq) && (board.turn || !board.white_ss.get(sq));
+            for (let s = 0; s < steps.length; s ++) {
+                let step_add = new squareset(game_data.width * game_data.height);
+                for (let c = 0; c < steps[s].length; c++) {
+                    if (steps[s][c].length === 0) {
+                        continue;
+                    }
+                    let add = parse_term(steps[s][c], 0, sq, a, treat_as_col);
+                    if (steps[s][c][0].type === "sub") {
+                        step_add.ande(add.inverse());
+                    }
+                    else {
+                        step_add.ore(add);
+                    }
                 }
-                let add = parse_term(step[c], 0, sq, a, treat_as_col, undefined, true);
-                if (step[c][0].type === "sub") {
-                    my_attack.ande(add.inverse());
-                }
-                else {
-                    my_attack.ore(add);
-                }
+                my_attack.ore(step_add);
             }
             //Add to the ss
             treat_as_col ?
@@ -175,7 +312,7 @@ function parse_term(term, term_index, sq, piece, col, angle, is_attack = false) 
     for (let a = term_index; a < term.length; a++) {
         if (term[a].type === "pre") {
             //Check condition, possibly return
-            if (typeof (term[a].data) === "function" && term[a].data(col, sq, piece)) {
+            if (typeof (term[a].data) === "function" && (!is_attack || !term[a].at) && term[a].data(col, sq, piece)) {
                 return ss_or(ret, saved_ss);
             }
         } else if (term[a].type === "post") {
@@ -199,7 +336,7 @@ function parse_term(term, term_index, sq, piece, col, angle, is_attack = false) 
         } else if (term[a].type === "mol") {
             //If it's the first molecule, add the ss
             if (first) {
-                ret.ore(game_data.move_ss[term[a].data][sq][angle]);
+                ret.ore(get_move_ss(term[a].data, sq, angle));
                 first = false;
             }
             //Otherwise, call the function recursively for each square
@@ -272,10 +409,10 @@ function get_drop_zone(piece_id, color) {
     //console.log(`id: ${piece_id}, color: ${color}`)
     let zone_id = undefined;
     let piece = game_data.all_pieces[piece_id];
-    if (piece.drop_to_zone != undefined && !isNaN(piece.drop_to_zone.white)) {
+    if (piece.drop_to_zone != undefined && typeof(piece.drop_to_zone.white) === "number") {
         zone_id = color ? piece.drop_to_zone.black : piece.drop_to_zone.white;
     }
-    else if (game_data.drop_to_zone != undefined && !isNaN(game_data.drop_to_zone.white)) {
+    else if (game_data.drop_to_zone != undefined && typeof(game_data.drop_to_zone.white) === "number") {
         zone_id = color ? game_data.drop_to_zone.black : game_data.drop_to_zone.white;
     }
     else {

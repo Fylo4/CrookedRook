@@ -2,6 +2,7 @@ preset_variants[folders.compound].push({
     name: "Compound Shuffle Chess",
     author: "Fylo",
     description: "First rank of both players is randomized. Adds 2 pieces, which combine the moves of knight and bishop, and knight and rook. Castle length is 2.",
+	style: "checkered",
 	width: 10,
 	height: 8,
 	wins: [ends.royal_capture],

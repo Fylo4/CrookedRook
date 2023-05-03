@@ -179,6 +179,9 @@ function upload_board() {
                 return;
             }
             else {
+                // let upload_board = get_export_game_data(last_loaded_board);
+                // upload_board.code = code;
+                // all_boards_ref.child(code).update(upload_board);
                 last_loaded_board.code = code;
                 all_boards_ref.child(code).update(last_loaded_board);
                 show_message("Upload successful");
@@ -188,6 +191,10 @@ function upload_board() {
     catch (error) {
         show_error(error);
     }
+}
+
+function cancel_lobby(lobby) {
+    firebase.database().ref(`lobby/${lobby}`).set({});
 }
 
 function switch_to_single_player() {
@@ -452,12 +459,15 @@ all_lobbies_ref.on("value", (snapshot) => {
             row_v.owner_col === 'r' ? "Random" :
             row_v.owner_col === 'w' ? "White" :
             row_v.owner_col === 'b' ? "Black" : "Error";
+        let btn = row_v.owner === user_id ?
+            `<button onclick="cancel_lobby('${DOMPurify.sanitize(row)}')">Cancel</button>`:
+            `<button onclick="join_game('${DOMPurify.sanitize(row)}')">Join</button>`;
         table.innerHTML += `
         <tr>
             <td>${DOMPurify.sanitize(row_v.board_name)}</td>
             <td>${DOMPurify.sanitize(row_v.owner_name)}</td>
             <td>${DOMPurify.sanitize(col)}</td>
-            <td><button onclick="join_game('${DOMPurify.sanitize(row)}')">Join</button></td>
+            <td>${btn}</td>
         </tr>`;
     }
 });

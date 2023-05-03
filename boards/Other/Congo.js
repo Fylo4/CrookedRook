@@ -2,6 +2,7 @@ preset_variants[folders.other].push({
   name: "Congo",
   author: "Damiel Freeling",
   description: "A 7x7 board with Xiangqi like elements. Monkeys currently cannot chain captures.",
+  style: "uncheckered",
   width: 7,
   height: 7,
   wins: ["royal_capture"],
@@ -80,5 +81,7 @@ preset_variants[folders.other].push({
     "0000000 0000000 0000000 0000000 0000000 0000000 1111111",
     "1111111 0000000 0000000 0000000 0000000 0000000 0000000",
     "0000000 0000000 0000000 1111111 0000000 0000000 0000000"
-  ]
+  ],
+  highlight: "0011100 0011100 0011100 0000000 0011100 0011100 0011100",
+  highlight2: "0000000 0000000 0000000 1111111 0000000 0000000 0000000",
 });

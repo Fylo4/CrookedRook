@@ -1,6 +1,7 @@
 preset_variants[folders.historical].push({
     name: "Courier Chess",
     description: "12th-century Chess variant. The added pieces are Mann, Elephant, Ferz, and Wazir. There is no castling.",
+	style: "checkered",
 	width: 12,
 	height: 8,
 	wins: [ends.royal_capture],

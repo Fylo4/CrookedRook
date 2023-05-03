@@ -2,6 +2,7 @@ preset_variants[folders.ccit].push({
     name: "Crow Chess",
     author: "Fylo",
     description: "A variant containing Crows",
+    style: "checkered",
     width: 5,
     height: 8,
     wins: ["royal_capture", "stalemate"],

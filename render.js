@@ -1,76 +1,33 @@
-﻿function render_board(){
+﻿let c, ctx, width_px, height_px, square_x, square_y;
+function reload_variables() {
+    c = document.getElementById("board_canvas");
+    ctx = c.getContext("2d");
+    width_px = c.width / game_data.width; //Width and height should be the same
+    height_px = c.height / (game_data.height + (game_data.has_hand ? 2 : 0));
+    square_x = mouse_sq_pos.x;
+    square_y = mouse_sq_pos.y;
+}
+
+function render_board(){
     if (!game_data || !game_data.width) {
         return;
     }
-    let c = document.getElementById("board_canvas");
-    let ctx = c.getContext("2d");
-    //Set up some variables
-    let width_px = c.width / game_data.width; //Width and height should be the same
-    let height_px = c.height / (game_data.height + (game_data.has_hand ? 2 : 0)); //(they should be squares)
-    //let square_x = Math.floor(mouse_pos.x / width_px);
-    //let square_y = Math.floor(mouse_pos.y / height_px);
-    let square_x = mouse_sq_pos.x;
-    let square_y = mouse_sq_pos.y;
 
     let brd = board_history[view_move];
-
     if (brd === undefined) {
         return;
     }
+
+    reload_variables();
 
     //Clear with background color
     ctx.fillStyle = style_data.bg_col;
     ctx.fillRect(0, 0, c.width, c.height);
 
     //Draw the squares
-    let file = (num) => { return String.fromCharCode(97 + num); };
-    let rank = (num) => { return game_data.height - num; }
     for (let a = 0; a < game_data.width; a++) {
         for (let b = 0; b < game_data.height; b++) {
-            if (!on_board(a, b)) { continue; }
-            let is_dark = (a + b + style_data.flip_colors) % 2;
-            let sq = b * game_data.width + a;
-            if (game_data.highlight.get(sq) && style_data.show_highlights) { ctx.fillStyle = is_dark ? style_data.dark_highlight_col : style_data.light_highlight_col; }
-            else if (game_data.mud.get(sq)) { ctx.fillStyle = is_dark ? style_data.dark_mud_col : style_data.light_mud_col; }
-            else if (game_data.ethereal.get(sq)) { ctx.fillStyle = is_dark ? style_data.dark_ethereal_col : style_data.light_ethereal_col; }
-            else if (game_data.pacifist.get(sq)) { ctx.fillStyle = is_dark ? style_data.dark_pacifist_col : style_data.light_pacifist_col; }
-            else if (game_data.sanctuary.get(sq)) { ctx.fillStyle = is_dark ? style_data.dark_sanctuary_col : style_data.light_sanctuary_col; }
-            else { ctx.fillStyle = is_dark ? style_data.dark_square_col : style_data.light_square_col; }
-            let x = width_px * a, y = height_px * (b + game_data.has_hand)
-            if (style_data.flip_board) {
-                x = width_px * (game_data.width - a - 1);
-                y = height_px * (game_data.height - b - 1 + game_data.has_hand);
-            }
-            ctx.fillRect(x, y, width_px, height_px);
-            
-            //Draw border around pieces that can move
-            if (style_data.movable_pieces) {
-                if(!brd.can_move_ss[sq].is_zero()) {
-                    draw_on_square(document.getElementById("img_movable"), sq);
-                }
-            }
-            //Attacked spaces
-            if (style_data.attacked_squares) {
-                let scale = 0.2;
-                if(board.white_attack_ss.get(sq)) {
-                    fill_triangle(x, y, x+width_px*scale, y, x, y+width_px*scale, 'white');
-                }
-                if(board.black_attack_ss.get(sq)) {
-                    fill_triangle(x+width_px, y, x+width_px*(1-scale), y, x+width_px, y+width_px*scale, 'black');
-                }
-            }
-            //Border
-            if (style_data.border) {
-                ctx.strokeStyle = 'black';
-                ctx.lineWidth = style_data.border*width_px;
-                ctx.strokeRect(x, y, width_px, height_px);
-            }
-            //Square names
-            if (style_data.name_squares) {
-                ctx.font = "12px serif";
-                ctx.fillStyle = 'rgb(0,0,0)';
-                ctx.fillText(file(a) + rank(b), x + 4, y + 12);
-            }
+            render_space(a, b);
         }
     }
     //Hands
@@ -89,26 +46,18 @@
 
     //Draw glow on last moved piece
     if (style_data.last_moved) {
-        if (brd.last_moved_src >= 0 && brd.last_moved_dest >= 0) {
-            let img = document.getElementById("img_glow");
+        let img = document.getElementById("img_glow");
+        if (brd.last_moved_src >= 0) {
             draw_on_square(img, brd.last_moved_src);
+        }
+        if (brd.last_moved_dest >= 0) {
             draw_on_square(img, brd.last_moved_dest);
         }
     }
     //Draw glow on royals that can be landed on by opponent
     if (style_data.check_indicator) {
-        let check_glows = new squareset(game_data.width * game_data.height);
-        let all_pieces = ss_or(brd.white_ss, brd.black_ss);
-        for (; !all_pieces.is_zero(); all_pieces.pop()) {
-            let sq = all_pieces.get_ls1b();
-            if (brd.white_ss.get(sq)) {
-                check_glows.ore(ss_and(brd.can_move_ss[sq], brd.black_ss, brd.royal_ss));
-            }
-            if (brd.black_ss.get(sq)) {
-                check_glows.ore(ss_and(brd.can_move_ss[sq], brd.white_ss, brd.royal_ss));
-            }
-        }
-        draw_ss(check_glows, document.getElementById("img_glow_check"));
+        draw_ss(brd.checked.black, document.getElementById("img_glow_check"));
+        draw_ss(brd.checked.white, document.getElementById("img_glow_check"));
     }
 
     //Draw the pieces
@@ -118,92 +67,22 @@
         let neutral_pieces = ss_and(brd.white_ss, brd.black_ss, brd.piece_ss[a]);
         let white_pieces = ss_and(brd.white_ss, brd.black_ss.inverse(), brd.piece_ss[a]);
         let black_pieces = ss_and(brd.white_ss.inverse(), brd.black_ss, brd.piece_ss[a]);
-        draw_ss(white_pieces, img, style_data.white_col, false, p.angle);
-        draw_ss(black_pieces, img, style_data.black_col, false, p.angle);
+        let flip_white = style_data.rotate_opp &&  style_data.flip_board;
+        let flip_black = style_data.rotate_opp && !style_data.flip_board;
+        let white_angle = (p.angle ?? 0) + flip_white*180;
+        let black_angle = (p.angle ?? 0) + flip_black*180;
+        draw_ss(white_pieces, img, style_data.white_col, false, white_angle);
+        draw_ss(black_pieces, img, style_data.black_col, false, black_angle);
         draw_ss(neutral_pieces, img, style_data.neutral_col, false, p.angle);
         if(p.mini_sprite != undefined) {
             img = document.getElementById("img_" + p.mini_sprite);
-            draw_ss(white_pieces, img, style_data.white_col, true, p.angle);
-            draw_ss(black_pieces, img, style_data.black_col, true, p.angle);
+            draw_ss(white_pieces, img, style_data.white_col, true, white_angle, flip_white);
+            draw_ss(black_pieces, img, style_data.black_col, true, black_angle, flip_black);
             draw_ss(neutral_pieces, img, style_data.neutral_col, true, p.angle);
         }
     }
-    //Circles and Lines
-    function draw_tcr_arrow(x1, y1, x2, y2, col) {
-        if (style_data.flip_board) {
-            x1 = canvas.width - x1;
-            y1 = canvas.height - y1;
-            x2 = canvas.width - x2;
-            y2 = canvas.height - y2;
-        }
-        let angle = Math.atan2(x2-x1, y2-y1);
-        let angle3 = -Math.PI/2-angle+30*Math.PI/180;
-        let angle4 = -Math.PI/2-angle-30*Math.PI/180;
-        let x3 = Math.cos(angle3)*width_px*0.4 + x2;
-        let y3 = Math.sin(angle3)*width_px*0.4 + y2;
-        let x4 = Math.cos(angle4)*width_px*0.4 + x2;
-        let y4 = Math.sin(angle4)*width_px*0.4 + y2;
+    draw_circles_and_lines();
 
-        ctx.strokeStyle = col;
-        ctx.lineCap = "round";
-        ctx.lineWidth = 0.1*width_px;
-        ctx.beginPath();
-        ctx.moveTo(x1, y1);
-        ctx.lineTo(x2, y2);
-        ctx.moveTo(x2, y2);
-        ctx.lineTo(x3, y3);
-        ctx.moveTo(x2, y2);
-        ctx.lineTo(x4, y4);
-        ctx.stroke();
-    }
-    function draw_tcr_circle(x, y, col) {
-        if (style_data.flip_board) {
-            x = canvas.width - x;
-            y = canvas.height - y;
-        }
-        ctx.strokeStyle = col;
-        ctx.lineWidth = 0.1*width_px;
-        ctx.beginPath();
-        ctx.arc(x, y, width_px * 0.4, 0, 2 * Math.PI);
-        ctx.stroke(); 
-    }
-    for (let a = 0; a < circles.length; a ++) {
-        let x = ((circles[a].sq % game_data.width)+ 0.5) * width_px;
-        let y = (Math.floor(circles[a].sq / game_data.width) + 0.5) * height_px;
-        if (game_data.has_hand) {
-            y += height_px;
-        }
-        draw_tcr_circle(x, y, circles[a].col);
-    }
-    for (let a = 0; a < lines.length; a ++) {
-        let x1 = ((lines[a].sq1 % game_data.width)+ 0.5) * width_px;
-        let y1 = (Math.floor(lines[a].sq1 / game_data.width)+ 0.5) * height_px;
-        let x2 = ((lines[a].sq2 % game_data.width)+ 0.5) * width_px;
-        let y2 = (Math.floor(lines[a].sq2 / game_data.width) + 0.5) * height_px;
-        if (game_data.has_hand) {
-            y1 += height_px;
-            y2 += height_px;
-        }
-        draw_tcr_arrow(x1, y1, x2, y2, lines[a].col);
-    }
-    if (down_sq >= 0 && down_sq < game_data.width * game_data.height) {
-        let x = ((down_sq % game_data.width)+ 0.5) * width_px;
-        let y = (Math.floor(down_sq / game_data.width) + 0.5) * height_px;
-        if (game_data.has_hand) {
-            y += height_px;
-        }
-        if (down_sq === mouse_sq) {
-            draw_tcr_circle(x, y, line_col);
-        }
-        else if(mouse_sq != -1) {
-            let mx = ((mouse_sq % game_data.width)+ 0.5) * width_px;
-            let my = (Math.floor(mouse_sq / game_data.width) + 0.5) * height_px;
-            if (game_data.has_hand) {
-                my += height_px;
-            }
-            draw_tcr_arrow(x, y, mx, my, line_col);
-        }
-    }
     //Pieces in hand
     if (game_data.has_hand) {
         let col = 0;
@@ -280,33 +159,203 @@
 
     //Promotions menu
     if (temp_data.waiting_for_promotion) {
-        //Background
-        ctx.globalAlpha = 0.5;
-        ctx.fillStyle = 'rgb(0,0,0)';
-        ctx.fillRect(0, 0, c.width, c.height);
-        ctx.globalAlpha = 1.0;
-        //Border around selectable pieces
-        let start_height = c.height / 2 - height_px / 2;
-        let start_width = c.width / 2 - height_px * temp_data.promotions.length / 2;
-        ctx.fillStyle = 'rgb(0,0,0)';
-        let border_width = width_px / 8;
-        ctx.fillRect(start_width - border_width, start_height - border_width,
-            temp_data.promotions.length * width_px + border_width * 2, height_px + border_width * 2);
+        draw_promotion_menu();
+    }
+}
 
-        //Selectable pieces
-        for (let a = 0; a < temp_data.promotions.length; a++) {
-            ctx.fillStyle = (a % 2) ? style_data.dark_square_col : style_data.light_square_col;
-            ctx.fillRect(start_width + width_px * a, start_height, width_px, height_px);
-            let img = document.getElementById("img_" + game_data.all_pieces[temp_data.promotions[a]].sprite);
-            //To do: Set draw color based on piece's color
-            draw_sprite(img, start_width + width_px * a, start_height, width_px, height_px);
+//Just the background, not including pieces, glows, etc.
+function render_space(a, b) {
+    //Can be called with only one parameter
+    if (b === undefined) {
+        b = Math.floor(a / game_data.width);
+        a %= game_data.width;
+    }
+    let sq = b * game_data.width + a;
+    function line_d(x1, y1, dx, dy) {
+        dx *= width_px;
+        dy *= height_px;
+        if (style_data.flip_board) {
+            dx *= -1;
+            dy *= -1;
+            x1 = c.width - x1;
+            y1 = c.height - y1;
+        }
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x1+dx, y1+dy);
+        ctx.stroke();
+    };
+    if (!on_board(a, b)) { return; }
+    if (["intersection", "xiangqi"].includes(style_data.style.toLowerCase())) {
+        let x = (a + 0.5) * width_px;
+        let y = (b + 0.5 + game_data.has_hand) * height_px;
+        ctx.strokeStyle = 'black';
+        ctx.lineWidth = style_data.lines*width_px;
+
+        //Draw line from this point to the right
+        if (on_board(a+1, b)) {
+            line_d(x, y, 1, 0)
+        }
+        //Draw line down, if it's not a river
+        if (on_board(a, b+1) && (style_data.style.toLowerCase() !== "xiangqi"
+            || b+1 !== game_data.height/2 || a === 0 || a === game_data.width-1)) {
+            line_d(x, y, 0, 1)
+        }
+        //Draw highlights
+        if (game_data.highlight.get(sq)) {
+            let test = offset => { return on_board(sq+offset) && game_data.highlight.get(sq+offset); };
+            //Top-left corner
+            if (test(1) && test(game_data.width) && !test(-1) && !test(-game_data.width)) {
+                line_d(x, y, 1, 1);
+            }
+            //Top-right corner
+            if (!test(1) && test(game_data.width) && test(-1) && !test(-game_data.width)) {
+                line_d(x, y, -1, 1);
+            }
+            //Bottom-left corner
+            if (test(1) && !test(game_data.width) && !test(-1) && test(-game_data.width)) {
+                line_d(x, y, 1, -1);
+            }
+            //Bottom-right corner
+            if (!test(1) && !test(game_data.width) && test(-1) && test(-game_data.width)) {
+                line_d(x, y, -1, -1);
+            }
+        }
+        if (game_data.highlight2.get(sq)) {
+            //Draw intersections of isolated and highlighted points
+            //Crosses
+            if (style_data.point_style.toLowerCase() === "x") {
+                line_d(x - 0.2 * width_px, y - 0.2 * height_px, 0.4, 0.4);
+                line_d(x + 0.2 * width_px, y - 0.2 * height_px, -0.4, 0.4);
+            }
+            //Dots
+            else if (style_data.point_style.toLowerCase() === "dot") {
+                let x1 = style_data.flip_board ? c.width - x : x;
+                let y1 = style_data.flip_board ? c.height - y : y;
+                ctx.beginPath();
+                ctx.arc(x1, y1, width_px * 0.15, 0, 2 * Math.PI);
+                ctx.fillStyle = "black";
+                ctx.fill();
+            }
+            //4-corner
+            else if (style_data.point_style.toLowerCase() === "4-corner") {
+                let length = 0.3, offset = 0.15;
+                if (a > 0 && b > 0) {
+                    line_d(x - offset * width_px, y - offset * height_px, -length, 0);
+                    line_d(x - offset * width_px, y - offset * height_px, 0, -length);
+                }
+                if (a < game_data.width - 1 && b > 0) {
+                    line_d(x + offset * width_px, y - offset * height_px, length, 0);
+                    line_d(x + offset * width_px, y - offset * height_px, 0, -length);
+                }
+                if (a > 0 && b < game_data.height - 1) {
+                    line_d(x - offset * width_px, y + offset * height_px, -length, 0);
+                    line_d(x - offset * width_px, y + offset * height_px, 0, length);
+                }
+                if (a < game_data.width - 1 && b < game_data.height - 1) {
+                    line_d(x + offset * width_px, y + offset * height_px, length, 0);
+                    line_d(x + offset * width_px, y + offset * height_px, 0, length);
+                }
+            }
+        }
+    }
+    else {
+        let is_dark = (a + b + style_data.flip_colors) % 2 && style_data.style.toLowerCase() === "checkered";
+        if (game_data.highlight.get(sq) && style_data.show_highlights && style_data.style.toLowerCase() !== "ashtapada")
+            { ctx.fillStyle = is_dark ? style_data.dark_highlight_col : style_data.light_highlight_col; }
+        else if (game_data.highlight2.get(sq) && style_data.show_highlights && style_data.style.toLowerCase() !== "ashtapada")
+            { ctx.fillStyle = is_dark ? style_data.dark_highlight_2_col : style_data.light_highlight_2_col; }
+        else if (game_data.mud.get(sq)) { ctx.fillStyle = is_dark ? style_data.dark_mud_col : style_data.light_mud_col; }
+        else if (game_data.ethereal.get(sq)) { ctx.fillStyle = is_dark ? style_data.dark_ethereal_col : style_data.light_ethereal_col; }
+        else if (game_data.pacifist.get(sq)) { ctx.fillStyle = is_dark ? style_data.dark_pacifist_col : style_data.light_pacifist_col; }
+        else if (game_data.sanctuary.get(sq)) { ctx.fillStyle = is_dark ? style_data.dark_sanctuary_col : style_data.light_sanctuary_col; }
+        else { ctx.fillStyle = is_dark ? style_data.dark_square_col : style_data.light_square_col; }
+        let x = width_px * a, y = height_px * (b + game_data.has_hand)
+        if (style_data.flip_board) {
+            x = width_px * (game_data.width - a - 1);
+            y = height_px * (game_data.height - b - 1 + game_data.has_hand);
+        }
+        ctx.fillRect(x, y, width_px, height_px);
+
+        //X on highlighted ashtapada squares
+        if (style_data.style.toLowerCase() === "ashtapada" && game_data.highlight.get(sq)) {
+            line_d(x, y, 1, 1);
+            line_d(x+width_px, y, -1, 1);
+        }
+
+        //Draw border around pieces that can move
+        if (style_data.movable_pieces) {
+            if(!brd.can_move_ss[sq].is_zero()) {
+                draw_on_square(document.getElementById("img_movable"), sq);
+            }
+        }
+        //Attacked spaces
+        if (style_data.attacked_squares) {
+            let scale = 0.2;
+            if(board.white_attack_ss.get(sq)) {
+                fill_triangle(x, y, x+width_px*scale, y, x, y+width_px*scale, 'white');
+            }
+            if(board.black_attack_ss.get(sq)) {
+                fill_triangle(x+width_px, y, x+width_px*(1-scale), y, x+width_px, y+width_px*scale, 'black');
+            }
+        }
+        //Border
+        if (style_data.border) {
+            ctx.strokeStyle = 'black';
+            ctx.lineWidth = style_data.border*width_px;
+            ctx.strokeRect(x, y, width_px, height_px);
+        }
+        //Square names
+        if (style_data.name_squares) {
+            ctx.font = "12px serif";
+            ctx.fillStyle = 'rgb(0,0,0)';
+            ctx.fillText(file(a) + rank(b), x + 4, y + 12);
         }
     }
 }
 
+//Renders the space, piece, glows, etc.
+//Used for express rendering when we only want to render a few squares
+function render_square(x, y) {
+    if (y === undefined) {
+        y = Math.floor(x / game_data.width);
+        x %= game_data.width;
+    }
+    let sq = x * game_data.width + y;
+
+    render_space(x, y);
+    //Draw glow on last moved piece
+    if (style_data.last_moved) {
+        if (brd.last_moved_src === sq || brd.last_moved_dest === sq) {
+            draw_on_square(document.getElementById("img_glow"), sq);
+        }
+    }
+    //Draw glow on royals that can be landed on by opponent
+    if (style_data.check_indicator) {
+        if (brd.checked.black.get(sq) || brd.checked.white.get(sq)) {
+            draw_on_square(document.getElementById("img_glow_check"), sq);
+        }
+    }
+
+    for (let a = 0; a < game_data.all_pieces.length; a ++) {
+        if (board.piece_ss[a].get(sq)) {
+
+        }
+    }
+}
+
+//Renders the given squares, plus the squares it can move to
+function express_render(squares) {
+    reload_variables();
+    if (!Array.isArray(squares)) {
+        squares = [squares];
+    }
+    for (let a = 0; a < squares.length; a ++) {
+
+    }
+}
+
 function fill_triangle(x1, y1, x2, y2, x3, y3, color) {
-    let c = document.getElementById("board_canvas");
-    let ctx = c.getContext("2d");
     ctx.fillStyle = color;
     ctx.beginPath();
     ctx.moveTo(x1, y1);
@@ -314,6 +363,109 @@ function fill_triangle(x1, y1, x2, y2, x3, y3, color) {
     ctx.lineTo(x3, y3);
     ctx.closePath();
     ctx.fill();
+}
+
+function draw_tcr_arrow(x1, y1, x2, y2, col) {
+    if (style_data.flip_board) {
+        x1 = canvas.width - x1;
+        y1 = canvas.height - y1;
+        x2 = canvas.width - x2;
+        y2 = canvas.height - y2;
+    }
+    let angle = Math.atan2(x2-x1, y2-y1);
+    let angle3 = -Math.PI/2-angle+30*Math.PI/180;
+    let angle4 = -Math.PI/2-angle-30*Math.PI/180;
+    let x3 = Math.cos(angle3)*width_px*0.4 + x2;
+    let y3 = Math.sin(angle3)*width_px*0.4 + y2;
+    let x4 = Math.cos(angle4)*width_px*0.4 + x2;
+    let y4 = Math.sin(angle4)*width_px*0.4 + y2;
+
+    ctx.strokeStyle = col;
+    ctx.lineCap = "round";
+    ctx.lineWidth = 0.1*width_px;
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(x3, y3);
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(x4, y4);
+    ctx.stroke();
+}
+function draw_tcr_circle(x, y, col) {
+    if (style_data.flip_board) {
+        x = canvas.width - x;
+        y = canvas.height - y;
+    }
+    ctx.strokeStyle = col;
+    ctx.lineWidth = 0.1*width_px;
+    ctx.beginPath();
+    ctx.arc(x, y, width_px * 0.4, 0, 2 * Math.PI);
+    ctx.stroke(); 
+}
+
+function draw_circles_and_lines() {
+    for (let a = 0; a < circles.length; a ++) {
+        let x = ((circles[a].sq % game_data.width)+ 0.5) * width_px;
+        let y = (Math.floor(circles[a].sq / game_data.width) + 0.5) * height_px;
+        if (game_data.has_hand) {
+            y += height_px;
+        }
+        draw_tcr_circle(x, y, circles[a].col);
+    }
+    for (let a = 0; a < lines.length; a ++) {
+        let x1 = ((lines[a].sq1 % game_data.width)+ 0.5) * width_px;
+        let y1 = (Math.floor(lines[a].sq1 / game_data.width)+ 0.5) * height_px;
+        let x2 = ((lines[a].sq2 % game_data.width)+ 0.5) * width_px;
+        let y2 = (Math.floor(lines[a].sq2 / game_data.width) + 0.5) * height_px;
+        if (game_data.has_hand) {
+            y1 += height_px;
+            y2 += height_px;
+        }
+        draw_tcr_arrow(x1, y1, x2, y2, lines[a].col);
+    }
+    if (down_sq >= 0 && down_sq < game_data.width * game_data.height) {
+        let x = ((down_sq % game_data.width)+ 0.5) * width_px;
+        let y = (Math.floor(down_sq / game_data.width) + 0.5) * height_px;
+        if (game_data.has_hand) {
+            y += height_px;
+        }
+        if (down_sq === mouse_sq) {
+            draw_tcr_circle(x, y, line_col);
+        }
+        else if(mouse_sq != -1) {
+            let mx = ((mouse_sq % game_data.width)+ 0.5) * width_px;
+            let my = (Math.floor(mouse_sq / game_data.width) + 0.5) * height_px;
+            if (game_data.has_hand) {
+                my += height_px;
+            }
+            draw_tcr_arrow(x, y, mx, my, line_col);
+        }
+    }
+}
+
+function draw_promotion_menu() {
+    //Background
+    ctx.globalAlpha = 0.5;
+    ctx.fillStyle = 'rgb(0,0,0)';
+    ctx.fillRect(0, 0, c.width, c.height);
+    ctx.globalAlpha = 1.0;
+    //Border around selectable pieces
+    let start_height = c.height / 2 - height_px / 2;
+    let start_width = c.width / 2 - height_px * temp_data.promotions.length / 2;
+    ctx.fillStyle = 'rgb(0,0,0)';
+    let border_width = width_px / 8;
+    ctx.fillRect(start_width - border_width, start_height - border_width,
+        temp_data.promotions.length * width_px + border_width * 2, height_px + border_width * 2);
+
+    //Selectable pieces
+    for (let a = 0; a < temp_data.promotions.length; a++) {
+        ctx.fillStyle = (a % 2) ? style_data.dark_square_col : style_data.light_square_col;
+        ctx.fillRect(start_width + width_px * a, start_height, width_px, height_px);
+        let img = document.getElementById("img_" + game_data.all_pieces[temp_data.promotions[a]].sprite);
+        //To do: Set draw color based on piece's color
+        draw_sprite(img, start_width + width_px * a, start_height, width_px, height_px);
+    }
 }
 
 function can_move(color, brd) {
@@ -358,37 +510,29 @@ function highlighted_hand_piece(brd) {
 }
 
 function draw_sprite(sprite, x, y, width, height, color, angle = 0) {
-    //try {
-        let c = document.getElementById("board_canvas");
-        let ctx = c.getContext("2d");
-        ctx.translate(x + width / 2, y + height / 2);
-        ctx.rotate(angle * Math.PI / 180);
+    ctx.translate(x + width / 2, y + height / 2);
+    ctx.rotate(angle * Math.PI / 180);
 
-        if (!color || color === 'rgb(255,255,255)') {
-            ctx.drawImage(sprite, -width/2, -height/2, width, height);
-        }
-        else {
-            let c2 = document.getElementById("blend_canvas");
-            let ctx2 = c2.getContext("2d");
-            ctx2.clearRect(0, 0, c2.width, c2.height);
-            ctx2.drawImage(sprite, 0, 0, width, height);
-            ctx2.globalCompositeOperation = "multiply";
-            ctx2.fillStyle = color;
-            ctx2.fillRect(0, 0, width, height);
-            ctx2.globalCompositeOperation = "destination-in";
-            ctx2.drawImage(sprite, 0, 0, width, height);
-            ctx2.globalCompositeOperation = "source-over";
-            //Nothing besides piece sprites will be colored
-            ctx.drawImage(c2, 0, 0, width, height, -width/2, -height/2, width, height);
-        }
+    if (!color || color === 'rgb(255,255,255)') {
+        ctx.drawImage(sprite, -width / 2, -height / 2, width, height);
+    }
+    else {
+        let c2 = document.getElementById("blend_canvas");
+        let ctx2 = c2.getContext("2d");
+        ctx2.clearRect(0, 0, c2.width, c2.height);
+        ctx2.drawImage(sprite, 0, 0, width, height);
+        ctx2.globalCompositeOperation = "multiply";
+        ctx2.fillStyle = color;
+        ctx2.fillRect(0, 0, width, height);
+        ctx2.globalCompositeOperation = "destination-in";
+        ctx2.drawImage(sprite, 0, 0, width, height);
+        ctx2.globalCompositeOperation = "source-over";
+        //Nothing besides piece sprites will be colored
+        ctx.drawImage(c2, 0, 0, width, height, -width / 2, -height / 2, width, height);
+    }
 
-        ctx.rotate(-angle * Math.PI / 180);
-        ctx.translate(-x - width / 2, -y - height / 2);
-    // }
-    // catch (e) {
-    //     //Do nothing, this is fine
-    //     console.log(`Sprite rendering failed. Sprite: ${sprite}, x: ${x}, y: ${y}, width: ${width}, height: ${height}, color: ${color}`);
-    // }
+    ctx.rotate(-angle * Math.PI / 180);
+    ctx.translate(-x - width / 2, -y - height / 2);
 }
 
 function render_extras() {
@@ -424,8 +568,7 @@ function render_extras() {
     //Move history
     let hist_div = document.getElementById("move_history");
     hist_div.innerHTML = "";
-    /*let file = (num) => { return String.fromCharCode(97 + num); };
-    let rank = (num) => { return game_data.height - num; }
+    /*
     let move_to_string = (move) => {
         return "" + file(move.x1) + rank(move.y1) + "→" + file(move.x2) + rank(move.y2);
     };*/
@@ -508,8 +651,6 @@ function print_history() {
 }
 
 function draw_on_square(img, pos1, pos2) {
-    let c = document.getElementById("board_canvas");
-    let ctx = c.getContext("2d");
     //If only sq position is given, set square based on that
     let sq = pos1;
     //If x and y coords are given, set square based on that
@@ -543,8 +684,6 @@ function draw_on_hand(img, x, is_black, is_mini = false) {
 }
 
 function draw_text_on_hand(txt, x, is_black) {
-    let c = document.getElementById("board_canvas");
-    let ctx = c.getContext("2d");
     if (style_data.flip_board) { is_black ^= 1; }
     //Set size data
     let width_px = canvas.width / game_data.width;
@@ -557,7 +696,7 @@ function draw_text_on_hand(txt, x, is_black) {
     ctx.fillText(txt, pos_x + 4, pos_y + 12);
 }
 
-function draw_ss(ss, img, col, is_mini = false, angle = 0) {
+function draw_ss(ss, img, col, is_mini = false, angle = 0, is_flip = false) {
     let width_px = canvas.width / game_data.width;
     let height_px = canvas.height / (game_data.height + (game_data.has_hand ? 2 : 0));
     for (let a = 0; a < Math.min(ss.length, game_data.width * game_data.height); a++) {
@@ -568,8 +707,13 @@ function draw_ss(ss, img, col, is_mini = false, angle = 0) {
                 pos_x = width_px * (game_data.width - (a % game_data.width) - 1);
                 pos_y = height_px * (game_data.height - Math.floor(a / game_data.width) - 1 + game_data.has_hand);
             }
-            let width = is_mini ? width_px * 0.4 : width_px;
-            let height = is_mini ? height_px * 0.4 : height_px;
+            const mini_ratio = 0.4;
+            let width = is_mini ? width_px * mini_ratio : width_px;
+            let height = is_mini ? height_px * mini_ratio : height_px;
+            if (is_mini && is_flip) {
+                pos_x += width_px  * (1 - mini_ratio);
+                pos_y += height_px * (1 - mini_ratio);
+            }
             draw_sprite(img, pos_x, pos_y, width, height, col, angle);
         }
     }

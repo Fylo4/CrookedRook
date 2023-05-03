@@ -2,6 +2,7 @@ preset_variants[folders.ccit].push({
     name: "No Step On Snek",
     author: "Eumorpha",
     description: "Popo Chess Snake Contest board. Snakes promote to Hydras on the last rank. Basilisks act as Short Rooks (R5) and cannot castle. Frogs act as Ferz + Threeleaper (yes, it can leap across the board holes on the edges). The Centaur acts as Mann + Knight.",
+	style: "checkered",
 	width: 10,
 	height: 10,
 
@@ -12,7 +13,7 @@ preset_variants[folders.ccit].push({
             sprite: "snake",
 			symbol: "S",
             move: "[P]a+([1 2 1 1],[-1 2 1 1])ea",
-			promotions: [{white: 0, black: 1, to: ["H"], on: [events.enter]}]
+			promotions: [{ to: ["H"] }]
 		},
 		{
             name: "Basilisk",
@@ -53,8 +54,4 @@ preset_variants[folders.ccit].push({
 	],
     setup: "2. bB bF bC bK bF bB 3. 8bS 62. 8wS 3. wB wF wC wK wF wB 2.",
     active_squares: "0011111100 0111111110 1111111111 1111111111 0111111110 0111111110 1111111111 1111111111 0111111110 0011111100",
-    zones: [
-        "0011111100 0000000000 0000000000 0000000000 0000000000 0000000000 0000000000 0000000000 0000000000 0000000000",
-        "0000000000 0000000000 0000000000 0000000000 0000000000 0000000000 0000000000 0000000000 0000000000 0011111100",
-    ]
 });

@@ -1,7 +1,7 @@
 preset_variants[folders.ccit].push({
     name: "Kitchen",
     author: "qBlaine",
-    description: "",
+	style: "checkered",
 	width: 8,
     height: 8,
     wins: [ends.stalemate, ends.bare_royal],
@@ -15,7 +15,7 @@ preset_variants[folders.ccit].push({
             notation: "",
             move: "[S]ae+[P]ca",
             attributes: [attrib.ep_capturer],
-            promotions: [{ white: 0, black: 1, to: ["Q"], on: [events.enter] }],
+            promotions: [{ to: ["Q"] }],
         },
         {
             name: "Pawn",
@@ -24,7 +24,7 @@ preset_variants[folders.ccit].push({
             symbol: "2",
             notation: "",
             move: "i[0 1 1 2]Bae+[S]ae+[P]ca",
-            promotions: [{ white: 0, black: 1, to: ["Q"], on: [events.enter] }],
+            promotions: [{ to: ["Q"] }],
             attributes: [attrib.ep_captured, attrib.ep_capturer],
         },
         {
@@ -59,8 +59,4 @@ preset_variants[folders.ccit].push({
 	],
     setup: "bB bN b2 2bK b2 bN bB 8b1",
     copy: "flip",
-    zones: [
-        "11111111 00000000 00000000 00000000 00000000 00000000 00000000 00000000",
-        "00000000 00000000 00000000 00000000 00000000 00000000 00000000 11111111",
-    ]
 });

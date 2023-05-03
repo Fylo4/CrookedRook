@@ -2,6 +2,7 @@ preset_variants[folders.SEA].push(JSON.parse(`{
   "name": "Sittuyin",
   "author": "Myanmar",
   "description": "Sittuyin, or Burmese Chess is a classic board game native to Myanmar and is very similar to Makruk. At the start of the game, players take turns placing pieces on their side of the board. Rooks must be placed on the back rank. When a pawn reaches the main diagonal, it can promote to general. You can also promote if it is your last pawn. You can only promote if you have no other general on the board. Promotion is performed as its own turn, without moving.",
+  "style": "uncheckered",
   "width": 8,
   "height": 8,
   "has_hand": true,

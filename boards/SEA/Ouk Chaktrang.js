@@ -2,6 +2,7 @@ preset_variants[folders.SEA].push(JSON.parse(`{
 	"name": "Ouk Chaktrang",
 	"author": "Cambodia",
 	"description": "Ouk Chaktrang, or Cambodian Chess, is the form of chess played in Cambodia. Its rules are similar to Makruk, the Thai Chess, with some special opening moves and slight differences. Queen and bishop is replaced by seed and nobleman. Pawn start on the 3rd rank and promote to seed only. King may make first move like knight. Queen may make first move leaping forward 2 steps.",
+  "style": "uncheckered",
 	"width": 8,
 	"height": 8,
 	"all_pieces": [

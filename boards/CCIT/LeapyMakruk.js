@@ -1,6 +1,7 @@
 preset_variants[folders.ccit].push({
     name: "LeapyMakruk",
     description: "8x8 board with Peasants on the 3rd row, which promote on the 7th row. The majority of the pieces can capture like a Knight, including the King.",
+	style: "checkered",
 	width: 8,
 	height: 8,
 
@@ -12,7 +13,7 @@ preset_variants[folders.ccit].push({
             symbol: "p",
             notation: "",
 			move: "[S]ae+[P]ca",
-            promotions: [{ white: 0, black: 1, to: ["NSNR"], on: [events.enter] }],
+            promotions: [{ white: "black_rank_2", black: "white_rank_2", to: ["NSNR"] }],
 		},
 		{
             name: "Empress",
@@ -53,8 +54,4 @@ preset_variants[folders.ccit].push({
 	],
     setup: "bR bU bG bE bK bG bU bR 8. 8bp",
     copy: "flip",
-	zones: [
-        "00000000 11111111 00000000 00000000 00000000 00000000 00000000 00000000",
-        "00000000 00000000 00000000 00000000 00000000 00000000 11111111 00000000",
-	],
 });

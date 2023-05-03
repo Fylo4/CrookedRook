@@ -1,6 +1,7 @@
 preset_variants[folders.other].push({
 //const style_board = {
     name: "Style",
+    style: "checkered",
 	description: "From top to bottom, the rows are highlighted, mud, etherial, pacifist, and sanctuary. <br />This is also the style priority; if a square has mud and sanctuary, it will render as mud.",
 	width: 7,
 	height: 7,

@@ -1,6 +1,7 @@
 preset_variants[folders.xiangqi].push({
     name: "Manchu Chess",
     description: "Xiangqi, but one side has a super-chariot, which moves like a rook, knight, or cannon",
+    style: "xiangqi",
 	width: 9,
 	height: 10,
     wins: [ends.royal_capture, ends.stalemate],

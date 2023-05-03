@@ -2,6 +2,7 @@ preset_variants[folders.compound].push({
     name: "Carrera's Chess",
     author: "Pietro Carrera (1617)",
     description: "Adds 2 pieces, which combine the moves of knight and bishop, and knight and rook. No castling or en passant.",
+	style: "checkered",
 	width: 10,
 	height: 8,
 	wins: [ends.royal_capture],

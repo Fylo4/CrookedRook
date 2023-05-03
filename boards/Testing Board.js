@@ -1,5 +1,6 @@
 preset_variants[folders.other].push({
     name: "Testing",
+    style: "checkered",
 	width: 8,
 	height: 8,
 	wins: [ends.royal_capture],

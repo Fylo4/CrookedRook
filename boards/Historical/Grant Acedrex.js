@@ -1,6 +1,7 @@
 preset_variants[folders.historical].push({
     name: "Grant Acedrex",
     description: "Grant Acedrex",
+	style: "checkered",
 	width: 12,
 	height: 12,
     wins: [ends.royal_capture, ends.bare_royal, ends.stalemate],

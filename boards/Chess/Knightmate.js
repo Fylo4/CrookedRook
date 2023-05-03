@@ -2,6 +2,7 @@ preset_variants[folders.chess].push({
   name: "Knightmate",
   author: "Bruce Zimov",
   description: "Chess variant where Knight and King switch roles",
+	style: "checkered",
   width: 8,
   height: 8,
   wins: ["royal_capture"],

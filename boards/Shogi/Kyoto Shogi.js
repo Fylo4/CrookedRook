@@ -2,6 +2,7 @@ preset_variants[folders.shogi].push({
 	name: "Kyoto Shogi",
 	author: "Tamiya Katsuya",
 	description: "A Shogi variant where pieces flip every turn",
+    style: "uncheckered",
 	width: 5,
 	height: 5,
 	wins: ["royal_capture"],

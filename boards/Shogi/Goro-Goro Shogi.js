@@ -1,6 +1,7 @@
 preset_variants[folders.shogi].push({
     name: "Goro-Goro Shogi",
     description: "A smaller version of Shogi. Pawns move and capture one step forward, Silver moves and captures one step diagonally or forward, Gold one step cardinally or diagonal-forward, and King one step in any direction. Silver and Pawn promote to move like Gold in the last 2 ranks. You can drop a piece anywhere, except only one pawn per file, and pawns cannot be dropped to the last rank. All pieces drop to their un-promoted version.",
+    style: "uncheckered",
 	width: 5,
 	height: 6,
 	has_hand: true,

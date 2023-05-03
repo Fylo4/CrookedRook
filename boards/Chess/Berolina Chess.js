@@ -1,11 +1,10 @@
 preset_variants[folders.chess].push({
   name: "Berolina Chess",
   description: "Classic Chess but with opposite pawns",
+	style: "checkered",
   width: 8,
   height: 8,
-  wins: ["royal_capture"],
-  draws: ["stalemate"],
-  castle_length: 2,
+  
   all_pieces: [
     {
       name: "Pawn",
@@ -14,9 +13,7 @@ preset_variants[folders.chess].push({
       symbol: "p",
       notation: "",
       move: "i([1 1 1 2],[-1 1 1 2])Bae+[P]ae+[S]ca",
-      promotions: [
-        { white: 1, black: 0, to: ["NSNR"], on: ["enter"] }
-      ],
+      promotions: [{ to: ["NSNR"] }],
       attributes: ["ep_captured", "ep_capturer"]
     },
     {
@@ -58,9 +55,5 @@ preset_variants[folders.chess].push({
     }
   ],
   setup: "bR bN bB bQ bK bB bN bR 8bp",
-  copy: "flip",
-  zones: [
-    "00000000 00000000 00000000 00000000 00000000 00000000 00000000 11111111",
-    "11111111 00000000 00000000 00000000 00000000 00000000 00000000 00000000"
-  ]
+  copy: "flip"
 });

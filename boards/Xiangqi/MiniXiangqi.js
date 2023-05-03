@@ -2,6 +2,7 @@ preset_variants[folders.xiangqi].push({
     name: "MiniXiangqi",
     author: "S. Kusumoto",
     description: "7x7 version of Chinese Chess",
+    style: "intersection",
 	width: 7,
 	height: 7,
     wins: [ends.royal_capture, ends.stalemate],

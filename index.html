@@ -3,6 +3,7 @@
 <head>
     <!--import * as DOMPurify from 'dompurify';-->
     <script type="text/javascript" src="purify.min.js"></script>
+    <script src="hjson.js"></script>
     <script src="Squareset.js"></script>
     <script src="Constants.js"></script>
     <script src="bnb_ep_init.js"></script>
@@ -11,8 +12,12 @@
     <script src="make_move.js"></script>
     <script src="refresh_moves.js"></script>
     <script src="style_data.js"></script>
-    <script src="init.js"></script>
     <script src="random.js"></script>
+    <script src="import-export.js"></script>
+    <script src="ui.js"></script>
+    <script src="site_utils.js"></script>
+    <script src="board_utils.js"></script>
+    <script src="init.js"></script>
 
     <script src="boards/CCIT/Crow Chess.js"></script>
     <script src="boards/CCIT/Cannon.js"></script>
@@ -21,6 +26,7 @@
     <script src="boards/CCIT/LeapyMakruk.js"></script>
     <script src="boards/CCIT/Honey Rush.js"></script>
     <script src="boards/CCIT/Segiztas Peak.js"></script>
+    <script src="boards/CCIT/Blackroot.js"></script>
 
     <script src="boards/Chess/Chess.js"></script>
     <script src="boards/Chess/Atomic Chess.js"></script>
@@ -127,6 +133,7 @@
 
     <br />
 
+    <!--Lobby-->
     <div id="lobby_section" style="display: none;">
         <table id="lobby_table">
             <tr>
@@ -165,7 +172,7 @@
             <select id="variantField" name="variantField"></select>
             <label class="custom-file-upload dark" id="variant_file_label">
                 <span id="file-selected">Choose File</span>
-                <input type="file" id="variant_file" style="display: none" accept=".json" />
+                <input type="file" id="variant_file" style="display: none" accept=".json, .hjson" />
             </label>
             <br /><br />
             <button onclick="load_variant();">Load</button>
@@ -182,9 +189,25 @@
         <p id="inspect_text" style="display: none">Click on any piece to inspect it</p>
         <div id="style_buttons" style="display:none">
             <br />
+            <label for="style_select">Style:</label>
+            <select id="style_select" onchange="set_style_type()">
+                <option value="checkered">Checkered</option>
+                <option value="uncheckered">Uncheckered</option>
+                <option value="ashtapada">Ashtapada</option>
+                <option value="intersection">Intersection</option>
+                <option value="xiangqi">Xiangqi</option>
+            </select>
+            <label for="intersection_select">Intersections:</label>
+            <select id="intersection_select" onchange="set_intersection_type()">
+                <option value="4-corner">4-corner</option>
+                <option value="dot">Dot</option>
+                <option value="x">X</option>
+            </select>
+            <br /> <br />
             <button onClick="change_zoom(1);  render_board();" class="sq_btn">+</button>
             <button onClick="change_zoom(-1); render_board();" class="sq_btn">-</button>
-            <button onClick="style_data.flip_board ^= 1; render_board()">Flip</button>
+            <button onClick="style_data.flip_board ^= 1; render_board()">Flip Board</button>
+            <button onClick="style_data.rotate_opp ^= 1; render_board()">Flip Opponent</button>
             <button onClick="style_data.name_squares ^= 1; render_board()">Square Names</button>
             <button href="#" id="download_btn" onClick="handle_download_btn()" download="image.png">📷</button>
             <br /> <br />
@@ -206,6 +229,8 @@
             <label for="last_moved_cb">Last moved piece</label>
             <input type="checkbox" id="highlight_cb" checked onchange="refresh_checkboxes()">
             <label for="highlight_cb">Show Highlighted Squares</label>
+            <br /> <br />
+            <button onclick="handle_advanced_style_btn()">Advanced Style Info</button>
         </div>
         <!-- <button onClick="">End turn</button> -->
         <br /> <br />
@@ -259,6 +284,11 @@
                     <td><input id="style_hi_dark" onchange="set_style()" /></td>
                 </tr>
                 <tr>
+                    <td>Highlight2</td>
+                    <td><input id="style_hi2_light" onchange="set_style()" /></td>
+                    <td><input id="style_hi2_dark" onchange="set_style()" /></td>
+                </tr>
+                <tr>
                     <td>Mud</td>
                     <td><input id="style_md_light" onchange="set_style()" /></td>
                     <td><input id="style_md_dark" onchange="set_style()" /></td>
@@ -289,7 +319,7 @@
 
         <div id="export_div" style="display: none">
             <h2>Export History</h2>
-            <button onclick="hideExportDiv()">Hide</button>
+            <button onclick="hide_export_div()">Hide</button>
             <button>Copy</button>
             <p id="export_p"></p>
         </div>

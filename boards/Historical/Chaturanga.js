@@ -1,6 +1,7 @@
 preset_variants[folders.historical].push({
     name: "Chaturanga",
     description: "Ancient ancestor of Chess-like games. Queen is replaced with Ferz, Bishop with Alfil, Pawns lose their double-step and promote to Ferz only, and King can't castle. Win by capturing, stalemating, or baring the opponent's King.",
+	style: "ashtapada",
 	width: 8,
 	height: 8,
     wins: [ends.royal_capture, ends.bare_royal, ends.stalemate],
@@ -59,4 +60,5 @@ preset_variants[folders.historical].push({
 		"00000000 00000000 00000000 00000000 00000000 00000000 00000000 11111111",
 		"11111111 00000000 00000000 00000000 00000000 00000000 00000000 00000000",
 	],
+	highlight: "00011000 00000000 00000000 10011001 10011001 00000000 00000000 00011000"
 });

@@ -2,6 +2,7 @@ preset_variants[folders.chess].push({
   name: "Omega Chess",
   author: "Daniel Macdoland",
   description: "A 10x10 Chess variant with corners and leapers",
+	style: "checkered",
   width: 12,
   height: 12,
   wins: ["royal_capture"],

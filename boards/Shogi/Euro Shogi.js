@@ -2,6 +2,7 @@ preset_variants[folders.shogi].push({
     name: "Euro Shogi",
     description: "8x8 version of Shogi.",
     author: "Vladimír Pribylinec",
+    style: "checkered",
 	width: 8,
 	height: 8,
 	has_hand: true,

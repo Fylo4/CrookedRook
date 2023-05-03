@@ -2,6 +2,7 @@ preset_variants[folders.compound].push({
     name: "Capablanca Chess",
     author: "José Raúl Capablanca (1920's)",
     description: "Adds 2 pieces, which combine the moves of knight and bishop, and knight and rook. Castle length is 3.",
+	style: "checkered",
 	width: 10,
 	height: 8,
 	wins: [ends.royal_capture],

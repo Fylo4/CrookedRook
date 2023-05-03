@@ -1,11 +1,9 @@
 preset_variants[folders.chess].push({
     name: "Chess",
     description: "Classic Chess, with some slight differences. Some endgame rules (50 move, repetition, etc) aren't implemented. Check/checkmate isn't enforced, you win by capturing the king. Since check isn't detected, you can castle from, through, and into check.",
+	style: "checkered",
 	width: 8,
 	height: 8,
-	wins: [ends.royal_capture],
-	draws: [ends.stalemate],
-    castle_length: 2,
 
 	all_pieces: [
 		{
@@ -15,7 +13,7 @@ preset_variants[folders.chess].push({
             symbol: "p",
             notation: "",
 			move: "i[0 1 1 2]Bae+[S]ae+[P]ca",
-            promotions: [{ white: 1, black: 0, to: ["NSNR"], on: [events.enter] }],
+            promotions: {to: "NSNR"},
             attributes: [attrib.ep_captured, attrib.ep_capturer],
 		},
 		{
@@ -58,8 +56,4 @@ preset_variants[folders.chess].push({
 	],
     setup: "bR bN bB bQ bK bB bN bR 8bp",
     copy: "flip",
-	zones: [
-		"00000000 00000000 00000000 00000000 00000000 00000000 00000000 11111111",
-		"11111111 00000000 00000000 00000000 00000000 00000000 00000000 00000000",
-	]
 });

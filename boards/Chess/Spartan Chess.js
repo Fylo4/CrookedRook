@@ -2,6 +2,7 @@ preset_variants[folders.chess].push({
   name: "Spartan Chess",
   author: "Steven Streetman",
   description: "A Chess variant with unequal armies",
+	style: "checkered",
   width: 8,
   height: 8,
   wins: ["royal_extinction"],

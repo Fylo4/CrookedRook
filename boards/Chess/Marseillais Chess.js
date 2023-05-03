@@ -1,6 +1,7 @@
 preset_variants[folders.chess].push({
   name: "Marseillais Chess",
   description: "Double Move Chess",
+	style: "checkered",
   width: 8,
   height: 8,
   wins: ["royal_capture"],

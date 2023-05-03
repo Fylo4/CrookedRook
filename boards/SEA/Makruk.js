@@ -2,6 +2,7 @@ preset_variants[folders.SEA].push(JSON.parse(`{
 	"name": "Makruk",
 	"author": "Thailand",
 	"description": "Makruk, or Thai Chess, is a classic board game native to Thailand and is closely descended from Chaturanga, the same ancestor as Chess. Queen and bishop is replaced by seed and nobleman. Pawn start on the 3rd rank and promote to seed only.",
+  "style": "uncheckered",
 	"width": 8,
 	"height": 8,
 	"all_pieces": [
