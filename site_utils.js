@@ -32,7 +32,7 @@ function add_pieces_then_reload(images) {
         img1.onload = function () {
             to_load--;
             if (to_load === 0) {
-                render_board();
+                render_entire_board();
             }
         }
         img1.onerror = () => {
@@ -154,11 +154,21 @@ function load_board_textures() {
 function fix_canvas_height() {
     //Find and set canvas height
     let ratio = (game_data.height + (game_data.has_hand ? 2 : 0)) / game_data.width;
-    canvas.height = canvas.width * ratio;
+    let c0 = document.getElementById("board_canvas_0");
+    let w = c0.width;
+    for (let a = 0; a < 6; a ++) {
+        let c = document.getElementById("board_canvas_"+a);
+        c.width = w;
+        c.height = w * ratio;
+    }
+    let container = document.getElementById("board_canvas_container");
+    container.style.height = c0.height+4+"px";
+    container.style.width = c0.width+4+"px";
     //Set history height
     let history = document.getElementById("history_div");
-    let h = Number(history.style.height.substring(0, history.style.height.length-2));
-    history.style.height = (canvas.offsetHeight-history.offsetHeight+h)+"px";
+    // let h = Number(history.style.height.substring(0, history.style.height.length-2));
+    // history.style.height = (c0.offsetHeight-history.offsetHeight+h)+"px";
+    history.style.height = c0.height-8+"px";
 }
 
 function add_circle(circle) {
@@ -178,7 +188,7 @@ function add_circle(circle) {
     else {
         circles.push(circle);
     }
-    render_board();
+    render_circles_and_lines();
 }
 //Line is an object like {sq1: number, sq2: number}
 function add_line(line) {
@@ -199,12 +209,12 @@ function add_line(line) {
     else {
         lines.push(line);
     }
-    render_board();
+    render_circles_and_lines();
 }
 function clear_lines_circles() {
     lines = [];
     circles = [];
-    render_board();
+    render_circles_and_lines();
 }
 
 

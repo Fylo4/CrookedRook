@@ -56,7 +56,7 @@ function refresh_checkboxes() {
     style_data.movable_pieces = document.getElementById("movable_pieces_cb").checked;
     style_data.last_moved = document.getElementById("last_moved_cb").checked;
     style_data.show_highlights = document.getElementById("highlight_cb").checked;
-    render_board();
+    render_entire_board();
 }
 
 function reload_style_inputs() {
@@ -107,7 +107,7 @@ function set_style() {
     style_data.hand_col = document.getElementById("style_hand").value;
 
     if (board.turn != undefined) {
-        render_board();
+        render_entire_board();
     }
 }
 

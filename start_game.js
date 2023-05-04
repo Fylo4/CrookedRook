@@ -47,7 +47,7 @@ function start_game(json_data, seed, from_file) {
     board_history = [cloneBoard()];
     view_move = 0;
     render_extras();
-    render_board();
+    render_entire_board();
 }
 
 function game_data_from_object(input) {

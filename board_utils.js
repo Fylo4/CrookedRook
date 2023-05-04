@@ -87,5 +87,13 @@ function get_constant_spawn_ss() {
     return get_attribute_ss(attrib.spawn_constant, board.constant_spawn_ss);
 }
 
-let file = (num) => { return String.fromCharCode(97 + num); };
+let file = (num) => {
+    if (num < 26) {
+        return String.fromCharCode(97 + num);
+    }
+    else if (num < 26*2) {
+        return String.fromCharCode(39 + num);
+    }
+    return "big"
+};
 let rank = (num) => { return game_data.height - num; }

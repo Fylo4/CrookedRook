@@ -1,4 +1,4 @@
-let canvas;
+let front_canvas;
 
 let game_data = {};
 let board = {};
@@ -15,7 +15,7 @@ let mouse_sq = -1, old_mouse_sq = -1;
 
 
 function page_init() {
-    canvas = document.getElementById("board_canvas");
+    front_canvas = document.getElementById("board_canvas_5");
     add_files_to_dropdown();
     load_board_textures();
     set_style_type();
@@ -34,13 +34,14 @@ function page_init() {
         document.getElementById("file-selected").innerHTML=fileName;
     })
 
-    canvas.addEventListener('mousemove', e => {
+    //Might need to be canvas_5?
+    front_canvas.addEventListener('mousemove', e => {
         handle_mouse_move(e);
     });
-    canvas.addEventListener('mouseleave', e => {
+    front_canvas.addEventListener('mouseleave', e => {
         handle_mouse_leave();
     });
-    canvas.addEventListener('mousedown', e => {
+    front_canvas.addEventListener('mousedown', e => {
         if(e.button === 0) {
             handle_mouse_click();
         }
@@ -48,7 +49,7 @@ function page_init() {
             handle_left_down();
         }
     });
-    canvas.addEventListener('mouseup', e => {
+    front_canvas.addEventListener('mouseup', e => {
         if(e.button === 2) {
             handle_left_up();
         }

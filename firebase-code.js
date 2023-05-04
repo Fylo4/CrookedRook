@@ -244,7 +244,7 @@ let other_prop_change = (snapshot) => {
             if(find_victory() >= 0) {
                 switch_to_single_player();
             }
-            render_board();
+            render_after_move();
         }
         else {
             //Todo: Report invalid move
@@ -272,7 +272,7 @@ let other_prop_change = (snapshot) => {
             if(find_victory() >= 0) {
                 switch_to_single_player();
             }
-            render_board();
+            render_after_move();
         }
         else {
             //Todo: Report invalid move
@@ -294,7 +294,7 @@ let other_ver_change = (snapshot) => {
                 if(find_victory() >= 0) {
                     close_match();
                 }
-                render_board();
+                render_after_move();
             }
         }
         else if (my_prop.src_x != undefined && my_prop.src_y != undefined && my_prop.dst_x != undefined && my_prop.dst_y != undefined) {
@@ -303,7 +303,7 @@ let other_ver_change = (snapshot) => {
                 if(find_victory() >= 0) {
                     close_match();
                 }
-                render_board();
+                render_after_move();
             }
         }
     }

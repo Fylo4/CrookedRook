@@ -45,7 +45,8 @@ function make_move(src_x, src_y, dst_x, dst_y, promotion) {
             in_same_column = true;
         }
     }
-    let is_capture = false; //Set throughout the program
+    let is_capture = false;
+    let promote_notation = "";
     //Continued at end
 
     if (src_sq === dst_sq) {
@@ -310,7 +311,6 @@ function make_move(src_x, src_y, dst_x, dst_y, promotion) {
     }
     //To space
     notation += file(dst_sq % game_data.width) + rank(Math.floor(dst_sq / game_data.width));
-    let promote_notation = "";
     notation += promote_notation;
 
     //Leave EP mask

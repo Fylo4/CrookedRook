@@ -41,6 +41,14 @@ th {
     width: 100%;
     overflow: auto;
 }
+
+
+#board_and_history_div {
+    width: max-content;
+    overflow: auto;
+    margin: auto;
+}
+
 #history_div {
     width: max-content;
     float: left;
@@ -53,18 +61,18 @@ th {
 	padding: 4px;
     margin-left: 8px;
     font-size: 100%;
-}
-#board_and_history_div {
-    width: max-content;
-    overflow: auto;
-    margin: auto;
+    height:50px;
 }
 
-#board_canvas {
-    margin: auto;
-    width: min-content;
+#board_canvas_container {
+    position: relative;
+    overflow: auto;
     float: left;
+}
+
+.board_canvas {
     border: 2px solid black;
+    position: absolute;
 }
 
 .sq_btn {

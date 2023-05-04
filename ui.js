@@ -2,7 +2,7 @@ let down_sq = -1;
 let line_col = 'green';
 function handle_left_down() {
     down_sq = mouse_sq;
-    render_board();
+    render_circles_and_lines();
 }
 function handle_left_up() {
     if (down_sq === mouse_sq) {
@@ -12,7 +12,7 @@ function handle_left_up() {
         add_line({sq1: down_sq, sq2: mouse_sq, col: line_col});
     }
     down_sq = -1;
-    render_board();
+    render_circles_and_lines();
 }
 
 function handle_mouse_leave() {
@@ -21,10 +21,12 @@ function handle_mouse_leave() {
         mouse_sq_pos = { x: -1, y: -1 };
         old_mouse_sq = -1;
     }
-    render_board();
+    render_circles_and_lines();
+    render_move_squares();
 }
 
 function change_zoom(amount) {
+    let canvas = document.getElementById("board_canvas_0")
     canvas.width = canvas.width + 50 * amount;
     fix_canvas_height();
 }
@@ -70,7 +72,7 @@ function handle_import_btn() {
     else {
         import_history_firebase(hist);
     }
-    render_board();
+    render_entire_board();
 }
 let is_editing_name = false;
 function handle_name_btn() {
@@ -109,12 +111,12 @@ function handle_inspect_button() {
 
 function set_style_type() {
     style_data.style = document.getElementById("style_select").value;
-    render_board();
+    render_entire_board();
 }
 
 function set_intersection_type() {
     style_data.point_style = document.getElementById("intersection_select").value;
-    render_board();
+    render_entire_board();
 }
 
 function handle_advanced_style_btn() {
@@ -124,13 +126,13 @@ function handle_advanced_style_btn() {
 
 function handle_mouse_move(e) {
     let rect = e.currentTarget.getBoundingClientRect();
-    let x_offset = canvas.clientWidth - canvas.offsetWidth;
-    let y_offset = canvas.clientHeight - canvas.offsetHeight;
+    let x_offset = front_canvas.clientWidth - front_canvas.offsetWidth;
+    let y_offset = front_canvas.clientHeight - front_canvas.offsetHeight;
     mouse_pos.x = e.clientX - rect.left + x_offset/2;
     mouse_pos.y = e.clientY - rect.top + y_offset/2;
     if (game_data.width != undefined) {
-        mouse_sq_pos.x = Math.min(Math.floor(mouse_pos.x * game_data.width / canvas.width), game_data.width-1);
-        mouse_sq_pos.y = Math.floor(mouse_pos.y * (game_data.height + game_data.has_hand * 2) / canvas.height) - game_data.has_hand;
+        mouse_sq_pos.x = Math.min(Math.floor(mouse_pos.x * game_data.width / front_canvas.width), game_data.width-1);
+        mouse_sq_pos.y = Math.floor(mouse_pos.y * (game_data.height + game_data.has_hand * 2) / front_canvas.height) - game_data.has_hand;
         if (style_data.flip_board) {
             mouse_sq_pos.x = game_data.width - mouse_sq_pos.x - 1;
             mouse_sq_pos.y = game_data.height - mouse_sq_pos.y - 1;
@@ -138,7 +140,8 @@ function handle_mouse_move(e) {
         mouse_sq = mouse_sq_pos.x + mouse_sq_pos.y * game_data.width;
         if (mouse_sq != old_mouse_sq) {
             //If mouse changes square, re-render the board
-            render_board();
+            render_move_squares();
+            render_circles_and_lines();
             old_mouse_sq = mouse_sq;
         }
     }
@@ -146,25 +149,25 @@ function handle_mouse_move(e) {
 function left_arrow_click() {
     if (view_move > 0) {
         view_move--;
-        render_board();
+        render_after_move();
         render_extras();
     }
 }
 function right_arrow_click() {
     if (view_move < board_history.length - 1) {
         view_move ++;
-        render_board();
+        render_after_move();
         render_extras();
     }
 }
 function down_arrow_click() {
     view_move = board_history.length - 1;
-    render_board();
+    render_after_move();
     render_extras();
 }
 function up_arrow_click() {
     view_move = 0;
-    render_board();
+    render_after_move();
     render_extras();
 }
 
@@ -179,10 +182,10 @@ function handle_mouse_click() {
         return;
     }
     if (temp_data.waiting_for_promotion) {
-        let width_px = canvas.width / game_data.width; //Width and height should be the same
-        let height_px = canvas.height / (game_data.height + (game_data.has_hand ? 2 : 0));
-        let start_height = canvas.height / 2 - height_px / 2;
-        let start_width = canvas.width / 2 - height_px * temp_data.promotions.length / 2;
+        let width_px = front_canvas.width / game_data.width; //Width and height should be the same
+        let height_px = front_canvas.height / (game_data.height + (game_data.has_hand ? 2 : 0));
+        let start_height = front_canvas.height / 2 - height_px / 2;
+        let start_width = front_canvas.width / 2 - height_px * temp_data.promotions.length / 2;
         let clicked_piece = Math.floor((mouse_pos.x - start_width) / width_px);
         if (mouse_pos.y >= start_height && mouse_pos.y <= start_height + height_px
             && clicked_piece >= 0 && clicked_piece < temp_data.promotions.length) {
@@ -220,6 +223,7 @@ function handle_mouse_click() {
                 if (promote_to.length < 2) {
                     if(validate_move(src_x, src_y, dst_x, dst_y)) {
                         handle_make_move(src_x, src_y, dst_x, dst_y);
+                        render_after_move();
                     }
                     else {
                         show_error("Invalid move attempted. This should be reported in #bug-reports.");
@@ -230,6 +234,7 @@ function handle_mouse_click() {
                     let prom = promote_to[Math.floor(Math.random() * promote_to.length)];
                     if(validate_move(src_x, src_y, dst_x, dst_y, prom)) {
                         handle_make_move(src_x, src_y, dst_x, dst_y, prom);
+                        render_after_move();
                     }
                     else {
                         show_error("Invalid move attempted (random promotion). This should be reported in #bug-reports.");
@@ -256,6 +261,7 @@ function handle_mouse_click() {
                 //Piece, color, dest
                 if(validate_drop(temp_data.selected_position, temp_data.selected_side, mouse_sq)) {
                     handle_make_drop(temp_data.selected_position, temp_data.selected_side, mouse_sq);
+                    render_after_move();
                 }
                 else {
                     show_error("Invalid drop attempted. This should be reported in #bug-reports.");
@@ -283,5 +289,5 @@ function handle_mouse_click() {
         }
     }
     clear_lines_circles();
-    render_board();
+    render_move_squares();
 }

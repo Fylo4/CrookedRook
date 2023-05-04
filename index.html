@@ -8,7 +8,7 @@
     <script src="Constants.js"></script>
     <script src="bnb_ep_init.js"></script>
     <script src="start_game.js"></script>
-    <script src="render.js"></script>
+    <script src="render-mc.js"></script>
     <script src="make_move.js"></script>
     <script src="refresh_moves.js"></script>
     <script src="style_data.js"></script>
@@ -204,11 +204,11 @@
                 <option value="x">X</option>
             </select>
             <br /> <br />
-            <button onClick="change_zoom(1);  render_board();" class="sq_btn">+</button>
-            <button onClick="change_zoom(-1); render_board();" class="sq_btn">-</button>
-            <button onClick="style_data.flip_board ^= 1; render_board()">Flip Board</button>
-            <button onClick="style_data.rotate_opp ^= 1; render_board()">Flip Opponent</button>
-            <button onClick="style_data.name_squares ^= 1; render_board()">Square Names</button>
+            <button onClick="change_zoom(1);  render_entire_board();" class="sq_btn">+</button>
+            <button onClick="change_zoom(-1); render_entire_board();" class="sq_btn">-</button>
+            <button onClick="style_data.flip_board ^= 1; render_entire_board()">Flip Board</button>
+            <button onClick="style_data.rotate_opp ^= 1; render_entire_board()">Flip Opponent</button>
+            <button onClick="style_data.name_squares ^= 1; render_entire_board()">Square Names</button>
             <button href="#" id="download_btn" onClick="handle_download_btn()" download="image.png">📷</button>
             <br /> <br />
             <button onClick="clear_lines_circles();">Clear Lines / Circles</button>
@@ -238,10 +238,17 @@
             <div id="board_and_history_div">
                 <p id="multiplayer_label">Mode: Single-player</p>
                 <p id="top_player_label"></p>
-                <!--Board-->
-                <canvas id="board_canvas" width="400" height="0" oncontextmenu="return false;"></canvas>
+                <!--Board canvases-->
+                <div id="board_canvas_container">
+                    <canvas id="board_canvas_0" width="400" height="0" oncontextmenu="return false;" class="board_canvas" style="z-index: 0;"></canvas>
+                    <canvas id="board_canvas_1" width="400" height="0" oncontextmenu="return false;" class="board_canvas" style="z-index: 1;"></canvas>
+                    <canvas id="board_canvas_2" width="400" height="0" oncontextmenu="return false;" class="board_canvas" style="z-index: 2;"></canvas>
+                    <canvas id="board_canvas_3" width="400" height="0" oncontextmenu="return false;" class="board_canvas" style="z-index: 3;"></canvas>
+                    <canvas id="board_canvas_4" width="400" height="0" oncontextmenu="return false;" class="board_canvas" style="z-index: 4;"></canvas>
+                    <canvas id="board_canvas_5" width="400" height="0" oncontextmenu="return false;" class="board_canvas" style="z-index: 5;"></canvas>
+                </div>
                 <!--Move history-->
-                <div id="history_div" style="height:50px;">
+                <div id="history_div">
                     <button onclick="up_arrow_click();" class="arrow_btn">&uarr;</button>
                     <button onclick="left_arrow_click();" class="arrow_btn">&larr;</button>
                     <button onclick="right_arrow_click();" class="arrow_btn">&rarr;</button>
