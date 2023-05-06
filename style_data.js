@@ -1,23 +1,23 @@
 let style_data = {
-    white_col: "rgb(240, 240, 240)",
-    black_col: "rgb(60, 60, 60)",
-    neutral_col: "rgb(0, 200, 100)",
-    light_highlight_col: "rgb(214, 111, 105)",
-    dark_highlight_col: "rgb(113, 50, 47)",
-    light_highlight_2_col: "rgb(98, 193, 221)",
-    dark_highlight_2_col: "rgb(50, 101, 109)",
-    light_mud_col: "rgb(205, 148, 114)",
-    dark_mud_col: "rgb(117, 70, 43)",
-    light_ethereal_col: "rgb(160, 100, 220)",
-    dark_ethereal_col: "rgb(80, 30, 130)",
-    light_pacifist_col: "rgb(236, 202, 79)",
-    dark_pacifist_col: "rgb(116, 100, 44)",
-    light_sanctuary_col: "rgb(135, 198, 121)",
-    dark_sanctuary_col: "rgb(60, 112, 48)",
-    light_square_col: "rgb(255, 196, 136)",
-    dark_square_col: "rgb(230, 115, 0)",
-    bg_col: "rgb(240, 209, 153)",
-    hand_col: "rgb(205, 137, 24)",
+    white_col: "#F0F0F0",
+    black_col: "#3C3C3C",
+    neutral_col: "#00C864",
+    light_highlight_col: "#D66F69",
+    dark_highlight_col: "#71322F",
+    light_highlight_2_col: "#62C1DD",
+    dark_highlight_2_col: "#32656D",
+    light_mud_col: "#CD9472",
+    dark_mud_col: "#75462B",
+    light_ethereal_col: "#A064DC",
+    dark_ethereal_col: "#501E82",
+    light_pacifist_col: "#ECCA4F",
+    dark_pacifist_col: "#74642C",
+    light_sanctuary_col: "#87C679",
+    dark_sanctuary_col: "#3C7030",
+    light_square_col: "#FFC488",
+    dark_square_col: "#E67300",
+    bg_col: "#F0D199",
+    hand_col: "#CD8918",
     flip_colors: false,
     flip_board: false,
     name_squares: false,
@@ -51,11 +51,16 @@ function style_toggle() {
 }
 
 function refresh_checkboxes() {
-    style_data.attacked_squares = document.getElementById("attacked_squares_cb").checked;
-    style_data.check_indicator = document.getElementById("check_indicator_cb").checked;
-    style_data.movable_pieces = document.getElementById("movable_pieces_cb").checked;
-    style_data.last_moved = document.getElementById("last_moved_cb").checked;
-    style_data.show_highlights = document.getElementById("highlight_cb").checked;
+    let get = e => document.getElementById(e).checked;
+    style_data.attacked_squares = get("attacked_squares_cb");
+    style_data.check_indicator = get("check_indicator_cb");
+    style_data.movable_pieces = get("movable_pieces_cb");
+    style_data.last_moved = get("last_moved_cb");
+    style_data.show_highlights = get("highlight_cb");
+
+    style_data.flip_board = get("flip_board_cb");
+    style_data.rotate_opp = get("flip_opp_cb");
+    style_data.name_squares = get("square_names_cb");
     render_entire_board();
 }
 
@@ -122,4 +127,14 @@ function export_style() {
     anchor.click();
     document.body.removeChild(anchor);
     URL.revokeObjectURL(url);
+}
+
+function set_style_listeners() {
+    let ids = ["style_piece_w", "style_piece_b", "style_piece_n", "style_sq_light", "style_sq_dark", "style_hi_light",
+    "style_hi_dark", "style_hi2_light", "style_hi2_dark", "style_md_light", "style_md_dark", "style_et_light",
+    "style_et_dark", "style_pa_light", "style_pa_dark", "style_sa_light", "style_sa_dark", "style_bg", "style_hand"];
+    
+    ids.forEach(e => {
+        document.getElementById(e).addEventListener('input', e => set_style());
+    });
 }

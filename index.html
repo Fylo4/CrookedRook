@@ -57,6 +57,7 @@
     <script src="boards/Xiangqi/Manchu Chess.js"></script>
     <script src="boards/Xiangqi/5 Tigers.js"></script>
     <script src="boards/Xiangqi/Ajax Xiangqi.js"></script>
+    <script src="boards/Xiangqi/Sanho.js"></script>
 
     <script src="boards/Shogi/Shogi.js"></script>
     <script src="boards/Shogi/Dobutsu.js"></script>
@@ -101,62 +102,54 @@
     <link href="style/tcr_style.css" rel="stylesheet"/>
 </head>
 <body>
-    <!-- Header -->
-    <div style="width: 100%; overflow:auto;">
-        <div style="width: max-content; float: left;">
-            <p id="title">The Crooked Rook</p>
-            <p><a href="https://discord.gg/NJNXUXqyvr">Discord</a> | <a href="https://drive.google.com/drive/folders/1yB_Elymo0vY33n6xQHWzukDGGkANqPQl">Documentation</a> | <a href="#" onclick="toggle_credits()">Credits</a> | Pre-Release 0.7.6</p>
-            <br />
-            <button id="board_page_button" onclick="board_page()" style="display: none;">Board</button>
-            <button id="lobby_page_button" onclick="lobby_page()">Lobby</button>
-        </div>
-        <div style="width: max-content; float: right;">
-            <p class="inline">Name:</p>
-            <p id="name_p" class="inline">Guest</p>
-            <input id="name_input" style="display:none;"/>
-            <button id="name_btn" onclick="handle_name_btn()">✏️</button>
-            <br />
-        </div>
-    </div>
-    <div id="message_div"></div>
-
-    <!--Credits-->
-    <div id="credits_div" style="display:none">
-        <p><b>Credits</b></p>
-        <p>Created by Fylo</p>
-        <p>Most sprites come from <a href="https://gitlab.com/zulban/chesscraft-creative-commons/-/tree/master/pieces">ChessCraft Creative Commons</a></p>
-        <p>Hidetchi sprites by <a href="https://boardgamegeek.com/user/jureboga">jureboga</a>, adapted from Hidetchi's designs. <a href="https://boardgamegeek.com/filepage/241678/shogi-more-chess-hidetchis-internationalized-piece">Link</a></p>
-        <p>SEA boards created by skyhistory</p>
-        <p>All other default boards by Ristet or Fylo</p>
-        <p>Style by Sharp-Shark and Fylo</p>
-    </div>
-
-    <br />
-
-    <!--Lobby-->
-    <div id="lobby_section" style="display: none;">
-        <table id="lobby_table">
-            <tr>
-                <th>Board Name</th>
-                <th>Creator</th>
-                <th>Creator's Color</th>
-                <th>Join</th>
-            </tr>
-        </table>
+    <!-- Modals -->
+    <dialog id="modal-about">
+        <h1>About TCR</h1>
+        <p>Version 0.8.0</p>
         <br />
-        <label for="board_name">Board Code:</label>
-        <input id="board_name">
-        <label for="color_sel">Play as:</label>
-        <select id="color_sel">
-            <option value="r">Random</option>
-            <option value="w">White</option>
-            <option value="b">Black</option>
-        </select>
-        <button onclick="add_lobby()">Start Room</button>
-    </div>
+        <a href="https://discord.gg/NJNXUXqyvr" autofocus>Discord</a>
+        <br /> <br />
+        <a href="https://drive.google.com/drive/folders/1yB_Elymo0vY33n6xQHWzukDGGkANqPQl">Documentation</a>
+        <br /> <br />
+        <button onclick="close_modal('about'); open_modal('credits');">Credits</button>
+        <br /> <br />
+        <button onclick="close_modal('about')">Close</button>
+    </dialog>
     
-    <div id="board_section">
-        <div id="choose_section">
+    <dialog id="modal-export">
+        <h1>Export</h1>
+        <p>Export code copied to clipboard:</p>
+        <p id="export_code_p"></p>
+        <button onclick="close_modal('export')">Close</button>
+    </dialog>
+    
+    <dialog id="modal-piece">
+        <h1 id="piece_modal_name">Piece name</h1>
+        <p id="piece_modal_desc">Piece description</p>
+        <button onclick="close_modal('piece')">Close</button>
+    </dialog>
+
+    <dialog id="modal-profile" style="width: 350px;">
+        <h1>Profile</h1>
+        <p class="inline">Name:</p>
+        <p class="inline name_container hide_name_container">Logged Out</p>
+        <input id="name_input" style="display:none;"/>
+        <button id="name_btn" onclick="handle_name_btn()">✏️</button>
+        <br /> <br />
+        <button onclick="close_modal('profile')">Close</button>
+    </dialog>
+
+    <dialog id="modal-load" style="width: 450px;">
+        <h1>Load Board</h1>
+        <label for="from_select">Load from: </label>
+        <select autofocus id="from_select" onchange="set_load_input();">
+            <option>Canon</option>
+            <option>File</option>
+            <option>Server</option>
+            <option>Import code</option>
+        </select>
+        <div id="from_canon">
+            <br />
             <select id="categoryField" onchange="add_files_to_dropdown()">
                 <option value="0">Chess</option>
                 <option value="1">Shogi</option>
@@ -167,27 +160,36 @@
                 <option value="5">CCIT</option>
                 <option value="6">Compound</option>
                 <option value="8">Other</option>
-                <option value="-1">From File</option>
             </select>
             <select id="variantField" name="variantField"></select>
+            <br /><br />
+            <button onclick="load_random_variant(); close_modal('load');">🎲</button>
+        </div>
+        <div id="from_file">
+            <br />
             <label class="custom-file-upload dark" id="variant_file_label">
                 <span id="file-selected">Choose File</span>
                 <input type="file" id="variant_file" style="display: none" accept=".json, .hjson" />
             </label>
-            <br /><br />
-            <button onclick="load_variant();">Load</button>
-            <button onclick="load_random_variant();">🎲</button>
-            <button onclick="handle_import_btn()">Import History</button>
-            <br /><br />
         </div>
-
-        <h2 id="board_name_header">Board Name</h2>
-        <p id="board_author_header">Board Author</p>
-        <p id="board_description_header">Board Description</p>
-        <button onclick="style_toggle()">Style</button>
-        <button onclick="handle_inspect_button()">🔍</button>
-        <p id="inspect_text" style="display: none">Click on any piece to inspect it</p>
-        <div id="style_buttons" style="display:none">
+        <div id="from_server">
+            <br />
+            <label for="from_server_code">Board Code: </label>
+            <input id="from_server_code">
+        </div>
+        <div id="from_import">
+            <br />
+            <label for="from_import_code">Import Code: </label>
+            <input id="from_import_code">
+        </div>
+        <br />
+        <button onclick="load_variant(); close_modal('load');">Load</button>
+        <button onclick="close_modal('load')">Close</button>
+    </dialog>
+    
+    <dialog id="modal-style" style="width: 500px;">
+        <h1>Style Options</h1>
+        <div id="style_buttons">
             <br />
             <label for="style_select">Style:</label>
             <select id="style_select" onchange="set_style_type()">
@@ -197,21 +199,20 @@
                 <option value="intersection">Intersection</option>
                 <option value="xiangqi">Xiangqi</option>
             </select>
-            <label for="intersection_select">Intersections:</label>
-            <select id="intersection_select" onchange="set_intersection_type()">
-                <option value="4-corner">4-corner</option>
-                <option value="dot">Dot</option>
-                <option value="x">X</option>
-            </select>
+            <div id="style_intersection_div">
+                <br /><br />
+                <label for="intersection_select">Intersections:</label>
+                <select id="intersection_select" onchange="set_intersection_type()">
+                    <option value="4-corner">4-corner</option>
+                    <option value="dot">Dot</option>
+                    <option value="x">X</option>
+                </select>
+            </div>
             <br /> <br />
             <button onClick="change_zoom(1);  render_entire_board();" class="sq_btn">+</button>
             <button onClick="change_zoom(-1); render_entire_board();" class="sq_btn">-</button>
-            <button onClick="style_data.flip_board ^= 1; render_entire_board()">Flip Board</button>
-            <button onClick="style_data.rotate_opp ^= 1; render_entire_board()">Flip Opponent</button>
-            <button onClick="style_data.name_squares ^= 1; render_entire_board()">Square Names</button>
             <button href="#" id="download_btn" onClick="handle_download_btn()" download="image.png">📷</button>
             <br /> <br />
-            <button onClick="clear_lines_circles();">Clear Lines / Circles</button>
             <button onClick="line_col='red'"><div class='box red'></div></button>
             <button onClick="line_col='orange'"><div class='box orange'></div></button>
             <button onClick="line_col='yellow'"><div class='box yellow'></div></button>
@@ -221,114 +222,270 @@
             <br /> <br />
             <input type="checkbox" id="attacked_squares_cb" onchange="refresh_checkboxes()">
             <label for="attacked_squares_cb">Attacked squares</label>
+            <br />
             <input type="checkbox" id="check_indicator_cb" checked onchange="refresh_checkboxes()">
             <label for="check_indicator_cb">Check indicator</label>
+            <br />
             <input type="checkbox" id="movable_pieces_cb" onchange="refresh_checkboxes()">
             <label for="movable_pieces_cb">Movable pieces</label>
+            <br />
             <input type="checkbox" id="last_moved_cb" checked onchange="refresh_checkboxes()">
             <label for="last_moved_cb">Last moved piece</label>
+            <br />
             <input type="checkbox" id="highlight_cb" checked onchange="refresh_checkboxes()">
-            <label for="highlight_cb">Show Highlighted Squares</label>
+            <label for="highlight_cb">Highlighted Squares</label>
+            <br />
+            <input type="checkbox" id="flip_opp_cb" onchange="refresh_checkboxes()">
+            <label for="flip_opp_cb">Flip opponent</label>
+            <br />
+            <input type="checkbox" id="square_names_cb" onchange="refresh_checkboxes()">
+            <label for="square_names_cb">Square names</label>
+            <br />
+            <input type="checkbox" id="flip_board_cb" onchange="refresh_checkboxes()">
+            <label for="flip_board_cb">Flip board</label>
             <br /> <br />
-            <button onclick="handle_advanced_style_btn()">Advanced Style Info</button>
-        </div>
-        <!-- <button onClick="">End turn</button> -->
-        <br /> <br />
-        <div id="center_div">
-            <div id="board_and_history_div">
-                <p id="multiplayer_label">Mode: Single-player</p>
-                <p id="top_player_label"></p>
-                <!--Board canvases-->
-                <div id="board_canvas_container">
-                    <canvas id="board_canvas_0" width="400" height="0" oncontextmenu="return false;" class="board_canvas" style="z-index: 0;"></canvas>
-                    <canvas id="board_canvas_1" width="400" height="0" oncontextmenu="return false;" class="board_canvas" style="z-index: 1;"></canvas>
-                    <canvas id="board_canvas_2" width="400" height="0" oncontextmenu="return false;" class="board_canvas" style="z-index: 2;"></canvas>
-                    <canvas id="board_canvas_3" width="400" height="0" oncontextmenu="return false;" class="board_canvas" style="z-index: 3;"></canvas>
-                    <canvas id="board_canvas_4" width="400" height="0" oncontextmenu="return false;" class="board_canvas" style="z-index: 4;"></canvas>
-                    <canvas id="board_canvas_5" width="400" height="0" oncontextmenu="return false;" class="board_canvas" style="z-index: 5;"></canvas>
-                </div>
-                <!--Move history-->
-                <div id="history_div">
-                    <button onclick="up_arrow_click();" class="arrow_btn">&uarr;</button>
-                    <button onclick="left_arrow_click();" class="arrow_btn">&larr;</button>
-                    <button onclick="right_arrow_click();" class="arrow_btn">&rarr;</button>
-                    <button onclick="down_arrow_click();" class="arrow_btn">&darr;</button>
-                    <button onclick="handle_export_btn()">Export</button>
-                    <hr />
-                    <div id="move_history"></div>
-                </div>
-                <br>
-                <p id="bottom_player_label"></p>
-                <p id="turn_indicator">Turn: N/A</p>
+            <button onclick="handle_advanced_style_btn()">Advanced Style Options</button>
+            <br /> <br />
+            <div id="style_div" style="display:none;">
+                <table class="style-table">
+                    <tr>
+                        <th>White Pieces</th>
+                        <th>Black Pieces</th>
+                        <th>Neutral Pieces</th>
+                    </tr>
+                    <tr>
+                        <td><input id="style_piece_w" type="color"></td>
+                        <td><input id="style_piece_b" type="color"></td>
+                        <td><input id="style_piece_n" type="color"></td>
+                    </tr>
+                </table>
+                <br /><br />
+                <table class="style-table">
+                    <tr>
+                        <th>Background</th>
+                        <th>Hands</th>
+                    </tr>
+                    <tr>
+                        <td><input id="style_bg" type="color"></td>
+                        <td><input id="style_hand" type="color"></td>
+                    </tr>
+                </table>
+                <br /><br />
+                <table class="style-table">
+                    <tr>
+                        <th>Square Type</th>
+                        <th>Light</th>
+                        <th>Dark</th>
+                    </tr>
+                    <tr>
+                        <td>Default</td>
+                        <td><input id="style_sq_light" type="color"></td>
+                        <td><input id="style_sq_dark" type="color"></td>
+                    </tr>
+                    <tr>
+                        <td>Highlight 1</td>
+                        <td><input id="style_hi_light" type="color"></td>
+                        <td><input id="style_hi_dark" type="color"></td>
+                    </tr>
+                    <tr>
+                        <td>Highlight 2</td>
+                        <td><input id="style_hi2_light" type="color"></td>
+                        <td><input id="style_hi2_dark" type="color"></td>
+                    </tr>
+                    <tr>
+                        <td>Mud</td>
+                        <td><input id="style_md_light" type="color"></td>
+                        <td><input id="style_md_dark" type="color"></td>
+                    </tr>
+                    <tr>
+                        <td>Ethereal</td>
+                        <td><input id="style_et_light" type="color"></td>
+                        <td><input id="style_et_dark" type="color"></td>
+                    </tr>
+                    <tr>
+                        <td>Pacifist</td>
+                        <td><input id="style_pa_light" type="color"></td>
+                        <td><input id="style_pa_dark" type="color"></td>
+                    </tr>
+                    <tr>
+                        <td>Sanctuary</td>
+                        <td><input id="style_sa_light" type="color"></td>
+                        <td><input id="style_sa_dark" type="color"></td>
+                    </tr>
+                </table>
+                <br />
+                <button onclick="export_style()">Save Style</button>
+                <br /><br />
             </div>
         </div>
-        <button id="resign_btn" onclick="resign()" style="display: none;">Resign</button>
-        <br />
-        <button onclick="download_variant();">Download this Board</button>
-        <br />
-        <div id="upload_div" style="display: none;">
-            <br />
-            <p>Boards cannot be modified once they are uploaded - make sure the board is finished before uploading!</p>
-            <button onclick="handle_upload_btn()">Upload to Server</button>
-            <input type="text" id="upload_name" placeholder="Board code">
-        </div>
-        <br />
+        <button onclick="close_modal('style')">Close</button>
+    </dialog>
 
-        <div id="style_div" style="display:none;">
-            <h2>Style Menu</h2>
-            <p>Piece colors- White: <input id="style_piece_w" onchange="set_style()" /> Black: <input id="style_piece_b" onchange="set_style()" /> Neutral: <input id="style_piece_n" onchange="set_style()" /></p>
-            <p>Background color- <input id="style_bg" onchange="set_style()" /></p>
-            <p>Hand color- <input id="style_hand" onchange="set_style()" /></p>
-            <table>
+    <dialog id="modal-credits">
+        <h1>Credits</h1>
+        <p>Created by Fylo</p>
+        <p>Most sprites come from <a href="https://gitlab.com/zulban/chesscraft-creative-commons/-/tree/master/pieces">ChessCraft Creative Commons</a></p>
+        <p>Hidetchi sprites by <a href="https://boardgamegeek.com/user/jureboga">jureboga</a>, adapted from Hidetchi's designs. <a href="https://boardgamegeek.com/filepage/241678/shogi-more-chess-hidetchis-internationalized-piece">Link</a></p>
+        <p>SEA boards created by skyhistory</p>
+        <p>All other default boards by Ristet or Fylo</p>
+        <p>Board color palette by Z</p>
+        <p>Style by Sharp-Shark and Fylo</p>
+        <button onclick="close_modal('credits')">Close</button>
+    </dialog>
+
+    
+    <dialog id="modal-newgame">
+        <h1>Create </h1>
+        <label for="board_name">Board Code:</label>
+        <input id="board_name">
+        <br /><br />
+        <label for="color_sel">Play as:</label>
+        <select id="color_sel">
+            <option value="r">Random</option>
+            <option value="w">White</option>
+            <option value="b">Black</option>
+        </select>
+        <br /><br />
+        <!-- <label for="clock_sel">Clock:</label>
+        <select id="clock_sel" onchange="set_clock_inputs();">
+            <option value="none">No clock</option>
+            <option value="inc">Increment</option>
+        </select>
+        <br /><br />
+        <div id="increment_div">
+            <input id="clock_start" type="number" style="width: 50px; margin-left: 20px;"> min +
+            <input id="clock_inc" type="number" style="width: 50px"> sec
+            <br /><br />
+        </div>
+        <input type="checkbox" id="private_room" onchange="set_private_input()">
+        <label for="private_room">Private room</label>
+        <br /><br />
+        <div id="private_code_div">
+            <label for="private_code">Room code: </label>
+            <input id="private_code">
+            <br /><br />
+        </div>
+        <input type="checkbox" id="save_match">
+        <label for="save_match">Save match to database</label>
+        <br /><br /> -->
+        <button onclick="add_lobby(); close_modal('newgame')">Start Room</button>
+        <button onclick="close_modal('newgame')">Close</button>
+    </dialog>
+
+
+    <!--Navbar-->
+    <nav class="navbar">
+        <div class="site-title">
+            <img src="logo_50.png" />
+            <p>The Crooked Rook</p>
+        </div>
+        <a href="#" class="hamburger">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </a>
+        <div class="navbar-links">
+            <a href="#" onclick="open_modal('load')">Load</a>
+            <a href="#" id="board_page_button" onclick="board_page()">Board</a>
+            <a href="#" id="lobby_page_button" onclick="lobby_page()">Lobby</a>
+            <a href="#" onclick="open_modal('about')">About</a>
+            <div class="dropdown">
+                <a href="#" class="dropdown_button">
+                    <p class="name_container">Logged Out</p>
+                    <i class="fa fa-caret-down"></i>
+                </a>
+                <div class="dropdown_content">
+                    <a href="#" id="user_profile" onclick="open_modal('profile')">Profile</a>
+                    <a href="#" id="user_log_out" onclick="sign_out()">Log out</a>
+                    <!-- <a href="#" id="user_anonymous" onclick="sign_in_anonymously()">Log in anonymously</a> -->
+                    <a href="#" id="user_google" onclick="sign_in_google()">Log in with Google</a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <a href="#" class="dropdown_button">
+                    Settings
+                    <i class="fa fa-caret-down"></i>
+                </a>
+                <div class="dropdown_content right">
+                    <select class="hidden">
+                        <option>English</option>
+                    </select>
+                    <a href="#" onclick="open_modal('style')">Style</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div style="padding: 20px">
+        <div id="message_div"></div>
+        <!--Lobby-->
+        <div id="lobby_section" style="display: none;">
+            <button onclick="open_modal('newgame')">Create Room</button>
+            <br /><br />
+            <table id="lobby_table">
                 <tr>
-                    <th>Square type</th>
-                    <th>Light</th>
-                    <th>Dark</th>
-                </tr>
-                <tr>
-                    <td>Highlight</td>
-                    <td><input id="style_hi_light" onchange="set_style()" /></td>
-                    <td><input id="style_hi_dark" onchange="set_style()" /></td>
-                </tr>
-                <tr>
-                    <td>Highlight2</td>
-                    <td><input id="style_hi2_light" onchange="set_style()" /></td>
-                    <td><input id="style_hi2_dark" onchange="set_style()" /></td>
-                </tr>
-                <tr>
-                    <td>Mud</td>
-                    <td><input id="style_md_light" onchange="set_style()" /></td>
-                    <td><input id="style_md_dark" onchange="set_style()" /></td>
-                </tr>
-                <tr>
-                    <td>Ethereal</td>
-                    <td><input id="style_et_light" onchange="set_style()" /></td>
-                    <td><input id="style_et_dark" onchange="set_style()" /></td>
-                </tr>
-                <tr>
-                    <td>Pacifist</td>
-                    <td><input id="style_pa_light" onchange="set_style()" /></td>
-                    <td><input id="style_pa_dark" onchange="set_style()" /></td>
-                </tr>
-                <tr>
-                    <td>Sanctuary</td>
-                    <td><input id="style_sa_light" onchange="set_style()" /></td>
-                    <td><input id="style_sa_dark" onchange="set_style()" /></td>
-                </tr>
-                <tr>
-                    <td>Default</td>
-                    <td><input id="style_sq_light" onchange="set_style()" /></td>
-                    <td><input id="style_sq_dark" onchange="set_style()" /></td>
+                    <th>Board Name</th>
+                    <th>Creator</th>
+                    <th>Creator's Color</th>
+                    <th>Join</th>
                 </tr>
             </table>
-            <button onclick="export_style()">Save</button>
         </div>
+        
+        <!--Board-->
+        <div id="board_section">
 
-        <div id="export_div" style="display: none">
-            <h2>Export History</h2>
-            <button onclick="hide_export_div()">Hide</button>
-            <button>Copy</button>
-            <p id="export_p"></p>
+            <h2 id="board_name_header">Board Name</h2>
+            <p id="board_author_header">Board Author</p>
+            <p id="board_description_header">Board Description</p>
+            <button onclick="download_variant();">Download</button>
+            <button onclick="handle_inspect_button()">🔍</button>
+            <p id="inspect_text" style="display: none">Click on any piece to inspect it</p>
+            
+            <!-- <button onClick="">End turn</button> -->
+            <br /> <br />
+            <div id="center_div">
+                <div id="board_and_history_div">
+                    <p id="multiplayer_label">Mode: Single-player</p>
+                    <p id="top_player_label"></p>
+                    <!--Board canvases-->
+                    <div id="board_canvas_container">
+                        <canvas id="board_canvas_0" width="400" height="0" oncontextmenu="return false;" class="board_canvas" style="z-index: 0;"></canvas>
+                        <canvas id="board_canvas_1" width="400" height="0" oncontextmenu="return false;" class="board_canvas" style="z-index: 1;"></canvas>
+                        <canvas id="board_canvas_2" width="400" height="0" oncontextmenu="return false;" class="board_canvas" style="z-index: 2;"></canvas>
+                        <canvas id="board_canvas_3" width="400" height="0" oncontextmenu="return false;" class="board_canvas" style="z-index: 3;"></canvas>
+                        <canvas id="board_canvas_4" width="400" height="0" oncontextmenu="return false;" class="board_canvas" style="z-index: 4;"></canvas>
+                        <canvas id="board_canvas_5" width="400" height="0" oncontextmenu="return false;" class="board_canvas" style="z-index: 5;"></canvas>
+                    </div>
+                    <!--Move history-->
+                    <div id="history_div">
+                        <button onclick="up_arrow_click();" class="arrow_btn">&uarr;</button>
+                        <button onclick="left_arrow_click();" class="arrow_btn">&larr;</button>
+                        <button onclick="right_arrow_click();" class="arrow_btn">&rarr;</button>
+                        <button onclick="down_arrow_click();" class="arrow_btn">&darr;</button>
+                        <button onclick="handle_export_btn()">Export</button>
+                        <hr />
+                        <div id="move_history"></div>
+                    </div>
+                    <br>
+                    <p id="bottom_player_label"></p>
+                    <p id="turn_indicator">Turn: N/A</p>
+                </div>
+            </div>
+            <button id="resign_btn" onclick="resign()" style="display: none;">Resign</button>
+            <div id="upload_div" style="display: none;">
+                <br />
+                <p>Boards cannot be modified once they are uploaded - make sure the board is finished before uploading!</p>
+                <button onclick="handle_upload_btn()">Upload to Server</button>
+                <input type="text" id="upload_name" placeholder="Board code">
+            </div>
+
+            <div id="export_div" style="display: none">
+                <h2>Export History</h2>
+                <button onclick="hide_export_div()">Hide</button>
+                <button>Copy</button>
+                <p id="export_p"></p>
+            </div>
         </div>
     </div>
 

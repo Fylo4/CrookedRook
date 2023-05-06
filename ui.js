@@ -58,10 +58,12 @@ function handle_export_btn() {
     //document.getElementById('history').value = export_history();
     let hist = export_history();
     navigator.clipboard.writeText(hist);
-    alert("History copied to clipboard:\n"+hist);
-    
-    document.getElementById("export_div").style.display = "block";
-    document.getElementById("export_p").innerHTML = hist;
+    document.getElementById("export_code_p").innerHTML = hist;
+    open_modal('export');
+
+    // alert("History copied to clipboard:\n"+hist);
+    // document.getElementById("export_div").style.display = "block";
+    // document.getElementById("export_p").innerHTML = hist;
 }
 function handle_import_btn() {
     let hist = prompt('Paste the exported history here:');
@@ -77,18 +79,17 @@ function handle_import_btn() {
 let is_editing_name = false;
 function handle_name_btn() {
     let name_input = document.getElementById("name_input");
-    let name_p = document.getElementById("name_p");
     let name_btn = document.getElementById("name_btn");
     if (is_editing_name) {
         set_name();
         name_input.style.display = "none";
-        name_p.style.display = "inline";
+        show_name_p();
         name_btn.innerHTML = "✏️";
     }
     else {
         name_input.style.display = "inline";
-        name_input.value = name_p.innerHTML;
-        name_p.style.display = "none";
+        name_input.value = get_name_p();
+        hide_name_p();
         name_btn.innerHTML = "✔️";
     }
     is_editing_name ^= 1;
@@ -111,6 +112,7 @@ function handle_inspect_button() {
 
 function set_style_type() {
     style_data.style = document.getElementById("style_select").value;
+    set_style_modal();
     render_entire_board();
 }
 
@@ -209,7 +211,10 @@ function handle_mouse_click() {
         let piece = identify_piece(mouse_sq);
         if (piece >= 0) {
             let p = game_data.all_pieces[piece];
-            alert(DOMPurify.sanitize(`${p.name}\n${p.description}`));
+            // alert(DOMPurify.sanitize(`${p.name}\n${p.description}`));
+            document.getElementById('piece_modal_name').innerHTML = DOMPurify.sanitize(p.name);
+            document.getElementById('piece_modal_desc').innerHTML = DOMPurify.sanitize(p.description);
+            open_modal('piece');
         }
     }
     else if (temp_data.selected) {
@@ -290,4 +295,118 @@ function handle_mouse_click() {
     }
     clear_lines_circles();
     render_move_squares();
+}
+
+function show_name_p() {
+    let all_p = document.getElementsByClassName("name_container");
+    for (let a = 0; a < all_p.length; a ++) {
+        all_p[a].classList.remove("hidden");
+    }
+}
+function hide_name_p() {
+    let all_p = document.getElementsByClassName("hide_name_container");
+    for (let a = 0; a < all_p.length; a ++) {
+        all_p[a].classList.add("hidden");
+    }
+}
+
+function set_name_p(name) {
+    let all_p = document.getElementsByClassName("name_container");
+    for (let a = 0; a < all_p.length; a ++) {
+        all_p[a].innerHTML = DOMPurify.sanitize(name);
+    }
+}
+function get_name_p() {
+    let all_p = document.getElementsByClassName("name_container");
+    return all_p[0].innerHTML;
+}
+
+function set_clock_inputs() {
+    let clock = document.getElementById("clock_sel");
+    if (clock) {
+        let increment_div = document.getElementById("increment_div")
+        if (clock.value === "inc") {
+            increment_div.classList.remove("hidden");
+        }
+        else {
+            increment_div.classList.add("hidden");
+        }
+    }
+}
+
+function set_private_input() {
+    let room_code = document.getElementById("private_code_div");
+    let room_check = document.getElementById("private_room");
+    if (room_code && room_check) {
+        if (room_check.checked) {
+            room_code.classList.remove("hidden");
+        }
+        else {
+            room_code.classList.add("hidden");
+        }
+    }
+}
+
+function set_load_input() {
+    let from = document.getElementById("from_select").value;
+    let from_canon = document.getElementById("from_canon");
+    let from_file = document.getElementById("from_file");
+    let from_server = document.getElementById("from_server");
+    let from_import = document.getElementById("from_import");
+    
+    from === "Canon" ? from_canon.classList.remove("hidden") : from_canon.classList.add("hidden");
+    from === "File" ? from_file.classList.remove("hidden") : from_file.classList.add("hidden");
+    from === "Server" ? from_server.classList.remove("hidden") : from_server.classList.add("hidden");
+    from === "Import code" ? from_import.classList.remove("hidden") : from_import.classList.add("hidden");
+}
+
+function set_profile_dropdown() {
+    if (is_signed_in) {
+        document.getElementById("user_profile").classList.remove("hidden");
+        document.getElementById("user_log_out").classList.remove("hidden");
+        // document.getElementById("user_anonymous").classList.add("hidden");
+        document.getElementById("user_google").classList.add("hidden");
+    }
+    else {
+        document.getElementById("user_profile").classList.add("hidden");
+        document.getElementById("user_log_out").classList.add("hidden");
+        // document.getElementById("user_anonymous").classList.remove("hidden");
+        document.getElementById("user_google").classList.remove("hidden");
+    }
+}
+
+function set_style_modal() {
+    let st = document.getElementById("style_select").value;
+    if (["intersection", "xiangqi"].includes(st)) {
+        document.getElementById("style_intersection_div").classList.remove("hidden");
+    }
+    else {
+        document.getElementById("style_intersection_div").classList.add("hidden");
+    }
+}
+
+function set_modal_listeners() {
+    let modals = document.getElementsByTagName("dialog");
+
+    for (let a = 0; a < modals.length; a ++) {
+        modals[a].addEventListener('click', e => {
+            if (e.target.tagName !== 'DIALOG') {
+                return;
+            }
+            const dim = modals[a].getBoundingClientRect();
+            if (e.clientX < dim.left || e.clientX > dim.right ||
+                e.clientY < dim.top || e.clientY > dim.bottom) {
+                    modals[a].close();
+            }
+        })
+    }
+}
+
+function ui_init() {
+    set_clock_inputs();
+    set_private_input();
+    set_load_input();
+    set_modal_listeners();
+    set_profile_dropdown();
+    set_style_modal()
 }

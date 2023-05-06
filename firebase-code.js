@@ -2,12 +2,13 @@ let verbose_db_set = false;
 let verbose_db_get = false;
 //This is just an estimate and doesn't include overhead
 let total_bytes_fetched = 0;
+let is_signed_in = false;
+let signed_in_with = "";
 
 let stored_boards = localStorage.getItem("boards") ?? [];
 if(typeof(stored_boards) === "string") {
     stored_boards = JSON.parse(stored_boards);
 }
-let stored_name = localStorage.getItem("name") ?? "Guest";
 
 function show_db_set(message) {
     if (verbose_db_set) {
@@ -137,7 +138,6 @@ function set_name() {
     }
     show_db_set("Updating my name");
     user_ref.update({name: new_name});
-    localStorage.setItem("name", new_name);
 }
 
 function close_match() {
@@ -195,6 +195,7 @@ function upload_board() {
 
 function cancel_lobby(lobby) {
     firebase.database().ref(`lobby/${lobby}`).set({});
+    my_lobby_ref = undefined;
 }
 
 function switch_to_single_player() {
@@ -477,26 +478,40 @@ firebase.auth().onAuthStateChanged((user) => {
     if(user) {
         user_id = user.uid;
         user_ref = firebase.database().ref(`users/${user_id}`);
+        is_signed_in = true;
+        set_profile_dropdown();
+        signed_in_with = "anonymous";
+        let default_name = "New User";
+        let email = "none";
+
+        let providerData = firebase.auth().currentUser.providerData;
+        if (providerData[0]) {
+            // console.log(providerData[0]);
+            if (providerData[0].providerId === "google.com") {
+                signed_in_with = "google";
+                default_name = providerData[0].displayName;
+                email = providerData[0].email;
+            }
+        }
 
         user_ref.on("value", (snapshot) => {
             this_user = snapshot.val();
-            if(!this_user) {
-                console.warn("This user is undefined. This is normal.")
+            if (this_user) {
+                show_db_get("Getting my user info", this_user);
+                set_name_p(this_user.name);
             }
             else {
-                show_db_get("Getting my user info", this_user);
-                let name_p = document.getElementById("name_p");
-                name_p.innerHTML = DOMPurify.sanitize(this_user.name);
+                console.log("Creating new user");       
+                show_db_set("Setting my user id and name");
+                user_ref.set({
+                    id: user_id,
+                    name: default_name,
+                    provider: signed_in_with,
+                    email
+                });
+                set_name_p(default_name);
             }
         });
-        
-        show_db_set("Setting my user id and name");
-        user_ref.set({
-            id: user_id,
-            name: stored_name
-        });
-
-        user_ref.onDisconnect().remove();
 
         //Look through all matches to see if you're in one
         if (!in_multiplayer_game) {
@@ -533,9 +548,31 @@ firebase.auth().onAuthStateChanged((user) => {
     }
     else {
         //Logged out
+        set_name_p("Logged Out");
+        is_signed_in = false;
+        set_profile_dropdown()
     }
 });
 
-firebase.auth().signInAnonymously().catch((error) => {
-    show_error(error.code, error.message);
-});
+function sign_out() {
+    firebase.auth().signOut();
+}
+
+// function sign_in_anonymously() {
+//     firebase.auth().signInAnonymously().catch((error) => {
+//         show_error(error.message);
+//     });
+// }
+
+let google = new firebase.auth.GoogleAuthProvider();
+function sign_in_google() {
+    firebase.auth().signInWithPopup(google)
+    // .then((result) => {
+    //     user_id = result.user;
+    //     var credential = result.credential;
+    //     googleToken = credential.accessToken;
+    // })
+    .catch((error) => {
+        show_error(error.message);
+    });
+}

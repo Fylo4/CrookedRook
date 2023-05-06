@@ -60,23 +60,14 @@ function download_json(object) {
 
 function add_files_to_dropdown() {
     let variant_dropdown = document.getElementById("variantField");
-    let variant_file_label = document.getElementById("variant_file_label");
     let category = document.getElementById("categoryField");
     let cat_num = Number(category.value);
-    if(cat_num < 0) {
-        variant_file_label.style.display="inline";
-        variant_dropdown.style.display="none";
-    }
-    else {
-        variant_file_label.style.display="none";
-        variant_dropdown.style.display="inline";
-        variant_dropdown.innerHTML = "";
-        for (let a = 0; a < preset_variants[cat_num].length; a++) {
-            let temp = new Option();
-            temp.value = a;
-            temp.innerHTML = DOMPurify.sanitize(preset_variants[cat_num][a].name);
-            variant_dropdown.appendChild(temp);
-        }
+    variant_dropdown.innerHTML = "";
+    for (let a = 0; a < preset_variants[cat_num].length; a++) {
+        let temp = new Option();
+        temp.value = a;
+        temp.innerHTML = DOMPurify.sanitize(preset_variants[cat_num][a].name);
+        variant_dropdown.appendChild(temp);
     }
 }
 
@@ -89,38 +80,63 @@ function download_variant() {
     }
 }
 
-function load_variant() {
+function load_from_canon() {
     let category = Number(document.getElementById("categoryField").value);
-    if(category < 0) {
-        let file = document.getElementById("variant_file").files[0];
-        if (file) {
-            let reader = new FileReader();
-            reader.readAsText(file, "UTF-8");
-            reader.onload = function (evt) {
-                try {
-                    let n = file.name.toLowerCase();
-                    let game_object =
-                        n.endsWith(".json") ? JSON.parse(evt.target.result) :
-                        n.endsWith(".hjson")?Hjson.parse(evt.target.result) :
-                        undefined;
-                    if(game_object) {
-                        start_game(game_object, undefined, true)
-                    }
-                    else {
-                        show_error("File not recognized");
-                    }
+    let variant = document.getElementById('variantField').value;
+    start_game(preset_variants[category][variant]);
+}
+
+function load_from_file() {
+    let file = document.getElementById("variant_file").files[0];
+    if (file) {
+        let reader = new FileReader();
+        reader.readAsText(file, "UTF-8");
+        reader.onload = function (evt) {
+            try {
+                let n = file.name.toLowerCase();
+                let game_object =
+                    n.endsWith(".json") ? JSON.parse(evt.target.result) :
+                    n.endsWith(".hjson")?Hjson.parse(evt.target.result) :
+                    undefined;
+                if(game_object) {
+                    start_game(game_object, undefined, true)
                 }
-                catch (error){
-                    show_error(error.message)
+                else {
+                    show_error("File not recognized");
                 }
             }
-            reader.onerror = function (evt) {
-                show_error("Couldn't read the file");
+            catch (error){
+                show_error(error.message)
             }
+        }
+        reader.onerror = function () {
+            show_error("Couldn't read the file");
         }
     }
     else {
-        start_game(preset_variants[category][document.getElementById('variantField').value]);
+        show_error("No file selected");
+    }
+}
+
+function load_variant() {
+    let load_from = document.getElementById("from_select").value;
+    
+    switch(load_from) {
+        case "Canon":
+            load_from_canon();
+            break;
+        case "File":
+            load_from_file();
+            break;
+        case "Server":
+            set_board(document.getElementById("from_server_code").value);
+            break;
+        case "Import code":
+            import_history_firebase(document.getElementById("from_import_code").value);
+            render_entire_board();
+            break;
+        default:
+            show_error("Error loading variant, this should go in #bug-reports");
     }
 }
 function load_random_variant() {
@@ -168,7 +184,7 @@ function fix_canvas_height() {
     let history = document.getElementById("history_div");
     // let h = Number(history.style.height.substring(0, history.style.height.length-2));
     // history.style.height = (c0.offsetHeight-history.offsetHeight+h)+"px";
-    history.style.height = c0.height-8+"px";
+    history.style.height = c0.height+4+"px";
 }
 
 function add_circle(circle) {
@@ -250,4 +266,11 @@ function roughSizeOfObject( object ) {
         }
     }
     return bytes;
+}
+
+function open_modal(name) {
+    document.getElementById("modal-"+name).showModal();
+}
+function close_modal(name) {
+    document.getElementById("modal-"+name).close();
 }

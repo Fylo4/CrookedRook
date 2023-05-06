@@ -184,10 +184,11 @@ function render_space(a, b) {
 }
 
 function render_all_spaces() {
-    render_hands();
+    clear_layer(cid.board); //For some reason this is needed
     //Clear with background color
     ctx[cid.board].fillStyle = style_data.bg_col;
     ctx[cid.board].fillRect(0, 0, c.width, c.height);
+    render_hands();
     //Draw the squares
     for (let a = 0; a < game_data.width; a++) {
         for (let b = 0; b < game_data.height; b++) {
@@ -627,14 +628,12 @@ function render_extras() {
             document.getElementById("top_player_label").style.display = "none";
             document.getElementById("bottom_player_label").style.display = "none";
         }
-        document.getElementById("choose_section").style.display = "none";
         document.getElementById("resign_btn").style.display = "block";
     }
     else {
         document.getElementById("multiplayer_label").innerHTML = "Mode: Single-player";
         document.getElementById("top_player_label").style.display = "none";
         document.getElementById("bottom_player_label").style.display = "none";
-        document.getElementById("choose_section").style.display = "block";
         document.getElementById("resign_btn").style.display = "none";
     }
 

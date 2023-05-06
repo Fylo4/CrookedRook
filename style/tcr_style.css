@@ -1,30 +1,19 @@
+* {
+    box-sizing: border-box;
+}
+
 body {
     /* background: url('wood2.jpg'); */
     background-color: rgb(235, 192, 113);
-    background-size: 75%;
     color: black;
     font-family: Arial, Helvetica, sans-serif;
+
+    margin: 0;
+    padding: 0;
 }
 
-p {
-    margin-top: 8px;
-    margin-bottom: 8px;
-}
-
-table, th, td {
-    border: 2px solid black;
-    text-align: center;
-}
-
-table {
-    margin: auto;
-    background-color: rgba(0, 0, 0, 0.4);
-    color: white;
-    width: 80%;
-}
-
-th {
-    width: 25%;
+.hidden {
+    display: none !important;
 }
 
 .inline {
@@ -32,47 +21,51 @@ th {
     display: inline;
 }
 
-#title {
-    font-size: 30px;
-    font-weight: bold;
+.custom-file-upload {
+    padding: 7px 12px 7px 12px;
+    cursor: pointer;
 }
 
-#center_div {
-    width: 100%;
-    overflow: auto;
+input[type=checkbox] {
+    height: 20px;
+    width: 20px;
 }
 
-
-#board_and_history_div {
-    width: max-content;
-    overflow: auto;
-    margin: auto;
-}
-
-#history_div {
-    width: max-content;
-    float: left;
-    overflow-y: scroll;
-    scrollbar-color: black rgba(0, 0, 0, 0.4);
-    
+button, select, input, .dark {
     background-color: rgba(0, 0, 0, 0.4);
     color: white;
     border: 2px solid black;
 	padding: 4px;
-    margin-left: 8px;
     font-size: 100%;
-    height:50px;
+ 	transition: background-color 0.2s;
+	transition-timing-function: ease-in-out;
+    scrollbar-color: black rgb(56, 56, 56);
+}
+select option {
+    background-color: black;
+}
+select option:hover, select option:focus {
+    background-color: rgba(0, 0, 0, 0.6);
+}
+input {
+    height:33px;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
-#board_canvas_container {
-    position: relative;
-    overflow: auto;
-    float: left;
+input[type=number] {
+  -moz-appearance: textfield;
 }
 
-.board_canvas {
-    border: 2px solid black;
-    position: absolute;
+button, select {
+    height: 33px;
+}
+
+button:hover, button:focus, select:hover, select:focus, input:hover, input:focus {
+    background-color: rgba(0, 0, 0, 0.6);
 }
 
 .sq_btn {
@@ -120,56 +113,230 @@ hr {
     background-color: purple;
 }
 
-input[type=checkbox] {
-    height: 20px;
-    width: 20px;
+#center_div {
+    width: 100%;
+    overflow: auto;
 }
 
-button, select, input, .dark {
+
+#board_and_history_div {
+    width: max-content;
+    overflow: auto;
+    margin: auto;
+}
+
+#history_div {
+    width: max-content;
+    float: left;
+    overflow-y: scroll;
+    scrollbar-color: black rgba(0, 0, 0, 0.4);
+    
     background-color: rgba(0, 0, 0, 0.4);
     color: white;
     border: 2px solid black;
 	padding: 4px;
+    margin-left: 8px;
     font-size: 100%;
- 	transition: background-color 0.2s;
-	transition-timing-function: ease-in-out;
-    scrollbar-color: black rgb(56, 56, 56);
+    height:50px;
 }
-select option {
-    background-color: black;
+
+#board_canvas_container {
+    position: relative;
+    overflow: auto;
+    float: left;
 }
-select option:hover {
-    background-color: rgba(0, 0, 0, 0.6);
+
+.board_canvas {
+    border: 2px solid black;
+    position: absolute;
 }
-input {
+
+table, th, td {
+    border: 2px solid black;
+    text-align: center;
+}
+
+table {
+    margin: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+    color: white;
+    width: 80%;
+    table-layout: fixed;
+}
+
+.style-table {
+    width: max-content;
+}
+
+dialog {
+    width: max-content;
+    padding: 16px 32px 16px 32px;
+}
+
+dialog::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+}
+
+
+.site-title {
+    font-size: 1.5rem;
+    margin: .5rem;
+    width: max-content;
+    display: flex;
+    align-items: center;
+}
+
+.site-title img {
+    width: 50px;
+    border-radius: 50%;
+}
+
+.site-title * {
+    width: max-content;
+    float: left;
+}
+
+.site-title p {
+    margin: 0 0 0 25px;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #333;
+    color: white;
+}
+
+.navbar-links {
+    margin: 0 1rem 0 0;
+    padding: 0;
+    display: flex;
+}
+
+.navbar-links > :not(.dropdown), .dropdown > *, .dropdown_content > *{
+    text-decoration: none;
+    color: white;
+    padding: 1rem;
+    display: block;
+    margin: 0;
+    height: min-content;
+}
+
+.navbar-links a:hover, .navbar-links a:focus {
+    background-color: #555;
+}
+
+.hamburger {
+    position: absolute;
+    top: 1.5rem;
+    right: 1rem;
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 30px;
     height: 21px;
 }
-button, select {
-    height: 33px;
+
+.hamburger .bar {
+    height: 3px;
+    width: 100%;
+    background-color: white;
+    border-radius: 10px;
 }
 
-button:hover, select:hover, input:hover {
-    background-color: rgba(0, 0, 0, 0.6);
+.dropdown {
+    overflow: hidden;
 }
 
-a {
-    color: #2f00ff;
-    text-decoration:underline;
-    text-decoration-thickness: 2px;
-    font-weight: normal;
+.dropdown .dropdown_button {
+
 }
 
-a:visited {
-    color: #2f00ff;
+.dropdown_button p {
+    margin: 0;
 }
 
-a:hover {
-    background-color: rgba(0, 0, 0, 0.2);
-    /* color: white; */
-    transition: all 0s linear;
+.dropdown_content {
+    display: none;
+    position: absolute;
+    background-color: #333;
+    padding: 0;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
 }
 
-.custom-file-upload {
-    padding: 6px 12px 5px 12px;
+.dropdown_content.right {
+    right: 0;
+    position: absolute;
+}
+
+.dropdown:hover .dropdown_content, .dropdown:focus .dropdown_content {
+    display: block;
+}
+
+/* .navbar a:hover, .dropdown:hover .dropdown_button {
+    background-color: red;
+} */
+
+.move_history p {
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
+input[type=color] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 75px;
+    height: 75px;
+    background-color: transparent;
+    border: none;
     cursor: pointer;
+}
+input[type=color]::-webkit-color-swatch {
+    border: 2px solid black;
+}
+input[type=color]::-moz-color-swatch {
+    border: 2px solid black;
+}
+
+@media (max-width: 800px) {
+    .site-title p{
+        display: none;
+    }
+}
+
+@media (max-width: 400px) {
+    .hamburger {
+        display: flex;
+    }
+
+    .navbar-links {
+        display: none;
+        width: 100%;
+    }
+
+    .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .navbar-links ul {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .navbar-links li {
+        text-align: center;
+    }
+
+    .navbar-links a {
+        padding: .5rem 1rem;
+    }
+
+    .navbar-links.active {
+        display: flex;
+    }
 }

@@ -1,0 +1,362 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <!--import * as DOMPurify from 'dompurify';-->
+    <script type="text/javascript" src="purify.min.js"></script>
+    <script src="hjson.js"></script>
+    <script src="Squareset.js"></script>
+    <script src="Constants.js"></script>
+    <script src="bnb_ep_init.js"></script>
+    <script src="start_game.js"></script>
+    <script src="render-mc.js"></script>
+    <script src="make_move.js"></script>
+    <script src="refresh_moves.js"></script>
+    <script src="style_data.js"></script>
+    <script src="random.js"></script>
+    <script src="import-export.js"></script>
+    <script src="ui.js"></script>
+    <script src="site_utils.js"></script>
+    <script src="board_utils.js"></script>
+    <script src="init.js"></script>
+
+    <script src="boards/CCIT/Crow Chess.js"></script>
+    <script src="boards/CCIT/Cannon.js"></script>
+    <script src="boards/CCIT/No Step On Snek.js"></script>
+    <script src="boards/CCIT/Kitchen.js"></script>
+    <script src="boards/CCIT/LeapyMakruk.js"></script>
+    <script src="boards/CCIT/Honey Rush.js"></script>
+    <script src="boards/CCIT/Segiztas Peak.js"></script>
+    <script src="boards/CCIT/Blackroot.js"></script>
+
+    <script src="boards/Chess/Chess.js"></script>
+    <script src="boards/Chess/Atomic Chess.js"></script>
+    <script src="boards/Chess/Berolina Chess.js"></script>
+    <script src="boards/Chess/Chess_on_a_Really_Big_Board.js"></script>
+    <script src="boards/Chess/Chess5040.js"></script>
+    <script src="boards/Chess/Crazyhouse.js"></script>
+    <script src="boards/Chess/Horde_Chess.js"></script>
+    <script src="boards/Chess/King of the Hill.js"></script>
+    <script src="boards/Chess/Knightmate.js"></script>
+    <script src="boards/Chess/Los Alamos.js"></script>
+    <script src="boards/Chess/Maharajah.js"></script>
+    <script src="boards/Chess/Marseillais Chess.js"></script>
+    <script src="boards/Chess/Monster Chess.js"></script>
+    <script src="boards/Chess/Omega Chess.js"></script>
+    <script src="boards/Chess/Pocket Knight Chess.js"></script>
+    <script src="boards/Chess/Spartan Chess.js"></script>
+    <script src="boards/Chess/Wildebeest Chess.js"></script>
+
+    <script src="boards/Historical/Chaturanga.js"></script>
+    <script src="boards/Historical/Courier Chess.js"></script>
+    <script src="boards/Historical/Courier Chess Start.js"></script>
+    <script src="boards/Historical/Grant Acedrex.js"></script>
+
+    <script src="boards/Xiangqi/Xiangqi.js"></script>
+    <script src="boards/Xiangqi/Janggi.js"></script>
+    <script src="boards/Xiangqi/MiniXiangqi.js"></script>
+    <script src="boards/Xiangqi/Manchu Chess.js"></script>
+    <script src="boards/Xiangqi/5 Tigers.js"></script>
+    <script src="boards/Xiangqi/Ajax Xiangqi.js"></script>
+
+    <script src="boards/Shogi/Shogi.js"></script>
+    <script src="boards/Shogi/Dobutsu.js"></script>
+    <script src="boards/Shogi/Simple Shogi.js"></script>
+    <script src="boards/Shogi/Micro Shogi.js"></script>
+    <script src="boards/Shogi/Mini Shogi.js"></script>
+    <script src="boards/Shogi/Kyoto Shogi.js"></script>
+    <script src="boards/Shogi/Goro-Goro Shogi.js"></script>
+    <script src="boards/Shogi/Rocket Shogi.js"></script>
+    <script src="boards/Shogi/Judkins Shogi.js"></script>
+    <script src="boards/Shogi/Tori Shogi.js"></script>
+    <script src="boards/Shogi/Yari Shogi.js"></script>
+    <script src="boards/Shogi/Euro Shogi.js"></script>
+    <script src="boards/Shogi/Heian Shogi.js"></script>
+    <script src="boards/Shogi/Sho Shogi.js"></script>
+    <script src="boards/Shogi/Wa Shogi.js"></script>
+
+    <script src="boards/Compound Chess/Almost Chess.js"></script>
+    <script src="boards/Compound Chess/Bird's Chess.js"></script>
+    <script src="boards/Compound Chess/Capablanca Chess.js"></script>
+    <script src="boards/Compound Chess/Carrera's Chess.js"></script>
+    <script src="boards/Compound Chess/Compound Shuffle Chess.js"></script>
+    <script src="boards/Compound Chess/Embassy Chess.js"></script>
+    <script src="boards/Compound Chess/Gothic Chess.js"></script>
+    <script src="boards/Compound Chess/Grand Chess.js"></script>
+    <script src="boards/Compound Chess/Shogun Chess.js"></script>
+
+    <script src="boards/SEA/Makruk.js"></script>
+    <script src="boards/SEA/Ouk Chaktrang.js"></script>
+    <script src="boards/SEA/Sittuyin.js"></script>
+    <script src="boards/SEA/Main Chator.js"></script>
+    <script src="boards/SEA/Asean Chess.js"></script>
+
+    <script src="boards/other/Congo.js"></script>
+    <script src="boards/other/Dragonfly.js"></script>
+    <script src="boards/other/Metamachy.js"></script>
+    <script src="boards/other/Shako.js"></script>
+    <script src="boards/Style.js"></script>
+
+    <title>The Crooked Rook</title>
+    <link rel="icon" href="icon.png">
+    <link href="style/tcr_style.css" rel="stylesheet"/>
+</head>
+<body>
+    <!-- Header -->
+    <div style="width: 100%; overflow:auto;">
+        <div style="width: max-content; float: left;">
+            <p id="title">The Crooked Rook</p>
+            <p><a href="https://discord.gg/NJNXUXqyvr">Discord</a> | <a href="https://drive.google.com/drive/folders/1yB_Elymo0vY33n6xQHWzukDGGkANqPQl">Documentation</a> | <a href="#" onclick="toggle_credits()">Credits</a> | Pre-Release 0.7.6</p>
+            <br />
+            <button id="board_page_button" onclick="board_page()" style="display: none;">Board</button>
+            <button id="lobby_page_button" onclick="lobby_page()">Lobby</button>
+        </div>
+        <div style="width: max-content; float: right;">
+            <p class="inline">Name:</p>
+            <p id="name_p" class="inline">Guest</p>
+            <input id="name_input" style="display:none;"/>
+            <button id="name_btn" onclick="handle_name_btn()">✏️</button>
+            <br />
+        </div>
+    </div>
+    <div id="message_div"></div>
+
+    <!--Credits-->
+    <div id="credits_div" style="display:none">
+        <p><b>Credits</b></p>
+        <p>Created by Fylo</p>
+        <p>Most sprites come from <a href="https://gitlab.com/zulban/chesscraft-creative-commons/-/tree/master/pieces">ChessCraft Creative Commons</a></p>
+        <p>Hidetchi sprites by <a href="https://boardgamegeek.com/user/jureboga">jureboga</a>, adapted from Hidetchi's designs. <a href="https://boardgamegeek.com/filepage/241678/shogi-more-chess-hidetchis-internationalized-piece">Link</a></p>
+        <p>SEA boards created by skyhistory</p>
+        <p>All other default boards by Ristet or Fylo</p>
+        <p>Style by Sharp-Shark and Fylo</p>
+    </div>
+
+    <br />
+
+    <!--Lobby-->
+    <div id="lobby_section" style="display: none;">
+        <table id="lobby_table">
+            <tr>
+                <th>Board Name</th>
+                <th>Creator</th>
+                <th>Creator's Color</th>
+                <th>Join</th>
+            </tr>
+        </table>
+        <br />
+        <label for="board_name">Board Code:</label>
+        <input id="board_name">
+        <label for="color_sel">Play as:</label>
+        <select id="color_sel">
+            <option value="r">Random</option>
+            <option value="w">White</option>
+            <option value="b">Black</option>
+        </select>
+        <button onclick="add_lobby()">Start Room</button>
+    </div>
+    
+    <div id="board_section">
+        <div id="choose_section">
+            <select id="categoryField" onchange="add_files_to_dropdown()">
+                <option value="0">Chess</option>
+                <option value="1">Shogi</option>
+                <option value="2">Xiangqi</option>
+                <option value="7">SEA</option>
+                <option value="3">Historical</option>
+                <!--<option value="4">Regional</option>-->
+                <option value="5">CCIT</option>
+                <option value="6">Compound</option>
+                <option value="8">Other</option>
+                <option value="-1">From File</option>
+            </select>
+            <select id="variantField" name="variantField"></select>
+            <label class="custom-file-upload dark" id="variant_file_label">
+                <span id="file-selected">Choose File</span>
+                <input type="file" id="variant_file" style="display: none" accept=".json, .hjson" />
+            </label>
+            <br /><br />
+            <button onclick="load_variant();">Load</button>
+            <button onclick="load_random_variant();">🎲</button>
+            <button onclick="handle_import_btn()">Import History</button>
+            <br /><br />
+        </div>
+
+        <h2 id="board_name_header">Board Name</h2>
+        <p id="board_author_header">Board Author</p>
+        <p id="board_description_header">Board Description</p>
+        <button onclick="style_toggle()">Style</button>
+        <button onclick="handle_inspect_button()">🔍</button>
+        <p id="inspect_text" style="display: none">Click on any piece to inspect it</p>
+        <div id="style_buttons" style="display:none">
+            <br />
+            <label for="style_select">Style:</label>
+            <select id="style_select" onchange="set_style_type()">
+                <option value="checkered">Checkered</option>
+                <option value="uncheckered">Uncheckered</option>
+                <option value="ashtapada">Ashtapada</option>
+                <option value="intersection">Intersection</option>
+                <option value="xiangqi">Xiangqi</option>
+            </select>
+            <label for="intersection_select">Intersections:</label>
+            <select id="intersection_select" onchange="set_intersection_type()">
+                <option value="4-corner">4-corner</option>
+                <option value="dot">Dot</option>
+                <option value="x">X</option>
+            </select>
+            <br /> <br />
+            <button onClick="change_zoom(1);  render_entire_board();" class="sq_btn">+</button>
+            <button onClick="change_zoom(-1); render_entire_board();" class="sq_btn">-</button>
+            <button onClick="style_data.flip_board ^= 1; render_entire_board()">Flip Board</button>
+            <button onClick="style_data.rotate_opp ^= 1; render_entire_board()">Flip Opponent</button>
+            <button onClick="style_data.name_squares ^= 1; render_entire_board()">Square Names</button>
+            <button href="#" id="download_btn" onClick="handle_download_btn()" download="image.png">📷</button>
+            <br /> <br />
+            <button onClick="clear_lines_circles();">Clear Lines / Circles</button>
+            <button onClick="line_col='red'"><div class='box red'></div></button>
+            <button onClick="line_col='orange'"><div class='box orange'></div></button>
+            <button onClick="line_col='yellow'"><div class='box yellow'></div></button>
+            <button onClick="line_col='green'"><div class='box green'></div></button>
+            <button onClick="line_col='blue'"><div class='box blue'></div></button>
+            <button onClick="line_col='purple'"><div class='box purple'></div></button>
+            <br /> <br />
+            <input type="checkbox" id="attacked_squares_cb" onchange="refresh_checkboxes()">
+            <label for="attacked_squares_cb">Attacked squares</label>
+            <input type="checkbox" id="check_indicator_cb" checked onchange="refresh_checkboxes()">
+            <label for="check_indicator_cb">Check indicator</label>
+            <input type="checkbox" id="movable_pieces_cb" onchange="refresh_checkboxes()">
+            <label for="movable_pieces_cb">Movable pieces</label>
+            <input type="checkbox" id="last_moved_cb" checked onchange="refresh_checkboxes()">
+            <label for="last_moved_cb">Last moved piece</label>
+            <input type="checkbox" id="highlight_cb" checked onchange="refresh_checkboxes()">
+            <label for="highlight_cb">Show Highlighted Squares</label>
+            <br /> <br />
+            <button onclick="handle_advanced_style_btn()">Advanced Style Info</button>
+        </div>
+        <!-- <button onClick="">End turn</button> -->
+        <br /> <br />
+        <div id="center_div">
+            <div id="board_and_history_div">
+                <p id="multiplayer_label">Mode: Single-player</p>
+                <p id="top_player_label"></p>
+                <!--Board canvases-->
+                <div id="board_canvas_container">
+                    <canvas id="board_canvas_0" width="400" height="0" oncontextmenu="return false;" class="board_canvas" style="z-index: 0;"></canvas>
+                    <canvas id="board_canvas_1" width="400" height="0" oncontextmenu="return false;" class="board_canvas" style="z-index: 1;"></canvas>
+                    <canvas id="board_canvas_2" width="400" height="0" oncontextmenu="return false;" class="board_canvas" style="z-index: 2;"></canvas>
+                    <canvas id="board_canvas_3" width="400" height="0" oncontextmenu="return false;" class="board_canvas" style="z-index: 3;"></canvas>
+                    <canvas id="board_canvas_4" width="400" height="0" oncontextmenu="return false;" class="board_canvas" style="z-index: 4;"></canvas>
+                    <canvas id="board_canvas_5" width="400" height="0" oncontextmenu="return false;" class="board_canvas" style="z-index: 5;"></canvas>
+                </div>
+                <!--Move history-->
+                <div id="history_div">
+                    <button onclick="up_arrow_click();" class="arrow_btn">&uarr;</button>
+                    <button onclick="left_arrow_click();" class="arrow_btn">&larr;</button>
+                    <button onclick="right_arrow_click();" class="arrow_btn">&rarr;</button>
+                    <button onclick="down_arrow_click();" class="arrow_btn">&darr;</button>
+                    <button onclick="handle_export_btn()">Export</button>
+                    <hr />
+                    <div id="move_history"></div>
+                </div>
+                <br>
+                <p id="bottom_player_label"></p>
+                <p id="turn_indicator">Turn: N/A</p>
+            </div>
+        </div>
+        <button id="resign_btn" onclick="resign()" style="display: none;">Resign</button>
+        <br />
+        <button onclick="download_variant();">Download this Board</button>
+        <br />
+        <div id="upload_div" style="display: none;">
+            <br />
+            <p>Boards cannot be modified once they are uploaded - make sure the board is finished before uploading!</p>
+            <button onclick="handle_upload_btn()">Upload to Server</button>
+            <input type="text" id="upload_name" placeholder="Board code">
+        </div>
+        <br />
+
+        <div id="style_div" style="display:none;">
+            <h2>Style Menu</h2>
+            <p>Piece colors- White: <input id="style_piece_w" onchange="set_style()" /> Black: <input id="style_piece_b" onchange="set_style()" /> Neutral: <input id="style_piece_n" onchange="set_style()" /></p>
+            <p>Background color- <input id="style_bg" onchange="set_style()" /></p>
+            <p>Hand color- <input id="style_hand" onchange="set_style()" /></p>
+            <table>
+                <tr>
+                    <th>Square type</th>
+                    <th>Light</th>
+                    <th>Dark</th>
+                </tr>
+                <tr>
+                    <td>Highlight</td>
+                    <td><input id="style_hi_light" onchange="set_style()" /></td>
+                    <td><input id="style_hi_dark" onchange="set_style()" /></td>
+                </tr>
+                <tr>
+                    <td>Highlight2</td>
+                    <td><input id="style_hi2_light" onchange="set_style()" /></td>
+                    <td><input id="style_hi2_dark" onchange="set_style()" /></td>
+                </tr>
+                <tr>
+                    <td>Mud</td>
+                    <td><input id="style_md_light" onchange="set_style()" /></td>
+                    <td><input id="style_md_dark" onchange="set_style()" /></td>
+                </tr>
+                <tr>
+                    <td>Ethereal</td>
+                    <td><input id="style_et_light" onchange="set_style()" /></td>
+                    <td><input id="style_et_dark" onchange="set_style()" /></td>
+                </tr>
+                <tr>
+                    <td>Pacifist</td>
+                    <td><input id="style_pa_light" onchange="set_style()" /></td>
+                    <td><input id="style_pa_dark" onchange="set_style()" /></td>
+                </tr>
+                <tr>
+                    <td>Sanctuary</td>
+                    <td><input id="style_sa_light" onchange="set_style()" /></td>
+                    <td><input id="style_sa_dark" onchange="set_style()" /></td>
+                </tr>
+                <tr>
+                    <td>Default</td>
+                    <td><input id="style_sq_light" onchange="set_style()" /></td>
+                    <td><input id="style_sq_dark" onchange="set_style()" /></td>
+                </tr>
+            </table>
+            <button onclick="export_style()">Save</button>
+        </div>
+
+        <div id="export_div" style="display: none">
+            <h2>Export History</h2>
+            <button onclick="hide_export_div()">Hide</button>
+            <button>Copy</button>
+            <p id="export_p"></p>
+        </div>
+    </div>
+
+    <div id="imageDiv" style="Display: none"></div>
+    <canvas id="blend_canvas" style="Display: none" width="400" height="400"></canvas>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script>
+        // Import the functions you need from the SDKs you need
+        // import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-app.js";
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBBbEUHGhTCavfixQmyBqMOEhJ-s9xfbsU",
+            authDomain: "crooked-rook.firebaseapp.com",
+            databaseURL: "https://crooked-rook-default-rtdb.firebaseio.com",
+            projectId: "crooked-rook",
+            storageBucket: "crooked-rook.appspot.com",
+            messagingSenderId: "612890880400",
+            appId: "1:612890880400:web:bf191526f0789a2ade2b15"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+    </script>
+    <script src="firebase-code.js"></script>
+    <script>page_init()</script>
+</body>
+</html>
