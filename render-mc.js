@@ -464,10 +464,10 @@ function render_promotion_menu() {
     clear_layer(cid.menu);
     if (temp_data.waiting_for_promotion) {
         //Background
-        ctx[cid.menu].globalAlpha = 0.5;
-        ctx[cid.menu].fillStyle = 'rgb(0,0,0)';
-        ctx[cid.menu].fillRect(0, 0, c.width, c.height);
-        ctx[cid.menu].globalAlpha = 1.0;
+        //ctx[cid.menu].globalAlpha = 0.5;
+        ctx[cid.menu].fillStyle = 'rgba(0,0,0,0.5)';
+        ctx[cid.menu].fillRect(0, 0, c[cid.menu].width, c[cid.menu].height);
+        //ctx[cid.menu].globalAlpha = 1.0;
         //Border around selectable pieces
         let start_height = c[cid.menu].height / 2 - height_px / 2;
         let start_width = c[cid.menu].width / 2 - height_px * temp_data.promotions.length / 2;

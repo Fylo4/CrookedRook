@@ -197,6 +197,7 @@ function handle_mouse_click() {
             let dst_x = dst % game_data.width, dst_y = Math.floor(dst / game_data.width);
             if(validate_move(src_x, src_y, dst_x, dst_y, prom)) {
                 handle_make_move(src_x, src_y, dst_x, dst_y, prom);
+                render_after_move();
             }
             else {
                 show_error("Invalid move attempted after promotion was selected. This should be reported in #bug-reports.");
@@ -204,6 +205,7 @@ function handle_mouse_click() {
             temp_data.selected = false;
         }
         temp_data.waiting_for_promotion = false;
+        render_promotion_menu();
     }
     else if (temp_data.inspect) {
         document.getElementById("inspect_text").style.display="none";
@@ -250,6 +252,7 @@ function handle_mouse_click() {
                     temp_data.waiting_for_promotion = true;
                     temp_data.promotions = promote_to;
                     temp_data.move_to = mouse_sq;
+                    render_promotion_menu();
                 }
             }
             else {
