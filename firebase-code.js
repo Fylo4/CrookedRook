@@ -443,9 +443,8 @@ function add_lobby() {
 }
 
 let all_lobbies_ref = firebase.database().ref(`lobby`);
-all_lobbies_ref.on("value", (snapshot) => {
-    let lobby = snapshot.val();
-    show_db_get("Updating lobby info for table", lobby)
+
+function refresh_lobby(lobby) {
     let table = document.getElementById("lobby_table");
     table.innerHTML = `
     <tr>
@@ -471,7 +470,19 @@ all_lobbies_ref.on("value", (snapshot) => {
             <td>${btn}</td>
         </tr>`;
     }
+}
+all_lobbies_ref.on("value", (snapshot) => {
+    let lobby = snapshot.val();
+    show_db_get("Updating lobby info for table", lobby)
+    refresh_lobby(lobby);
 });
+function handle_refresh_lobby_button() {
+    all_lobbies_ref.once("value", (snapshot) => {
+        let lobby = snapshot.val();
+        show_db_get("Updating lobby info for table", lobby)
+        refresh_lobby(lobby);
+    })
+}
 
 
 firebase.auth().onAuthStateChanged((user) => {
