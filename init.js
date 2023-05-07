@@ -34,6 +34,12 @@ function page_init() {
         document.getElementById("file-selected").innerHTML=fileName;
     })
 
+    document.getElementById("style_file").addEventListener('change', e => {
+        let fileName = '';
+        fileName = String(e.target.value).slice(12);
+        document.getElementById("style-selected").innerHTML=fileName;
+    })
+
     //Might need to be canvas_5?
     front_canvas.addEventListener('mousemove', e => {
         handle_mouse_move(e);

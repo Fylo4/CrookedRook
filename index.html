@@ -105,7 +105,7 @@
     <!-- Modals -->
     <dialog id="modal-about">
         <h1>About TCR</h1>
-        <p>Version 0.8.2</p>
+        <p>Version 0.8.3</p>
         <br />
         <a href="https://discord.gg/NJNXUXqyvr" autofocus>Discord</a>
         <br /> <br />
@@ -316,6 +316,12 @@
                 <br />
                 <button onclick="export_style()">Save Style</button>
                 <br /><br />
+                <button onclick="import_style()">Load Style</button>
+                <label class="custom-file-upload dark" id="variant_file_label">
+                    <span id="style-selected">Choose File</span>
+                    <input type="file" id="style_file" style="display: none" accept=".json, .hjson" />
+                </label>
+                <br /><br />
             </div>
         </div>
         <button onclick="close_modal('style')">Close</button>
@@ -420,6 +426,8 @@
         <div id="message_div"></div>
         <!--Lobby-->
         <div id="lobby_section" style="display: none;">
+            <p>You must be logged in to access multiplayer features</p>
+            <p>There are several known bugs with multiplayer. I need to completely redo my database code. Until then, don't expect it to be perfect.</p>
             <button onclick="open_modal('newgame')">Create Room</button>
             <br /><br />
             <table id="lobby_table">

@@ -129,6 +129,40 @@ function export_style() {
     URL.revokeObjectURL(url);
 }
 
+function import_style() {
+    let file = document.getElementById("style_file").files[0];
+    if (file) {
+        let reader = new FileReader();
+        reader.readAsText(file, "UTF-8");
+        reader.onload = function (evt) {
+            try {
+                let n = file.name.toLowerCase();
+                let style_object =
+                    n.endsWith(".json") ? JSON.parse(evt.target.result) :
+                    n.endsWith(".hjson")?Hjson.parse(evt.target.result) :
+                    undefined;
+                if (style_object) {
+                    style_data = style_object;
+                    render_entire_board();
+                    show_message("Style data updated");
+                }
+                else {
+                    show_error("File not recognized");
+                }
+            }
+            catch (error){
+                show_error(error.message)
+            }
+        }
+        reader.onerror = function () {
+            show_error("Couldn't read the file");
+        }
+    }
+    else {
+        show_error("No file selected");
+    }
+}
+
 function set_style_listeners() {
     let ids = ["style_piece_w", "style_piece_b", "style_piece_n", "style_sq_light", "style_sq_dark", "style_hi_light",
     "style_hi_dark", "style_hi2_light", "style_hi2_dark", "style_md_light", "style_md_dark", "style_et_light",
