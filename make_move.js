@@ -56,8 +56,9 @@ function make_move(src_x, src_y, dst_x, dst_y, promotion) {
             is_capture = true;
         }
     }
-    else if ((board.turn && board.black_ss.get(dst_sq)) || (!board.turn && board.white_ss.get(dst_sq))) {
-        //Lands on ally
+    else if ((board.turn && board.black_ss.get(dst_sq) && !board.white_ss.get(dst_sq)) ||
+        (!board.turn && board.white_ss.get(dst_sq) && !board.black_ss.get(dst_sq))) {
+        //Lands on ally (not neutral)
         let other_piece = game_data.all_pieces[identify_piece(dst_sq)];
         if (get_attributes(this_piece).includes(attrib.castle_from) && get_attributes(other_piece).includes(attrib.castle_to)) {
             //Castle
@@ -562,90 +563,7 @@ function slots_left (piece_id, color, brd) {
     let pieces_placed = ss_and(brd.piece_ss[piece_id], col_ss);
     return Math.max(limit - pieces_placed.count_bits(), 0);
 }
-function find_promotions(this_id, src_sq, end_sq, is_white, is_black, brd) {
-    if(brd === undefined) {
-        brd = board;
-    }
-    let promote_to = [];
-    let in_any_zone = false;
-    for (let a = 0; a < game_data.all_pieces[this_id].promotions.length; a++) {
-        let prom = game_data.all_pieces[this_id].promotions[a];
-        let start_in_white = game_data.zones[prom.white].get(src_sq);
-        let start_in_black = game_data.zones[prom.black].get(src_sq);
-        let end_in_white = game_data.zones[prom.white].get(end_sq);
-        let end_in_black = game_data.zones[prom.black].get(end_sq);
-        if (prom.on.includes(events.self) && src_sq === end_sq &&
-            ((is_white && start_in_white) || (is_black && start_in_black))) {
-                promote_to.push(...prom.to);
-                in_any_zone = true;
-            }
-        else if (prom.on.includes(events.enter) &&
-            ((is_white && !start_in_white && end_in_white) ||
-            (is_black && !start_in_black && end_in_black))) {
-            promote_to.push(...prom.to);
-            in_any_zone = true;
-        }
-        else if (prom.on.includes(events.exit) &&
-            ((is_white && start_in_white && !end_in_white) ||
-            (is_black && start_in_black && !end_in_black))) {
-            promote_to.push(...prom.to);
-            in_any_zone = true;
-        }
-        else if (prom.on.includes(events.between) &&
-            ((is_white && start_in_white && end_in_white) ||
-            (is_black && start_in_black && end_in_black))) {
-            promote_to.push(...prom.to);
-            in_any_zone = true;
-        }
-    }
-    //If I promote to a piece in my opponent's hand, add that here
-    if (in_any_zone && get_attributes(this_id).includes(attrib.promote_from_opp_hand) && game_data.has_hand) {
-        let opp_hand = (!is_white && is_black) ? brd.hands.white :
-            (is_white && !is_black) ? brd.hands.black :
-            brd.turn ? brd.hands.white : brd.hands.black;
-        for (let a = 0; a < opp_hand.length; a ++) {
-            if (opp_hand[a] > 0) {
-                promote_to.push(a);
-            }
-        }
-    }
-    //Go through each element of promote_to to make sure it doesn't exceed the piece limit
-    let ret = [];
-    let treat_as_col = is_white + is_black*2 - 1;
-    promote_to = [...new Set(promote_to)]; //Remove duplicates
-    for (let a = 0; a < promote_to.length; a++) {
-        //Do I need to pass in some sort of board to slots_left here?
-        if(promote_to[a] === this_id || slots_left(promote_to[a], treat_as_col)) {
-            ret.push(promote_to[a]);
-        }
-    }
-    return ret;
-}
-//Currently not used
-//If I implement drop promotions, this will be useful
-function find_drop_promotions(this_id, end_sq, color) {
-    let promote_to = [];
-    for (let a = 0; a < game_data.all_pieces[this_id].promotions.length; a++) {
-        let prom = game_data.all_pieces[this_id].promotions[a];
-        let end_in_white = game_data.zones[prom.white].get(end_sq);
-        let end_in_black = game_data.zones[prom.black].get(end_sq);
-        if (prom.on.includes(events.drop) &&
-            ((!color && end_in_white) || (color && end_in_black))) {
-            promote_to.push(...prom.to);
-        }
-    }
-    //Promote from opp hand doesn't make sense here
-    //Go through each element of promote_to to make sure it doesn't exceed the piece limit
-    let ret = [];
-    let treat_as_col = is_white + is_black*2 - 1;
-    for (let a = 0; a < promote_to.length; a++) {
-        //Do I need to pass in some sort of board to slots_left here?
-        if (promote_to[a] === this_id || slots_left(promote_to[a], treat_as_col)) {
-            ret.push(promote_to[a]);
-        }
-    }
-    return ret;
-}
+
 //Returns true if any pieces are captured
 function evaluate_burns(piece_id, sq, col) {
     let burn = new squareset(get_move_ss(game_data.all_pieces[piece_id].held_move, sq, col ? 4 : 0));
@@ -725,6 +643,11 @@ function death(sq, is_burn = false, flip = true) {
 function spawn_piece(sq, piece_id, col) {
     if (board.white_ss.get(sq) || board.black_ss.get(sq)) {
         return;
+    }
+    if (game_data.all_pieces[piece_id].file_limit) {
+        if (count_pieces_in_column(piece_id, sq%game_data.width, (col === 2) ? undefined : col) >= game_data.all_pieces[piece_id].file_limit) {
+            return;
+        }
     }
     board.piece_ss[piece_id].set_on(sq);
     if (col == 0 || col == 2) {

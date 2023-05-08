@@ -283,9 +283,9 @@ function render_board_pieces() {
         let flip_black = style_data.rotate_opp && !style_data.flip_board;
         let white_angle = (p.angle ?? 0) + flip_white*180;
         let black_angle = (p.angle ?? 0) + flip_black*180;
-        draw_ss(cid.pieces, white_pieces, img, style_data.white_col, false, white_angle);
-        draw_ss(cid.pieces, black_pieces, img, style_data.black_col, false, black_angle);
-        draw_ss(cid.pieces, neutral_pieces, img, style_data.neutral_col, false, p.angle);
+        draw_ss(cid.pieces, white_pieces, img, style_data.white_col, false, white_angle, false, p.flip_sprite);
+        draw_ss(cid.pieces, black_pieces, img, style_data.black_col, false, black_angle, false, p.flip_sprite);
+        draw_ss(cid.pieces, neutral_pieces, img, style_data.neutral_col, false, p.angle, false, p.flip_sprite);
         if(p.mini_sprite != undefined) {
             img = document.getElementById("img_" + p.mini_sprite);
             draw_ss(cid.pieces, white_pieces, img, style_data.white_col, true, white_angle, flip_white);
@@ -304,7 +304,7 @@ function render_hand_pieces() {
             for (let a = 0; a < hands[h].length; a++) {
                 if (hands[h][a] > 0) {
                     let img = document.getElementById("img_" + game_data.all_pieces[a].sprite)
-                    draw_on_hand(img, col, !!h);
+                    draw_on_hand(img, col, !!h, false, game_data.all_pieces[a].flip_sprite);
                     if (game_data.all_pieces[a].mini_sprite) {
                         img = document.getElementById("img_" + game_data.all_pieces[a].mini_sprite);
                         draw_on_hand(img, col, !!h, true);
@@ -528,9 +528,12 @@ function highlighted_hand_piece(brd) {
     return {piece: hover_piece, color: hover_side};
 }
 
-function draw_sprite(layer, sprite, x, y, width, height, color, angle = 0) {
+function draw_sprite(layer, sprite, x, y, width, height, color, angle = 0, flipped = false) {
     ctx[layer].translate(x + width / 2, y + height / 2);
     ctx[layer].rotate(angle * Math.PI / 180);
+    if (flipped) {
+        ctx[layer].scale(-1,1);
+    }
 
     if (!color || color === 'rgb(255,255,255)') {
         ctx[layer].drawImage(sprite, -width / 2, -height / 2, width, height);
@@ -550,8 +553,12 @@ function draw_sprite(layer, sprite, x, y, width, height, color, angle = 0) {
         ctx[layer].drawImage(c2, 0, 0, width, height, -width / 2, -height / 2, width, height);
     }
 
-    ctx[layer].rotate(-angle * Math.PI / 180);
-    ctx[layer].translate(-x - width / 2, -y - height / 2);
+    // ctx[layer].rotate(-angle * Math.PI / 180);
+    // ctx[layer].translate(-x - width / 2, -y - height / 2);
+    // if (flipped) {
+    //     ctx[layer].scale(-1,1);
+    // }
+    ctx[layer].setTransform(1, 0, 0, 1, 0, 0);
 }
 
 function render_extras() {
@@ -692,7 +699,7 @@ function draw_text_on_hand(txt, x, is_black) {
     ctx[cid.pieces].fillText(txt, pos_x + 4, pos_y + 12);
 }
 
-function draw_ss(layer, ss, img, col, is_mini = false, angle = 0, is_flip = false) {
+function draw_ss(layer, ss, img, col, is_mini = false, angle = 0, is_flip = false, flip_sprite = false) {
     let width_px = c[layer].width / game_data.width;
     let height_px = c[layer].height / (game_data.height + (game_data.has_hand ? 2 : 0));
     for (let a = 0; a < Math.min(ss.length, game_data.width * game_data.height); a++) {
@@ -705,7 +712,7 @@ function draw_ss(layer, ss, img, col, is_mini = false, angle = 0, is_flip = fals
                 pos_x += width_px  * (1 - mini_ratio);
                 pos_y += height_px * (1 - mini_ratio);
             }
-            draw_sprite(layer, img, pos_x, pos_y, width, height, col, angle);
+            draw_sprite(layer, img, pos_x, pos_y, width, height, col, angle, flip_sprite);
         }
     }
 }

@@ -8,15 +8,18 @@ function start_game(json_data, seed, from_file) {
     last_loaded_board = JSON.parse(JSON.stringify(json_data));
     loaded_from_file = !!from_file;
 
+    //Init game data from game data seed
     game_data = game_data_from_object(json_data);
     game_data.seed = seed;
     inflate_game_data(game_data);
     validate_game_data(game_data);
-    
-    board = get_empty_board(game_data);
-    fill_board(rand);
     set_mols_and_moves();
     
+    //Init board from game data
+    board = get_empty_board(game_data);
+    fill_board(rand);
+    
+    //Website stuff from here down
     temp_data = {
         selected: false,
         selected_position: -1,
@@ -254,6 +257,7 @@ function inflate_pieces(piece_list) {
         piece.file_limit = piece.file_limit ?? piece.f ?? undefined;
         piece.held_piece = piece.held_piece ?? piece.hp ?? undefined;
         piece.held_move = piece.held_move ?? piece.hm ?? undefined;
+        piece.flip_sprite = piece.flip_sprite ?? piece.fs ?? false;
         
         if (piece.sprite === "cerebus") { piece.sprite = "cerberus"; }
 
@@ -780,7 +784,10 @@ function string_to_term(string, mols) {
         //at is how it applies to finding attacking squares
         //at=true: remove all spaces; at=false: skip, at=undefined: normal
         else if (string[a] === "a") { term.push({ type: "post", at: false,
-            data: (col) => { return col ? board.black_ss : board.white_ss } }); }
+            data: (col) => {
+                return col ? ss_and(board.black_ss, board.white_ss.inverse()) :
+                ss_and(board.white_ss, board.black_ss.inverse())
+            } }); }
         else if (string[a] === "e") { term.push({ type: "post", at: true,
             data: (col) => { return col ? board.white_ss : board.black_ss } }); }
         else if (string[a] === "b") { term.push({ type: "post", at: false,

@@ -173,8 +173,10 @@ function update_all_boards() {
             // upload_board.code = upload_board.n.toLowerCase();
             // firebase.database().ref("boards").child(upload_board.n.toLowerCase()).set({});
             // firebase.database().ref("boards").child(upload_board.n.toLowerCase()).update(upload_board);
-            preset_variants[a][b].code = preset_variants[a][b].name.toLowerCase();
-            firebase.database().ref("boards").child(preset_variants[a][b].name.toLowerCase()).set(preset_variants[a][b]);
+            if (preset_variants[a][b].code === undefined) {
+                preset_variants[a][b].code = preset_variants[a][b].name.toLowerCase();
+            }
+            firebase.database().ref("boards").child(preset_variants[a][b].code).set(preset_variants[a][b]);
         }
     }
 }

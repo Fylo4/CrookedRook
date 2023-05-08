@@ -148,6 +148,41 @@ function refresh_moves() {
             }
 		}
     }
+    //File limit for each piece
+    for (let a = 0; a < game_data.all_pieces.length; a ++) {
+        let p = game_data.all_pieces[a];
+        if (p.file_limit) {
+            //Find which columns are maxed out
+            let maxed_cols = {white: [], black: [], neutral: []};
+            for (let b = 0; b < game_data.width; b ++) {
+                if (count_pieces_in_column(a, b, false) >= p.file_limit) {
+                    maxed_cols.white.push(b);
+                }
+                if (count_pieces_in_column(a, b, true) >= p.file_limit) {
+                    maxed_cols.black.push(b);
+                }
+                if (count_pieces_in_column(a, b) >= p.file_limit) {
+                    maxed_cols.neutral.push(b);
+                }
+            }
+            //Don't allow movement to those maxed columns
+            for (let b = new squareset(board.piece_ss[a]); !b.is_zero(); b.pop()) {
+                let sq = b.get_ls1b();
+                let my_maxed_cols = 
+                    board.black_ss.get(sq) && !board.white_ss.get(sq) ? maxed_cols.black :
+                    !board.black_ss.get(sq) && board.white_ss.get(sq) ? maxed_cols.white :
+                    maxed_cols.neutral;
+                let my_col = sq % game_data.width;
+                for (let c = 0; c < my_maxed_cols.length; c ++) {
+                    if (my_maxed_cols[c] !== my_col) {
+                        for (let d = 0; d < game_data.height; d ++) {
+                            board.can_move_ss[sq].set_off(d*game_data.width+my_maxed_cols[c]);
+                        }
+                    }
+                }
+            }
+        }
+    }
     //Berzerk board rule
     if (game_data.berzerk) {
         let neutral = ss_and(board.white_ss, board.black_ss);
@@ -301,7 +336,6 @@ function find_attackers(non_attackers) {
     }
 }
 function parse_term(term, term_index, sq, piece, col, angle, is_attack = false) {
-    //Neutral pieces are whoever's turn it is; non-neutral pieces are their color
     if (angle === undefined) {
         angle = col ? 4 : 0;
     }
@@ -405,6 +439,7 @@ function reload_can_drop_piece_to() {
         }
     }
 }
+
 function get_drop_zone(piece_id, color) {
     //console.log(`id: ${piece_id}, color: ${color}`)
     let zone_id = undefined;
