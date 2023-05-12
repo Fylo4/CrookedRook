@@ -14,7 +14,7 @@ preset_variants[folders.ccit].push({
             sprite: "pawn",
             symbol: "p",
             notation: "",
-			move: "i[0 1 1 3]Ba+[S]ae+[P]ca",
+			move: "i[0 1 1 3]Bae+[S]ae+[P]ca",
             promotions: {white: "black_rank_2", black: "white_rank_2", to: "NRNS"},
 		},
 		{
@@ -91,7 +91,7 @@ preset_variants[folders.ccit].push({
 		},
 		{
             name: "Omega Wizard",
-            description: "Moves one step in any direction. Can be checked and checkmated.",
+            description: "Moves like a Giraffe(Camel) or a Ferz",
             sprite: "sorcerer",
 			symbol: "W",
             move: "([F],[C])a",

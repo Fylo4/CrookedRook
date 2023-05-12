@@ -13,7 +13,7 @@ preset_variants[folders.ccit].push({
             sprite: "pawn",
             symbol: "p",
             notation: "",
-			move: "i[0 1 1 2]Ba+[S]ae+[P]ca",
+			move: "i[0 1 1 2]Bae+[S]ae+[P]ca",
             promotions: {to: ["W", "B", "R", "Q"]},
 		},
 		{
