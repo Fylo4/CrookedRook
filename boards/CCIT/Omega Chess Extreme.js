@@ -57,7 +57,7 @@ preset_variants[folders.ccit].push({
 		},
 		{
             name: "Swapper",
-            description: "Moves one step in any direction. Can be checked and checkmated.",
+            description: "Moves like a Queen, swaps with enemies instead of capturing them",
             sprite: "pylon",
 			symbol: "S",
             move: "z{0 0}[Q]Ba+[S]a",
