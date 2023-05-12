@@ -59,7 +59,7 @@ preset_variants[folders.ccit].push({
 			description: "From the Chesscraft trailer. Moves and captures by sliding like a bishop forward, a Rook sideways, a Knight, a Giraffe and an Alfil stricly backwards.",
 			sprite: "Manticore",
 			symbol: "M",
-			move: "([Gr],[1 0 2 -1])Ba+([1 -2 1 1],[2 -2 1 1],[1 -3 1 1],[-1 -2 1 1],[-2 -2 1 1],[-1 -3 1 1])"
+			move: "([Gr],[1 0 2 -1])Ba+([1 -2 1 1],[2 -2 1 1],[1 -3 1 1],[-1 -2 1 1],[-2 -2 1 1],[-1 -3 1 1])a"
 		}
 	],
     setup: "bR bN bB bQ bK 3. 5bp . 2wM 5bp . 2wM 16. 2bM . 5wp 2bM . 5wp 3. wQ wK wB wN wR",
