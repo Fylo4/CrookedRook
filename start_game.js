@@ -119,7 +119,7 @@ function inflate_game_data(input) {
     input.highlight2 = zone_to_squareset(input.highlight2);
 
     //Initialize utility squaresets
-    if (game_data.precompute) {
+    if (input.precompute) {
         let bnb_ep = bnb_ep_squaresets(input.width, input.height, input.active_squares);
         input.bnb_ss = bnb_ep.bnb_ss;
         input.ep_ss = bnb_ep.ep_ss;
@@ -138,9 +138,12 @@ function inflate_game_data(input) {
     }
 
     //Inflate objects
-    input.all_pieces = inflate_pieces(input.all_pieces);
+    input.all_pieces = inflate_pieces(input.all_pieces, input);
     input.starting_hands = inflate_hands(input.starting_hands, input.all_pieces);
     input.turn_list = inflate_turn_list(input.turn_list);
+
+    //See what pieces have no movement (for copycat)
+    input.piece_move_is_empty = input.all_pieces.map(e => e.move === "") ;
 
     //See if we have any copy_attribs
     for (let a = 0; a < input.all_pieces.length; a ++) {
@@ -248,7 +251,7 @@ function inflate_pieces(piece_list) {
         piece.angle = piece.angle ?? piece.r ?? undefined;
         piece.symbol = piece.symbol ?? piece.s ?? show_error("All pieces must have symbols");
         piece.notation = piece.notation ?? piece.w ?? undefined;
-        piece.move = piece.move ?? piece.m ?? show_error("All pieces must have moves");
+        piece.move = piece.move ?? piece.m ?? "";
         piece.move_str = piece.move;
         piece.attributes = piece.attributes ?? piece.a ?? [];
         piece.promotions = piece.promotions ?? piece.p ?? [];

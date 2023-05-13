@@ -414,7 +414,9 @@ function post_move(src, dest, history_record, piece_id) {
     board.turn = game_data.turn_list[board.turn_pos];
     board.last_moved_src = src;
     board.last_moved_dest = dest;
-    board.copycat_memory = piece_id;
+    if (!game_data.piece_move_is_empty[piece_id]) {
+        board.copycat_memory = piece_id;
+    }
     refresh_moves();
     if ((current_turn && !board.checked.white.is_zero()) || (!current_turn && !board.checked.black.is_zero())) {
         history_record.notation += "+";
