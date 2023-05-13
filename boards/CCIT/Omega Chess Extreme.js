@@ -16,6 +16,7 @@ preset_variants[folders.ccit].push({
             notation: "",
 			move: "i[0 1 1 3]Bae+[S]ae+[P]ca",
             promotions: {white: "black_rank_2", black: "white_rank_2", to: "NRNS"},
+			attributes: [attrib.ep_capturer, attrib.ep_captured],
 		},
 		{
             name: "Rook",

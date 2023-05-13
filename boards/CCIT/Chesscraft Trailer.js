@@ -15,6 +15,7 @@ preset_variants[folders.ccit].push({
             notation: "",
 			move: "i[0 1 1 2]Bae+[S]ae+[P]ca",
             promotions: {to: ["W", "B", "R", "Q"]},
+			attributes: [attrib.ep_capturer, attrib.ep_captured],
 		},
 		{
             name: "Rook",

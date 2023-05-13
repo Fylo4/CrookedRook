@@ -5,7 +5,7 @@ let total_bytes_fetched = 0;
 let is_signed_in = false;
 let signed_in_with = "";
 
-let stored_boards = localStorage.getItem("boards") ?? [];
+let stored_boards = [];//localStorage.getItem("boards") ?? [];
 if(typeof(stored_boards) === "string") {
     stored_boards = JSON.parse(stored_boards);
 }
