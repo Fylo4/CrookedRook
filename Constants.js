@@ -77,6 +77,7 @@ const attrib = {
 	copy_attrib: 60,
 	ninja: 61,
 	statue: 62,
+	no_default_move: 63,
 }
 const attrib_str = ["ally_static", "enemy_static", "kill_ally", "save_enemy", "flip_this_on_attack", 
 "dont_flip_enemy", "fireball", "bomb", "save_self", "transform_on_death", "ep_capturer", "ep_captured",
@@ -86,7 +87,7 @@ const attrib_str = ["ally_static", "enemy_static", "kill_ally", "save_enemy", "f
 "flip_on_passive", "forced_step", "retreat", "bloodlust", "promote_on_attack", "kill_between",
 "mud_curse", "ghost_curse", "defender", "pacifier", "anchor", "empower", "random_promotion", "dont_flip_on_death",
 "destroy_on_capture", "destroy_on_burn", "promote_from_opp_hand", "peaceful", "glue_curse", "peace_curse",
-"curse_allies", "iron_bless", "bless_enemies", "copy_move", "copy_attrib", "ninja", "statue"];
+"curse_allies", "iron_bless", "bless_enemies", "copy_move", "copy_attrib", "ninja", "statue", "no_default_move"];
 
 const preset_move_types = [
 	{ a: "[0]", b: "[0 0 1 1]"},

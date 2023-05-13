@@ -99,7 +99,10 @@ function refresh_moves() {
         for (let b = new squareset(board.piece_ss[a]); !b.is_zero(); b.pop()){
             let sq = b.get_ls1b();
             let step_num = 0;
-            let steps = [game_data.all_pieces[a].move[step_num]];
+            let steps = [];
+            if(!game_data.all_pieces[a].attributes.includes(attrib.no_default_move)) {
+                steps.push(game_data.all_pieces[a].move[step_num]);
+            }
             if (get_attributes(a).includes(attrib.copy_move) && board.copycat_memory >= 0) {
                 steps.push(game_data.all_pieces[board.copycat_memory].move[0]);
             }

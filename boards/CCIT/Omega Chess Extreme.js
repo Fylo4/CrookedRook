@@ -15,7 +15,7 @@ preset_variants[folders.ccit].push({
             symbol: "p",
             notation: "",
 			move: "i[0 1 1 3]Bae+[S]ae+[P]ca",
-            promotions: {white: "black_rank_2", black: "white_rank_2", to: "NRNS"},
+            promotions: {white: "black_rank_2", black: "white_rank_2", to: ["R", "Q", "K", "B", "J", "K", "S", "C", "W"]},
 			attributes: [attrib.ep_capturer, attrib.ep_captured],
 		},
 		{
@@ -70,7 +70,7 @@ preset_variants[folders.ccit].push({
             sprite: "jester",
 			symbol: "J",
             move: "[K]a",
-			attributes: [attrib.copy_move, attrib.copy_attrib, attrib.glue_curse, attrib.peace_curse],
+			attributes: [attrib.copy_move, attrib.copy_attrib, attrib.glue_curse, attrib.peace_curse, attrib.no_default_move],
 			held_move: "[K]",
 		},
 		{
