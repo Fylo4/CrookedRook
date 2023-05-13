@@ -61,8 +61,17 @@ preset_variants[folders.ccit].push({
             description: "Moves like a Queen, swaps with enemies instead of capturing them",
             sprite: "pylon",
 			symbol: "S",
-            move: "z{0 0}[Q]Ba+[S]a",
+            move: "[Q]Ba",
 			attributes: [attrib.save_enemy, attrib.dont_flip_enemy],
+		},
+		{
+            name: "Swapper Start",
+            description: "Step forward to enter the board. Moves like a Queen, swaps with enemies instead of capturing them",
+            sprite: "pylon",
+			symbol: "s",
+			notation: "S",
+            move: "[S]ae",
+			promotions: {to: "S", white: "white_rank_2", black: "black_rank_2"},
 		},
 		{
             name: "Jester",
@@ -75,11 +84,11 @@ preset_variants[folders.ccit].push({
 		},
 		{
             name: "Jester Start",
-            description: "Copies the last moved piece AND immobolizes enemies",
+            description: "Step forward to enter the board. Copies the last moved piece AND immobolizes enemies",
             sprite: "jester",
 			symbol: "j",
 			notation: "J",
-            move: "[S]a",
+            move: "[S]ae",
 			promotions: {to: "J", white: "white_rank_2", black: "black_rank_2"},
 		},
 		{
@@ -87,8 +96,17 @@ preset_variants[folders.ccit].push({
             description: "Moves like a King or Knight but it and its capturer/captured will be removed",
             sprite: "potion",
 			symbol: "Z",
-            move: "z{0 0}([K],[N])a+[S]a",
+            move: "([K],[N])a",
 			attributes: [attrib.bomb, attrib.fireball],
+		},
+		{
+            name: "Kamikaze Start",
+            description: "Step forward to enter the board. Moves like a King or Knight but it and its capturer/captured will be removed",
+            sprite: "potion",
+			symbol: "z",
+			notation: "Z",
+            move: "[S]ae",
+			promotions: {to: "Z", white: "white_rank_2", black: "black_rank_2"},
 		},
 		{
             name: "Omega Wizard",
@@ -106,7 +124,7 @@ preset_variants[folders.ccit].push({
 		},
 
 	],
-    setup: "bW 3. bZ bS bj bZ 3. bW . bG bR bN bB bQ bK bB bN bR bG 2. 10bp",
+    setup: "bW 3. bz bs bj bz 3. bW . bG bR bN bB bQ bK bB bN bR bG 2. 10bp",
     copy: "flip",
 	active_squares: "100000000001 011111111110 011111111110 011111111110 011111111110 011111111110 011111111110 011111111110 011111111110 011111111110 011111111110 100000000001",
 	zones: [
