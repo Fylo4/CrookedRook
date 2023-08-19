@@ -1,0 +1,40 @@
+.box {
+    width: 20px;
+    height: 20px;
+    border-radius: 5px;
+    border: 2px solid black;
+}
+.red {
+    background-color: red;
+}
+.orange {
+    background-color: orange;
+}
+.yellow {
+    background-color: yellow;
+}
+.green {
+    background-color: green;
+}
+.blue {
+    background-color: blue;
+}
+.purple {
+    background-color: purple;
+}
+input[type=color] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 75px;
+    height: 75px;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+table, th, td {
+    border: 1px solid black;
+}
+th, td {
+    padding: 0.25rem;
+}

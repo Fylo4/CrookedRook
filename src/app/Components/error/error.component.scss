@@ -1,0 +1,21 @@
+.error {
+    background-color: pink;
+    color: red;
+}
+.message {
+    background-color: white;
+}
+.em {
+    padding: 0.5rem;
+    padding-left: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 5px;
+}
+.em-container {
+    width: 100%;
+    padding: 0.5rem;
+    padding-bottom: 0;
+    box-sizing: border-box;
+}

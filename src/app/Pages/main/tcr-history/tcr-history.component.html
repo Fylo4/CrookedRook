@@ -1,0 +1,47 @@
+<div id="history_div" [style.height]="getHeight()" [style.width]="getWidth()">
+    <div style="background-color: #836C3F;" class="sticky">
+        <div style="display: flex; justify-content: space-around; padding: 4px;">
+            <button mat-mini-fab color="primary" (click)="g.game.firstMove();" aria-label="First move button">
+                <mat-icon>arrow_upward</mat-icon>
+            </button>
+            <button mat-mini-fab color="primary" (click)="g.game.previousMove();" aria-label="Previous move button">
+                <mat-icon>arrow_back</mat-icon>
+            </button>
+            <button mat-mini-fab color="primary" (click)="g.game.nextMove();" aria-label="Next move button">
+                <mat-icon>arrow_forward</mat-icon>
+            </button>
+            <button mat-mini-fab color="primary" (click)="g.game.lastMove();" aria-label="Last move button">
+                <mat-icon>arrow_downward</mat-icon>
+            </button>
+        </div>
+        
+        <div style="display: flex; justify-content: space-around; padding: 4px;">
+            <button mat-raised-button color="primary" (click)="g.game.pass()" [disabled]="!canPass()">Pass</button>
+            <button mat-raised-button [color]="isOpenDraw() ? 'accent' : 'primary'">
+                {{isOpenDraw() ? 'Call draw' : 'Offer draw'}}
+            </button>
+            <button mat-raised-button color="primary">Resign</button>
+        </div>
+    </div>
+
+    <div style="background-color: #836C3F; padding: 4px;">
+        <div *ngFor="let mhArray of g.game.moveHistoryAsTurnArray(); let i1 = index;" style="display: flex; width: 100%;">
+            <button mat-raised-button *ngFor="let mh of mhArray; let i2 = index;"
+                [style]="'width:'+getHistWidth(mhArray.length)+'%;'"
+                [class.highlight_hist]="(mh.position === g.game.viewMove-1)"
+                [class.black_hist]="!(mh.position === g.game.viewMove-1)&&mh.color"
+                [class.white_hist]="!(mh.position === g.game.viewMove-1)&&!mh.color"
+                (click)="g.game.viewMove=mh.position+1; g.game.renderEntireBoard();">
+                {{i2 === 0 ? (mh.turn+1+'. ') : ''}}{{mh.notation}}
+            </button>
+        </div>
+        <!-- <div *ngFor="let mhArray of [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]; let i1 = index;" style="display: flex; width: 100%;">
+            <button mat-raised-button *ngFor="let mh of [0, 1]; let i2 = index;"
+                [style]="'width:50%;'"
+                [class.black_hist]="i2 === 0"
+                [class.white_hist]="i2 === 1">
+                {{i2 === 0 ? (i1+1+'. ') : ''}}asdfasdf
+            </button>
+        </div> -->
+    </div>
+</div>

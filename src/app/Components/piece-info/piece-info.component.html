@@ -1,0 +1,17 @@
+<h3>{{p.name}}</h3>
+<p *ngIf="p.description">{{p.description}}</p>
+<p>Move string: {{p.move_str}}</p>
+<div *ngIf="p.attributes.length">
+    <hr>
+    <h4>Attributes:</h4>
+    <p *ngFor="let attrib of p.attributes">{{getAttribString(attrib)}}</p>
+</div>
+<div *ngIf="p.promotions.length">
+    <hr>
+    <h4>Promotions:</h4>
+    <div *ngFor="let prom of p.promotions">
+        <p>To: {{getPromToString(prom.to)}}</p>
+        <p>Events: {{getPromOnString(prom.on)}}</p>
+        <button mat-raised-button color="primary">See Zones</button>
+    </div>
+</div>

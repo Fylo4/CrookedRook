@@ -1,0 +1,7 @@
+
+<div *ngFor="let em of error.messageErrors" class="em-container">
+    <div [class]="em.isError ? 'em error' : 'em message'">
+        <span>{{em.text}}</span>
+        <button mat-mini-fab (click)="error.deleteMessageError(em.id)" color="primary">x</button>
+    </div>
+</div>

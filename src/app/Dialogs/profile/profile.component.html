@@ -1,0 +1,26 @@
+<div class="dialog" style="min-width: 400px; min-height: 300px;">
+    <div class="dialog-body">
+        <div *ngIf="auth.loggedIn">
+            <h1>Profile</h1>
+            <div *ngIf="isEditingName">
+                <mat-form-field class="mr">
+                    <mat-label>New Name</mat-label>
+                    <input matInput [(ngModel)]="editNameText">
+                </mat-form-field>
+                <button mat-raised-button color="primary" class="mr" (click)="saveNameChange()">Save</button>
+                <button mat-raised-button color="warn" (click)="cancelNameChange()">Cancel</button>
+            </div>
+            <div *ngIf="!isEditingName">
+                <p>Name: {{auth.name}}</p>
+                <button mat-raised-button color="primary" (click)="startNameChange()">Change</button>
+            </div>
+        </div>
+        <div *ngIf="!auth.loggedIn">
+            <h1>Not Logged In</h1>
+            <p>Please log in to view this page</p>
+        </div>
+    </div>
+    <div class="dialog-footer">
+        <button mat-raised-button color="warn" (click)="closeModal();">Close</button>
+    </div>
+</div>

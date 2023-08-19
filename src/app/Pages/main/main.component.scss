@@ -1,0 +1,18 @@
+.black_hist {
+    background-color: black;
+    color:white;
+}
+.white_hist {
+    background-color: white;
+    color:black;
+}
+.highlight_hist {
+    background-color: rgb(128,128,128);
+    color:black;
+}
+.sticky {
+    position: -webkit-sticky; /* Safari */
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}

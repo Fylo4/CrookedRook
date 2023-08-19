@@ -1,0 +1,52 @@
+<div class="dialog" id="createMatchDialog" @dialogTrigger>
+    <div class="dialog-body">
+        <h1>Create Match</h1>
+        <mat-form-field>
+            <mat-label>Board Code</mat-label>
+            <input matInput [(ngModel)]="data.boardCode">
+        </mat-form-field>
+        <br />
+        <div class="mb">
+            <mat-slide-toggle [(ngModel)]="data.isPrivate">
+                <span>Private </span>
+                <mat-icon matTooltip="Private matches are not visible to the public lobby, but can be joined and spectated using the room code.">info</mat-icon>
+            </mat-slide-toggle>
+            <div *ngIf="data.isPrivate">
+                <mat-form-field>
+                    <mat-label>Private Room Code</mat-label>
+                    <input matInput [(ngModel)]="data.privateCode">
+                </mat-form-field>
+            </div>
+        </div>
+
+        <!-- <mat-form-field>
+            <mat-label>Play As</mat-label>
+            <mat-select [(ngModel)]="data.playAs">
+                <mat-option value="random">Random</mat-option>
+                <mat-option value="white">White</mat-option>
+                <mat-option value="black">Black</mat-option>
+            </mat-select>
+        </mat-form-field>
+        <br /> -->
+
+        <p>Play As:</p>
+        <mat-button-toggle-group [(ngModel)]="data.playAs">
+            <mat-button-toggle value="random">Random</mat-button-toggle>
+            <mat-button-toggle value="white" color="primary">White</mat-button-toggle>
+            <mat-button-toggle value="black" color="accent">Black</mat-button-toggle>
+        </mat-button-toggle-group>
+        <br />
+
+        <p>Save finished game to database? <mat-icon matTooltip="Saving a game allows others to replay the game and allows you to see it on your profile. Saving anonymously doesn't store your name or attach it to your profile (same with your opponent). In any case, some statistics (such whether white or black won, how many turns, date+time it ended) will be saved.">info</mat-icon></p>
+        <mat-button-toggle-group class="mb" [(ngModel)]="data.saveMode">
+            <mat-button-toggle value="save">Save</mat-button-toggle>
+            <mat-button-toggle value="save-anon">Save Anonymously</mat-button-toggle>
+            <mat-button-toggle value="no-save">Don't Save</mat-button-toggle>
+          </mat-button-toggle-group>
+    </div>
+
+    <div class="dialog-footer">
+        <button mat-raised-button color="primary" class="mr" (click)="send();">Create</button>
+        <button mat-raised-button color="warn" (click)="closeModal();">Cancel</button>
+    </div>
+</div>

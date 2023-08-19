@@ -1,0 +1,41 @@
+<div style="padding-bottom: 4rem;">
+    <h1>
+        {{g.game.gameData.name}}
+        <button mat-raised-button color="primary" (click)="openBoardInfoDialog()">Info</button>
+    </h1>
+
+    <app-tcr-canvas-container></app-tcr-canvas-container>
+
+    <mat-accordion>
+        <mat-expansion-panel>
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+            Actions
+            </mat-panel-title>
+            <!-- <mat-panel-description>
+            This is a summary of the content
+            </mat-panel-description> -->
+        </mat-expansion-panel-header>
+            <div class="button-row mb">
+                <button mat-raised-button color="primary" class="mr">Download</button>
+                <button mat-mini-fab color="primary" aria-label="Inspect icon" (click)="g.game.toggleInspect()" class="mr">
+                    <mat-icon>search</mat-icon>
+                </button>
+                <button mat-raised-button color="primary" class="mr" (click)="copyExport()">Export Game</button>
+                <button mat-raised-button color="primary" (click)="copyHistory()">Copy History</button>
+            </div>
+            
+            <p *ngIf="g.game.clickData.inspect" style="margin-bottom:0;">Click on any piece to inspect it</p>
+            <br />
+            
+            <div *ngIf="g.game.loadedFrom === 'editor'">
+                <span class="mr">Upload Board:</span>
+                <mat-form-field class="mr">
+                    <mat-label>Board Code</mat-label>
+                    <input matInput>
+                </mat-form-field>
+                <button mat-raised-button color="primary">Upload</button>
+            </div>
+        </mat-expansion-panel>
+    </mat-accordion>
+</div>

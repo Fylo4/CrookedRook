@@ -1,0 +1,67 @@
+<div class="dialog" id="loadBoardDialog">
+    <div class="dialog-body">
+        <h1>Load Board</h1>
+        <mat-form-field>
+            <mat-label>Load From</mat-label>
+            <mat-select [(ngModel)]="loadFrom" value="canon">
+                <mat-option value="canon">Canon</mat-option>
+                <mat-option value="file">File</mat-option>
+                <mat-option value="server">Server</mat-option>
+                <mat-option value="import">Import Code</mat-option>
+            </mat-select>
+        </mat-form-field>
+        <br />
+
+        <div *ngIf="loadFrom === 'canon'">
+            <mat-form-field class="mr">
+                <mat-label>Category</mat-label>
+                <mat-select #Category>
+                    <mat-option value="chess">Chess</mat-option>
+                    <mat-option value="shogi">Shogi</mat-option>
+                    <mat-option value="xiangqi">Xiangqi</mat-option>
+                    <mat-option value="SEA">SEA</mat-option>
+                    <mat-option value="historical">Historical</mat-option>
+                    <mat-option value="CCIT">CCIT</mat-option>
+                    <mat-option value="compound">Compound</mat-option>
+                    <mat-option value="other">Other</mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <mat-form-field>
+                <mat-label>Board</mat-label>
+                <mat-select [(ngModel)] = "canonSelector">
+                    <mat-option *ngFor="let board of loader.getCategory(Category.value)" value={{board.name}}>{{board.name}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <br />
+
+            <button mat-raised-button color="primary" class="mb" (click)="loadRandom()">Random</button> <br />
+        </div>
+
+        <div *ngIf="loadFrom === 'file'">
+            <button type="button" mat-raised-button (click)="fileInput.click()" color="primary" class="mb-half">Choose File</button>
+            <input hidden (change)="onFileSelected()" #fileInput type="file" id="file">
+            <p>{{fileName ? fileName : "No file chosen"}}</p>
+        </div>
+
+        <div *ngIf="loadFrom === 'server'">
+            <mat-form-field>
+                <mat-label>Board Code</mat-label>
+                <input matInput>
+            </mat-form-field>
+        </div>
+
+        <div *ngIf="loadFrom === 'import'">
+            <mat-form-field style="width: 100%;">
+                <mat-label>Import Code</mat-label>
+                <textarea matInput [(ngModel)]="importCode"></textarea>
+            </mat-form-field>
+        </div>
+        <p style="color: red;">{{errorStr}}</p>
+    </div>
+
+    <div class="dialog-footer">
+        <button mat-raised-button color="primary" class="mr" (click)="load();">Load</button>
+        <button mat-raised-button color="warn" (click)="closeModal();">Close</button>
+    </div>
+</div>
