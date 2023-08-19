@@ -56,7 +56,7 @@ exports.createLobby = onRequest(async (req, res) => {
         .collection("Lobby")
         .add(newMatch);
     res.json({success: true});
-}); 
+});
 
 
   // Listens for new messages added to /messages/:documentId/original
