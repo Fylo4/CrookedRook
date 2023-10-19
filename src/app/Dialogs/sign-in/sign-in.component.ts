@@ -4,7 +4,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
-import { AuthService } from 'src/app/Services/auth.service';
+import { AuthService } from 'src/app/Services/Firebase/auth.service';
 
 @Component({
   selector: 'app-sign-in',

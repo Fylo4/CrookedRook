@@ -8,7 +8,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { AboutComponent } from 'src/app/Dialogs/about/about.component';
 import { RouterModule } from '@angular/router';
 import { LoadBoardComponent } from 'src/app/Dialogs/load-board/load-board.component';
-import { AuthService } from 'src/app/Services/auth.service';
+import { AuthService } from 'src/app/Services/Firebase/auth.service';
 import { CommonModule } from '@angular/common';
 import { ProfileComponent } from 'src/app/Dialogs/profile/profile.component';
 import { StyleComponent } from 'src/app/Dialogs/style/style.component';
