@@ -1,0 +1,25 @@
+#createMatchDialog {
+    min-width: 400px;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+}
+
+mat-button-toggle {
+    background-color: #3F51B5;
+    color: white;
+    font-weight: 500;
+}
+mat-button-toggle-group {
+    border-radius: 25px;
+    :first-child {
+        padding-left: 0.25rem;
+    }
+    :last-child {
+        padding-right: 0.25rem;
+    }
+    .mat-button-toggle-checked {
+        background-color: #4CAF50;
+        color: black;
+    }
+}

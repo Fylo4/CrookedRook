@@ -1,0 +1,119 @@
+<div class="dialog" style="min-width: 400px; min-height: 300px; ">
+    <div class="dialog-body">
+        <h1>Style Options</h1>
+        <mat-form-field>
+            <mat-label>Style</mat-label>
+            <mat-select [(ngModel)]="g.game.styleData.style" (selectionChange)="g.game.renderAllSpaces()">
+                <mat-option value="checkered">Checkered</mat-option>
+                <mat-option value="uncheckered">Uncheckered</mat-option>
+                <mat-option value="ashtapada">Ashtapada</mat-option>
+                <mat-option value="intersection">Intersection</mat-option>
+                <mat-option value="xiangqi">Xiangqi</mat-option>
+            </mat-select>
+        </mat-form-field>
+        <br />
+        <div class="button-row mb">
+            <button mat-mini-fab color="primary" (click)="zoomIn()">+</button>
+            <button mat-mini-fab color="primary" (click)="zoomOut()">-</button>
+            <button mat-raised-button color="primary" (click)="g.fitToScreen()">Fit</button>
+            <button mat-mini-fab color="primary" (click)="screenshot()"><mat-icon>camera_alt</mat-icon></button>
+        </div>
+        <div class="button-row mb">
+            <span class="mr-half">Line Color:</span>
+            <button *ngFor = "let color of ['red', 'orange', 'yellow', 'green', 'blue', 'purple']"
+                (click)="setColor(color)"
+                mat-mini-fab [color]="isSelected(color)?'accent':'primary'">
+                <div [class]="'box '+color"></div>
+            </button>
+        </div>
+        <div style="display: flex; flex-direction: row;" class="mb">
+            <div style="width: 50%">
+                <mat-checkbox [(ngModel)]="g.game.styleData.check_indicator" (click)="g.game.renderEntireBoard()">Check Indicator</mat-checkbox> <br />
+                <mat-checkbox [(ngModel)]="g.game.styleData.last_moved" (click)="g.game.renderEntireBoard()">Last Moved Piece</mat-checkbox> <br />
+                <mat-checkbox [(ngModel)]="g.game.styleData.attacked_squares" (click)="g.game.renderEntireBoard()">Attacked Squares</mat-checkbox> <br />
+                <mat-checkbox [(ngModel)]="g.game.styleData.selected_hovered" (click)="g.game.renderEntireBoard()">Selected/Hovered Pieces</mat-checkbox> <br />
+                <mat-checkbox [(ngModel)]="g.game.styleData.movable_pieces" (click)="g.game.renderEntireBoard()">Movable Pieces</mat-checkbox>
+            </div>
+            <div style="width: 50%">
+                <mat-checkbox [(ngModel)]="g.game.styleData.show_highlights" (click)="g.game.renderEntireBoard()">Highlighted Squares</mat-checkbox> <br />
+                <mat-checkbox [(ngModel)]="g.game.styleData.flip_board" (click)="g.game.renderEntireBoard()">Flip Board</mat-checkbox> <br />
+                <mat-checkbox [(ngModel)]="g.game.styleData.rotate_opp" (click)="g.game.renderEntireBoard()">Flip Opponent's Pieces</mat-checkbox> <br />
+                <mat-checkbox [(ngModel)]="g.game.styleData.name_squares" (click)="g.game.renderEntireBoard()">Square Labels</mat-checkbox>
+            </div>
+        </div>
+        <button mat-raised-button color="primary" class="mb" (click)="showAdvanced = !showAdvanced">Advanced Style Options</button><br />
+        <div *ngIf="showAdvanced" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+            <table class="mb">
+                <tr>
+                    <th>White Pieces</th>
+                    <th>Black Pieces</th>
+                    <th>Neutral Pieces</th>
+                </tr>
+                <tr class="table-even">
+                    <td><input type="color" [(ngModel)]="g.game.styleData.white_col" (change)="g.game.renderPieces();"></td>
+                    <td><input type="color" [(ngModel)]="g.game.styleData.black_col" (change)="g.game.renderPieces();"></td>
+                    <td><input type="color" [(ngModel)]="g.game.styleData.neutral_col" (change)="g.game.renderPieces();"></td>
+                </tr>
+            </table>
+            <table class="mb">
+                <tr>
+                    <th>Empty Spaces</th>
+                    <th>Hands</th>
+                </tr>
+                <tr class="table-even">
+                    <td><input type="color" [(ngModel)]="g.game.styleData.bg_col" (change)="g.game.renderAllSpaces();"></td>
+                    <td><input type="color" [(ngModel)]="g.game.styleData.hand_col" (change)="g.game.renderAllSpaces();"></td>
+                </tr>
+            </table>
+            <table class="mb">
+                <tr>
+                    <th>Square Type</th>
+                    <th>Light</th>
+                    <th>Dark</th>
+                </tr>
+                <tr class="table-even">
+                    <td>Default</td>
+                    <td><input type="color" [(ngModel)]="g.game.styleData.light_square_col" (change)="g.game.renderAllSpaces();"></td>
+                    <td><input type="color" [(ngModel)]="g.game.styleData.dark_square_col" (change)="g.game.renderAllSpaces();"></td>
+                </tr>
+                <tr class="table-odd">
+                    <td>Highlight 1</td>
+                    <td><input type="color" [(ngModel)]="g.game.styleData.light_highlight_col" (change)="g.game.renderAllSpaces();"></td>
+                    <td><input type="color" [(ngModel)]="g.game.styleData.dark_highlight_col" (change)="g.game.renderAllSpaces();"></td>
+                </tr>
+                <tr class="table-even">
+                    <td>Highlight 2</td>
+                    <td><input type="color" [(ngModel)]="g.game.styleData.light_highlight_2_col" (change)="g.game.renderAllSpaces();"></td>
+                    <td><input type="color" [(ngModel)]="g.game.styleData.dark_highlight_2_col" (change)="g.game.renderAllSpaces();"></td>
+                </tr>
+                <tr class="table-odd">
+                    <td>Mud</td>
+                    <td><input type="color" [(ngModel)]="g.game.styleData.light_mud_col" (change)="g.game.renderAllSpaces();"></td>
+                    <td><input type="color" [(ngModel)]="g.game.styleData.dark_mud_col" (change)="g.game.renderAllSpaces();"></td>
+                </tr>
+                <tr class="table-even">
+                    <td>Ethereal</td>
+                    <td><input type="color" [(ngModel)]="g.game.styleData.light_ethereal_col" (change)="g.game.renderAllSpaces();"></td>
+                    <td><input type="color" [(ngModel)]="g.game.styleData.dark_ethereal_col" (change)="g.game.renderAllSpaces();"></td>
+                </tr>
+                <tr class="table-odd">
+                    <td>Pacifist</td>
+                    <td><input type="color" [(ngModel)]="g.game.styleData.light_pacifist_col" (change)="g.game.renderAllSpaces();"></td>
+                    <td><input type="color" [(ngModel)]="g.game.styleData.dark_pacifist_col" (change)="g.game.renderAllSpaces();"></td>
+                </tr>
+                <tr class="table-even">
+                    <td>Sanctuary</td>
+                    <td><input type="color" [(ngModel)]="g.game.styleData.light_sanctuary_col" (change)="g.game.renderAllSpaces();"></td>
+                    <td><input type="color" [(ngModel)]="g.game.styleData.dark_sanctuary_col" (change)="g.game.renderAllSpaces();"></td>
+                </tr>
+            </table>
+            <div class="button-row">
+                <button mat-raised-button color="primary" class="mr">Save Style</button>
+                <button mat-raised-button color="primary">Load Style</button>
+            </div>
+        </div>
+    </div>
+    <div class="dialog-footer">
+        <button mat-raised-button color="warn" (click)="closeModal()">Close</button>
+    </div>
+</div>

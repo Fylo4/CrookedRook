@@ -1,0 +1,15 @@
+#content {
+    background-color: #E1B86C;
+    min-height: 100%;
+}
+#page-section {
+    padding-left: 32px;
+    padding-right: 32px;
+    padding-top: 16px;
+}
+@media(max-width: 500px) {
+    #page-section {
+        padding-left: 4px;
+        padding-right: 4px;
+    }
+}

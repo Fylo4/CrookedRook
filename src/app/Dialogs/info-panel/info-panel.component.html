@@ -1,0 +1,9 @@
+<div class="dialog" style="min-width: 200px; min-height: 150px;">
+    <div class="dialog-body">
+        <h1>{{data.title}}</h1>
+        <p *ngFor="let t of data.text">{{t}}</p>
+    </div>
+    <div class="dialog-footer">
+        <button mat-raised-button color="warn" (click)="closeModal()">Close</button>
+    </div>
+</div>

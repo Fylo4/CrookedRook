@@ -1,0 +1,11 @@
+
+<p>Mode: Single-player; Turn: {{g.game.boardHistory[g.game.boardHistory.length-1].turn ? 'Black' : 'White'}}</p>
+
+<div style="display: flex;">
+    <div [class]="(spaceBeside() ? 'side-by-side' : 'vertical') +  ' mb'">
+        <app-tcr-canvas></app-tcr-canvas>
+        <app-tcr-history [matchWidth]="!spaceBeside()"></app-tcr-history>
+    </div>
+</div>
+
+<canvas id="blend_canvas" width="480" height="480" style="display: none"></canvas>

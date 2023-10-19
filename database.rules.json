@@ -1,0 +1,60 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "users": {
+      "$uid": {
+        ".write": "auth.uid === $uid",
+        ".read":  "auth.uid === $uid"
+      }
+    },
+    "boards": {
+      ".read": "auth != null",
+      ".write": "auth.uid === 'EMHlL1OzPxZzto7ZNMfuup0rnBw1'",
+      "$id": {
+        ".write": "auth != null && !data.exists() && newData.child('code').val() == $id"
+      }
+    },
+    "match": {
+      ".read": "auth != null",
+      "$id": {
+        ".write": "auth.uid === data.child('o').child('uid').val() || auth.uid === data.child('j').child('uid').val()",
+        "board_name": {
+          //Joiner sets this once at start, and it can't be changed once it's set
+        	".write": "auth != null && !data.exists()"
+        },
+        "seed": {
+        	".write": "auth != null && !data.exists()"
+        },
+        "moves": {
+        	".write": "auth.uid === data.parent().child('o').child('uid').val() || auth.uid === data.parent().child('j').child('uid').val()"
+        },
+      	"j": {
+          ".write": "auth != null && (!data.child('uid').exists() || auth.uid === data.child('uid').val())"
+        },
+      	"o": {
+          ".write": "auth != null && (!data.child('uid').exists() || auth.uid === data.child('uid').val())"
+        }
+      }
+    },
+    "lobby": {
+      ".read": "auth != null",
+      "$id": {
+        ".write": "auth.uid === data.child('owner').val() || (auth != null && !data.child('owner').exists())",
+        "goto": {
+          ".write": "auth != null && !data.exists()"
+        },
+        "joiner_name": {
+          ".write": "auth != null && !data.exists()"
+        },
+        "seed": {
+          ".write": "auth != null && !data.exists()"
+        },
+        "owner_col": {
+          //Joiner overwrites this once
+          ".write": "auth != null && data.val() != true && data.val() != false"
+        }
+      }
+    }
+  }
+}

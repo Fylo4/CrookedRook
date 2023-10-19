@@ -1,0 +1,36 @@
+<h1>Lobby</h1>
+<p *ngIf="!auth.loggedIn">You must be logged in to create or join matches</p>
+
+<div *ngIf="auth.loggedIn">
+    <button mat-raised-button color="primary" class="mb" (click)="openCreateDialog()">Create Room</button>
+
+    <mat-card class="mb">
+        <mat-card-header>
+            <h2>Join Match</h2>
+        </mat-card-header>
+        <mat-card-content>
+            <app-join-table></app-join-table>
+            <h2 class="mt">Join Private Match</h2>
+            <mat-form-field class="mr">
+                <mat-label>Private Match Code</mat-label>
+                <input matInput>
+            </mat-form-field>
+            <button mat-raised-button color="primary">Join</button>
+        </mat-card-content>
+    </mat-card>
+</div>
+
+<mat-card>
+    <mat-card-header>
+        <h2>Spectate Match</h2>
+    </mat-card-header>
+    <mat-card-content>
+        <app-spectate-table></app-spectate-table>
+        <h2 class="mt">Spectate Private Match</h2>
+        <mat-form-field class="mr">
+            <mat-label>Private Match Code</mat-label>
+            <input matInput>
+        </mat-form-field>
+        <button mat-raised-button color="primary">Spectate</button>
+    </mat-card-content>
+</mat-card>

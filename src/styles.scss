@@ -1,0 +1,98 @@
+/* You can add global styles to this file, and also import other style files */
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.dialog {
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+.dialog-body {
+    width: 100%;
+}
+.dialog-footer {
+    margin-left: auto;
+    margin-top: auto;
+}
+
+.mt {
+    margin-top: 1rem !important;
+}
+
+.mb {
+    margin-bottom: 1rem !important;
+}
+
+.ml {
+    margin-left: 1rem !important;
+}
+
+.mr {
+    margin-right: 1rem !important;
+}
+
+.mt-half{
+    margin-top: 0.5rem !important;
+}
+
+.mb-half{
+    margin-bottom: 0.5rem !important;
+}
+
+.ml-half{
+    margin-left: 0.5rem !important;
+}
+
+.mr-half{
+    margin-right: 0.5rem !important;
+}
+.button-row {
+    display: flex;
+    align-items:center;
+}
+
+//Table stuff
+td, th {
+    text-align: center !important;
+}
+
+td:not(:first-child), th:not(:first-child) {
+    border-left: 2px solid rgba(0, 0, 0, 0.12);
+}
+.mat-sort-header-container {
+    display: flex;
+    justify-content: center;
+}
+.table-even {
+    background-color: #F2F4FF !important;
+}
+.table-even:hover {
+    background-color: #E6E8F2 !important;
+}
+.table-odd {
+    background-color: white !important;
+}
+.table-odd:hover {
+    background-color: #F2F2F2 !important;
+}
+
+// @media (prefers-color-scheme: dark) {
+//     td:not(:first-child) {
+//         border-left: 2px solid rgba(255, 255, 255, 0.12);
+//     }
+//     .table-even {
+//         background-color: #212538 !important;
+//     }
+//     .table-even:hover {
+//         background-color: #2d334e !important;
+//     }
+//     .table-odd {
+//         background-color: #303030 !important;
+//     }
+//     .table-odd:hover {
+//         background-color: #3f3f3f !important;
+//     }
+// }

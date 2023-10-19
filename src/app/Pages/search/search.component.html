@@ -1,0 +1,59 @@
+<h1>Board Search</h1>
+<mat-expansion-panel class="mb">
+    <mat-expansion-panel-header>
+        <mat-panel-title>Filter</mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <div class="mb">
+        <mat-form-field class="no-bottom-text mr">
+            <mat-label>Name includes</mat-label>
+            <input matInput>
+        </mat-form-field>
+        <mat-form-field class="no-bottom-text mr">
+            <mat-label>Code includes</mat-label>
+            <input matInput>
+        </mat-form-field>
+        <mat-form-field class="no-bottom-text">
+            <mat-label>Creator includes</mat-label>
+            <input matInput>
+        </mat-form-field>
+    </div>
+
+    <div class="mb">
+        <mat-form-field class="no-bottom-text mr">
+            <mat-label>Min plays</mat-label>
+            <input matInput type="number">
+        </mat-form-field>
+        <mat-form-field class="no-bottom-text">
+            <mat-label>Max plays</mat-label>
+            <input matInput type="number">
+        </mat-form-field>
+    </div>
+
+    <div class="mb">
+        <mat-form-field class="no-bottom-text mr">
+            <mat-label>Min rating</mat-label>
+            <input matInput type="number">
+        </mat-form-field>
+        <mat-form-field class="no-bottom-text">
+            <mat-label>Max rating</mat-label>
+            <input matInput type="number">
+        </mat-form-field>
+    </div>
+
+    <div class="mb">
+        <mat-form-field class="no-bottom-text mr">
+            <mat-label>Min size</mat-label>
+            <input matInput type="number">
+        </mat-form-field>
+        <mat-form-field class="no-bottom-text">
+            <mat-label>Max size</mat-label>
+            <input matInput type="number">
+        </mat-form-field>
+    </div>
+
+    <mat-checkbox class="mb">Include canon</mat-checkbox> <br />
+
+    <button mat-raised-button color="primary">Apply Filter</button>
+</mat-expansion-panel>
+<app-search-table></app-search-table>

@@ -1,0 +1,48 @@
+<div class="dialog" style="min-width: 200px; min-height: 150px;">
+    <div class="dialog-body">
+        <h1>{{gd.name}}</h1>
+        <p *ngIf="gd.author">Author: {{gd.author}}</p>
+        <p *ngIf="gd.description">{{gd.description}}</p>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <h2>Board Rules</h2>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <p><b>Castle length:</b> {{gd.castle_length}}</p>
+            <p *ngIf="uniqueTurnOrder"><b>Turn order:</b> {{turnOrderString}}</p>
+            <p *ngFor="let r of filteredGameRules"><b>{{gamerules[r].name}}: </b>{{gamerules[r].desc}}</p>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <h2>Pieces</h2>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <div *ngFor="let p of gd.all_pieces; let i = index;" [class]="(i%2) ? 'table-even' : 'table-odd'" style="padding: 1rem;">
+                <app-piece-info [pieceId]="i"></app-piece-info>
+                <br />
+            </div>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <h2>Win and Draw Conditions</h2>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <h3>Win Conditions: </h3>
+            <p *ngFor="let w of allWins;"><b>{{w.name}}: </b>{{w.desc}}
+                <span *ngIf="w.progress">({{w.progress}})</span></p>
+            <p *ngIf="gd.nextTurnWins.length">Win conditions marked with * will be evaluated one move in advance; If you can't prevent the opponent from winning the next turn, they instantly win.</p>
+            <hr>
+            <h3>Draw Conditions: </h3>
+            <p *ngFor="let d of allDraws;"><b>{{d.name}}: </b>{{d.desc}}
+                <span *ngIf="d.progress">({{d.progress}})</span></p>
+        </mat-expansion-panel>
+    </div>
+    <br />
+    <p>You can inspect individual pieces to see how they move in the Actions menu below the board</p>
+    <div class="dialog-footer">
+        <button mat-raised-button color="warn" (click)="closeModal()">Close</button>
+    </div>
+</div>

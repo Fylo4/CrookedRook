@@ -1,0 +1,71 @@
+<mat-toolbar color="primary" id="toolbar-lg">
+    <img src="../../../assets/logo_50.png" width="50" height="50" style="border-radius: 50%;" class="mr-half">
+    <span>The Crooked Rook</span>
+    <span style="flex: 1 1 auto;"></span>
+    <button mat-button routerLink="/board">Board</button>|
+    <button mat-button routerLink="/lobby">Lobby</button>|
+    <button mat-button routerLink="/search">Board Search</button>
+    <div *ngIf="auth.loggedIn">
+      |<button mat-button routerLink="/matches">My Matches</button>
+    </div>
+    <span style="flex: 1 1 auto;"></span>
+    <button mat-button (click)="openLoadDialog()">Load</button>|
+    <button mat-button (click)="openAboutDialog()">About</button>|
+    <button mat-button [matMenuTriggerFor]="profileMenu">{{auth.loggedIn ? auth.name : 'Signed Out'}}</button>|
+    <button mat-button [matMenuTriggerFor]="settingsMenu">Settings</button>
+</mat-toolbar>
+
+<mat-toolbar color="primary" id="toolbar-md">
+  <img src="../../../assets/logo_50.png" width="50" height="50" style="border-radius: 50%;" class="mr-half">
+  <span>The Crooked Rook</span>
+  <span style="flex: 1 1 auto;"></span>
+  <button mat-button [matMenuTriggerFor]="profileMenu">{{auth.loggedIn ? auth.name : 'Signed Out'}}</button>|
+  <button mat-button [matMenuTriggerFor]="navigateMenu">Navigate</button>|
+  <button mat-button [matMenuTriggerFor]="actionsMenu">Actions</button>
+</mat-toolbar>
+
+<mat-toolbar color="primary" id="toolbar-sm">
+  <img src="../../../assets/logo_50.png" width="50" height="50" style="border-radius: 50%;" class="mr-half">
+  <span>The Crooked Rook</span>
+  <span style="flex: 1 1 auto;"></span>
+  <button mat-button [matMenuTriggerFor]="allMenu"><mat-icon>menu</mat-icon></button>
+</mat-toolbar>
+
+<mat-menu #profileMenu="matMenu">
+  <button mat-menu-item *ngIf="auth.loggedIn" (click)="openProfileDialog()">Profile</button>
+  <button mat-menu-item *ngIf="auth.loggedIn" (click)="auth.logOut();">Sign Out</button>
+  <button mat-menu-item *ngIf="!auth.loggedIn" (click)="signInWithGoogle()">Sign in</button>
+</mat-menu>
+
+<mat-menu #settingsMenu="matMenu">
+  <button mat-menu-item (click)="openStyleDialog()">Style</button>
+</mat-menu>
+
+<mat-menu #navigateMenu="matMenu">
+  <button mat-menu-item routerLink="/board">Board</button>
+  <button mat-menu-item routerLink="/lobby">Lobby</button>
+  <button mat-menu-item routerLink="/search">Board Search</button>
+  <button *ngIf="auth.loggedIn" mat-menu-item  routerLink="/matches">My Matches</button>
+</mat-menu>
+
+<mat-menu #actionsMenu="matMenu">
+  <button mat-menu-item (click)="openLoadDialog()">Load</button>
+  <button mat-menu-item (click)="openAboutDialog()">About</button>
+  <button mat-menu-item (click)="openStyleDialog()">Style</button>
+</mat-menu>
+
+<mat-menu #allMenu="matMenu">
+  <span style="padding-left: 1rem; padding-bottom: 1rem;">{{auth.loggedIn ? auth.name : 'Signed Out'}}</span>
+  <button mat-menu-item *ngIf="auth.loggedIn" (click)="openProfileDialog()">Profile</button>
+  <button mat-menu-item *ngIf="auth.loggedIn" (click)="auth.logOut();">Sign Out</button>
+  <button mat-menu-item *ngIf="!auth.loggedIn" (click)="signInWithGoogle()">Sign in with Google</button>
+  <mat-divider></mat-divider>
+  <button mat-menu-item routerLink="/board">Board</button>
+  <button mat-menu-item routerLink="/lobby">Lobby</button>
+  <button mat-menu-item routerLink="/search">Board Search</button>
+  <button *ngIf="auth.loggedIn" mat-menu-item  routerLink="/matches">My Matches</button>
+  <mat-divider></mat-divider>
+  <button mat-menu-item (click)="openLoadDialog()">Load</button>
+  <button mat-menu-item (click)="openAboutDialog()">About</button>
+  <button mat-menu-item (click)="openStyleDialog()">Style</button>
+</mat-menu>
