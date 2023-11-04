@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToolbarComponent } from './Components/toolbar/toolbar.component';
 import { ErrorComponent } from './Components/error/error.component';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -17,6 +18,7 @@ import { ErrorComponent } from './Components/error/error.component';
     BrowserAnimationsModule,
     ToolbarComponent,
     ErrorComponent,
+    HttpClientModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
