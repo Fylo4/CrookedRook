@@ -432,20 +432,9 @@ function post_move(board: Board, src: number, dest: number, history_record: Hist
     board.last_moved_col = board.turn;
     let pieceIsStillThere = board.piece_ss[piece_id].get(end_space) && (current_turn?board.black_ss:board.white_ss).get(end_space);
     let piece = board.game_data.all_pieces[piece_id];
-    //If we have bloodlust, stay on this piece and don't increment step
-    if (pieceIsStillThere && board.get_attributes(piece).includes(PieceAttributes.bloodlust) && wasCapture) {
-        board.is_piece_locked = true;
-        board.piece_locked_pos = end_space;
-    }
-    //Else if we did a multi step move, stay on this piece and increment step
-    else if (pieceIsStillThere && board.multi_step_pos < piece.move.length-1) {
-        board.is_piece_locked = true;
-        board.piece_locked_pos = end_space;
-        board.multi_step_pos ++;
-    }
-    //Else, increment the turn
-    else {
+    let incrementTurn = () => {
         board.is_piece_locked = false;
+        board.is_bloodlust = false;
         board.multi_step_pos = 0;
         board.turn_pos++;
         if (board.turn_pos >= board.game_data.turn_list.length) {
@@ -453,6 +442,23 @@ function post_move(board: Board, src: number, dest: number, history_record: Hist
             board.turn_count++;
         }
         board.turn = board.game_data.turn_list[board.turn_pos];
+    }
+    //If we have bloodlust, stay on this piece and don't increment step
+    if (pieceIsStillThere && board.get_attributes(piece).includes(PieceAttributes.bloodlust) && wasCapture) {
+        board.is_piece_locked = true;
+        board.piece_locked_pos = end_space;
+        board.is_bloodlust = true;
+    }
+    //Else if we did a multi step move, stay on this piece and increment step
+    else if (pieceIsStillThere && board.multi_step_pos < piece.move.length-1) {
+        board.is_piece_locked = true;
+        board.piece_locked_pos = end_space;
+        board.multi_step_pos ++;
+        board.is_bloodlust = false;
+    }
+    //Else, increment the turn
+    else {
+        incrementTurn();
     }
     board.last_moved_src = src;
     board.last_moved_dest = dest;
@@ -463,6 +469,11 @@ function post_move(board: Board, src: number, dest: number, history_record: Hist
     if (piece.attributes.includes(PieceAttributes.restart_timer) || wasCapture || wasPromote)
         board.draw_move_counter = 0;
     board.refresh_moves();
+    //If we are locked onto a piece and it can't move, unlock and refresh
+    if (board.is_piece_locked && board.can_move_ss[board.piece_locked_pos].is_zero()) {
+        incrementTurn();
+        board.refresh_moves();
+    }
     if ((current_turn && !board.checked.white.is_zero()) || (!current_turn && !board.checked.black.is_zero())) {
         history_record.notation += "+";
     }
@@ -488,6 +499,21 @@ function evaluate_burns(board: Board, piece_id: number, sq: number, col: boolean
         has_captured = true;
     }
     return has_captured;
+}
+//Same thing as evaluate_burns, but doesn't modify the board
+//Just returns whether anything has been captured
+//Not perfect- I think if it can capture allies it will count capturing itself
+export function test_burns(board: Board, piece_id: number, sq: number, col: boolean) {
+    let piece = board.game_data.all_pieces[piece_id];
+    if(piece.held_move === undefined) return false;
+    let burn = new Squareset(board.game_data.get_move_ss(piece.held_move, sq, col ? 4 : 0));
+    burn = ss_and(burn, ss_or(board.black_ss, board.white_ss),
+        board.get_attribute_ss(PieceAttributes.burn_immune).inverse());
+    if (!board.get_attributes(piece_id).includes(PieceAttributes.burn_allies)) {
+        let my_ss = col ? board.black_ss : board.white_ss;
+        burn.ande(my_ss.inverse());
+    }
+    return !burn.is_zero();
 }
 interface Killer {
     square: number,

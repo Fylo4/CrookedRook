@@ -20,6 +20,7 @@ export class Board {
     is_promotion_locked: boolean = false;
     piece_locked_pos: number = -1;
     multi_step_pos: number = 0;
+    is_bloodlust = false; //Are we currently locked into a bloodlust chain
     
     white_ss: Squareset;
     black_ss: Squareset;

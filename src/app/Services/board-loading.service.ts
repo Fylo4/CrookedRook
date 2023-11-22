@@ -45,6 +45,7 @@ import { other_congo } from 'src/assets/boards/Other/Congo';
 import { other_dragonfly } from 'src/assets/boards/Other/Dragonfly';
 import { other_metamachy } from 'src/assets/boards/Other/Metamachy';
 import { other_shako } from 'src/assets/boards/Other/Shako';
+import { other_checkers } from 'src/assets/boards/Other/checkers';
 import { sea_asean } from 'src/assets/boards/SEA/Asean Chess';
 import { sea_main_chator } from 'src/assets/boards/SEA/Main Chator';
 import { sea_makruk } from 'src/assets/boards/SEA/Makruk';
@@ -160,6 +161,7 @@ export class BoardLoadingService {
     {category: 'other', name: 'Dragonfly', value: other_dragonfly},
     {category: 'other', name: 'Metamachy', value: other_metamachy},
     {category: 'other', name: 'Shako', value: other_shako},
+    {category: 'other', name: 'Checkers', value: other_checkers},
   ]
 
   getCategory(category: string) {

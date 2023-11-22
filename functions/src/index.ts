@@ -8,7 +8,9 @@ import {DocumentData, getFirestore} from "firebase-admin/firestore";
 initializeApp();
 
 // https://getallboards-mlqacmsctq-uc.a.run.app
-exports.getAllBoards = onRequest(async (req: any, res: any) => {
+exports.getAllBoards = onRequest(
+  {cors: true },
+  async (req: any, res: any) => {
   let allBoards: any[] = [];
   await getFirestore()
     .collection("Boards")

@@ -364,6 +364,7 @@ function inflate_piece(piece: any, all_zones: Squareset[], all_molecules: string
         name: piece.name ?? piece.n,
         description: piece.description ?? piece.d ?? "",
         sprite: piece.sprite ?? piece.i,
+        mini_sprite: piece.mini_sprite ?? undefined,
         angle: piece.angle ?? piece.r ?? undefined,
         symbol: piece.symbol ?? piece.s,
         notation: piece.notation ?? piece.w ?? undefined,

@@ -48,9 +48,6 @@ export class StyleComponent {
     this.error.handle(this.g.game.setCanvasHeight, Math.max(this.g.game.canvases[0].height - 50, 50), true);
     this.error.handle(this.g.game.renderEntireBoard);
   }
-  screenshot() {
-
-  }
   setColor(color: string) {
     this.g.game.line_col = color;
   }

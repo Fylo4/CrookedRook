@@ -1,7 +1,7 @@
 export const other_congo = {
   name: "Congo",
   author: "Damiel Freeling",
-  description: "A 7x7 board with Xiangqi like elements. Monkeys currently cannot chain captures.",
+  description: "A 7x7 board with Xiangqi like elements.",
   style: "uncheckered",
   width: 7,
   height: 7,
@@ -53,7 +53,7 @@ export const other_congo = {
       sprite: "chimpanzee",
       symbol: "M",
       move: "[K]ba[S]ae+[K]ae",
-      attributes: ["kill_between"]
+      attributes: ["berzerk", "kill_between", "bloodlust"]
     },
     {
       name: "Crocodile",

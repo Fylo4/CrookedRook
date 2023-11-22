@@ -5,25 +5,25 @@
     display: none;
 }
 
-@media (max-width: 800px) {
-    #toolbar-sm {
-        display: none;
-    }
-    #toolbar-md {
-        display: flex;
-    }
-    #toolbar-lg {
-        display: none;
-    }
-}
-@media (max-width: 500px) {
-    #toolbar-sm {
-        display: flex;
-    }
-    #toolbar-md {
-        display: none;
-    }
-    #toolbar-lg {
-        display: none;
-    }
-}
+// @media (max-width: 800px) {
+//     #toolbar-sm {
+//         display: none;
+//     }
+//     #toolbar-md {
+//         display: flex;
+//     }
+//     #toolbar-lg {
+//         display: none;
+//     }
+// }
+// @media (max-width: 500px) {
+//     #toolbar-sm {
+//         display: flex;
+//     }
+//     #toolbar-md {
+//         display: none;
+//     }
+//     #toolbar-lg {
+//         display: none;
+//     }
+// }

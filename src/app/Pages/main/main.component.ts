@@ -53,4 +53,7 @@ export class MainComponent{
   copyExport() {
     this.dialog.open(InfoPanelComponent, {data: {title: "Export Code", text: [this.g.game.getExport()]}})
   }
+  screenshot() {
+    
+  }
 }

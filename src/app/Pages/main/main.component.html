@@ -22,7 +22,8 @@
                     <mat-icon>search</mat-icon>
                 </button>
                 <button mat-raised-button color="primary" class="mr" (click)="copyExport()">Export Game</button>
-                <button mat-raised-button color="primary" (click)="copyHistory()">Copy History</button>
+                <button mat-raised-button color="primary" class="mr" (click)="copyHistory()">Copy History</button>
+                <button mat-raised-button color="primary" (click)="screenshot()" disabled><mat-icon>camera_alt</mat-icon></button>
             </div>
             
             <p *ngIf="g.game.clickData.inspect" style="margin-bottom:0;">Click on any piece to inspect it</p>

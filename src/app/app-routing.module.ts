@@ -6,7 +6,7 @@ import { MatchesComponent } from './Pages/games/matches.component';
 import { SearchComponent } from './Pages/search/search.component';
 
 const routes: Routes = [
-  {path: '', redirectTo: 'board', pathMatch: 'full'},
+  {path: '', component: MainComponent, pathMatch: 'full'},
   {path: 'board', component: MainComponent},
   {path: 'lobby', component: LobbyComponent},
   {path: 'matches', component: MatchesComponent},

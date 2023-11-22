@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { CreditsComponent } from '../credits/credits.component';
+import { MatDividerModule } from '@angular/material/divider';
 
 @Component({
   selector: 'app-about',
@@ -10,6 +11,7 @@ import { CreditsComponent } from '../credits/credits.component';
   standalone: true,
   imports: [
     MatButtonModule,
+    MatDividerModule,
   ],
 })
 export class AboutComponent {

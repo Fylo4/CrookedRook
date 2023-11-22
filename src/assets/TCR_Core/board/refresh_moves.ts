@@ -3,6 +3,8 @@ import { GameRules, PieceAttributes } from "../Constants";
 import { Squareset, ss_and, ss_or } from "../Squareset";
 import { angle_to } from "../utils";
 import { Term } from "../game_data/from_object";
+import { get_ep_ss } from "../bnb_ep_init";
+import { test_burns } from "./make_move";
 
 export function _refresh_moves(board: Board) {
 	//Clear all bitboards
@@ -121,21 +123,23 @@ export function _refresh_moves(board: Board) {
             }
             //Cannot land on iron enemies
             board.can_move_ss[sq].ande(ss_and(iron, treat_as_col ? board.white_ss : board.black_ss).inverse());
+            //Can capture
+            let attacks = get_attacks(board, sq, a);
+            if (!attacks.is_zero()) {
+                treat_as_col ? can_capture.black = true : can_capture.white = true;
+            }
             //Berzerk
             if (board.get_attributes(a).includes(PieceAttributes.berzerk)) {
-                let treat_as_col = board.black_ss.get(sq) && (!board.white_ss.get(sq) || board.turn);
-                let enemies = treat_as_col ? board.white_ss : board.black_ss;
-                if (!ss_and(board.can_move_ss[sq], enemies).is_zero()) {
-                    board.can_move_ss[sq].ande(enemies);
+                if (!attacks.is_zero()) {
+                    board.can_move_ss[sq].ande(attacks);
                 }
+            }
+            if (board.is_bloodlust) {
+                board.can_move_ss[sq].ande(attacks);
             }
             //Retreat
             if (board.get_attributes(a).includes(PieceAttributes.retreat)) {
                 board.can_move_ss[sq].set_on(sq);
-            }
-            //Can capture
-            if (!ss_and(board.can_move_ss[sq], treat_as_col ? board.white_ss : board.black_ss).is_zero()) {
-                treat_as_col ? can_capture.black = true : can_capture.white = true;
             }
 		}
     }
@@ -177,27 +181,25 @@ export function _refresh_moves(board: Board) {
     }
     //Berzerk board rule
     if (board.game_data.game_rules.includes(GameRules.berzerk)) {
-        let neutral = ss_and(board.white_ss, board.black_ss);
-        let black = ss_and(board.black_ss, neutral.inverse());
-        let white = ss_and(board.white_ss, neutral.inverse());
         if (can_capture.black) {
+            let black = ss_and(board.black_ss, board.white_ss.inverse());
             for(; !black.is_zero(); black.pop()) {
                 let sq = black.get_ls1b();
-                board.can_move_ss[sq].ande(ss_and(board.white_ss, board.black_ss.inverse()));
+                board.can_move_ss[sq].ande(get_attacks(board, sq));
             }
         }
         if (can_capture.white) {
+            let white = ss_and(board.white_ss, board.black_ss.inverse());
             for(; !white.is_zero(); white.pop()) {
                 let sq = white.get_ls1b();
-                board.can_move_ss[sq].ande(ss_and(board.black_ss, board.white_ss.inverse()));
+                board.can_move_ss[sq].ande(get_attacks(board, sq));
             }
         }
         if ((board.turn && can_capture.black) || (!board.turn && can_capture.white)) {
+            let neutral = ss_and(board.white_ss, board.black_ss);
             for(; !neutral.is_zero(); neutral.pop()) {
                 let sq = neutral.get_ls1b();
-                let me  = board.turn ? board.black_ss : board.white_ss;
-                let opp = board.turn ? board.white_ss : board.black_ss;
-                board.can_move_ss[sq].ande(ss_and(opp, me.inverse()));
+                board.can_move_ss[sq].ande(get_attacks(board, sq));
             }
         }
     }
@@ -431,4 +433,41 @@ export function _reload_can_drop_piece_to(board: Board) {
             board.can_drop.black = true;
         }
     }
+}
+
+export function get_attacks(board: Board, sq: number, piece_id?: number): Squareset {
+    if (piece_id == undefined) {
+        piece_id = board.identify_piece(sq);
+    }
+    let treat_as_col = board.black_ss.get(sq) && (!board.white_ss.get(sq) || board.turn);
+    let enemies = treat_as_col ? board.white_ss : board.black_ss;
+    let attacks = ss_and(board.can_move_ss[sq], enemies);
+    if (board.get_attributes(piece_id).includes(PieceAttributes.kill_between)) {
+        for (let landing = new Squareset(board.can_move_ss[sq]); !landing.is_zero(); landing.pop()) {
+            let sq2 = landing.get_ls1b();
+            let line = get_ep_ss(sq, sq2, board.game_data);
+            if (!ss_and(line, enemies).is_zero()) {
+                attacks.set_on(sq2);
+            }
+        }
+    }
+    if (board.get_attributes(piece_id).includes(PieceAttributes.burn_peaceful)) {
+        let peaceful = ss_and(board.can_move_ss[sq], ss_or(board.white_ss, board.black_ss).inverse());
+        for (; !peaceful.is_zero(); peaceful.pop()) {
+            let sq2 = peaceful.get_ls1b();
+            if (test_burns(board, piece_id, sq2, board.turn)) {
+                attacks.set_on(sq2);
+            }
+        }
+    }
+    if (board.get_attributes(piece_id).includes(PieceAttributes.burn_attack)) {
+        let squares = ss_and(board.can_move_ss[sq], ss_or(board.white_ss, board.black_ss));
+        for (; !squares.is_zero(); squares.pop()) {
+            let sq2 = squares.get_ls1b();
+            if (test_burns(board, piece_id, sq2, board.turn)) {
+                attacks.set_on(sq2);
+            }
+        }
+    }
+    return attacks;
 }
