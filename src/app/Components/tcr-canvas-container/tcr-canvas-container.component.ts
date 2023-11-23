@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ErrorService } from 'src/app/Services/error.service';
 import { GameService } from 'src/app/Services/game.service';
-import { TcrCanvasComponent } from '../tcr-canvas/tcr-canvas.component';
-import { TcrHistoryComponent } from '../tcr-history/tcr-history.component';
+import { TcrCanvasComponent } from './tcr-canvas/tcr-canvas.component';
+import { TcrHistoryComponent } from './tcr-history/tcr-history.component';
 import { CommonModule } from '@angular/common';
 
 @Component({

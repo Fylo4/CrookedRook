@@ -2,7 +2,7 @@ import { Observable, of } from "rxjs";
 import { Board } from "../board/Board";
 import { GameData } from "../game_data/GameData";
 import { StyleData } from "./StyleData";
-import { _addCircle, _addLine, _adjustCanvasHeight, _adjustCanvasWidth, _clampCanvasSize, _clearLinesAndCircles, _exportHistory, _getExport, _getHistoryAsString, _importHistory, _importHistoryOld, _makeDropMove, _makeMove, _moveHistoryAsTurnArray, _pass, _setCanvasHeight, _setCanvasWidth, _setPieceImages, _startFromJson } from "./containter_funcs";
+import { _addCircle, _addFileLeft, _addFileRight, _addLine, _addRankBottom, _addRankTop, _adjustCanvasHeight, _adjustCanvasWidth, _clampCanvasSize, _clearLinesAndCircles, _deleteFileLeft, _deleteFileRight, _deleteRankBottom, _deleteRankTop, _exportHistory, _getExport, _getHistoryAsString, _importHistory, _importHistoryOld, _makeDropMove, _makeMove, _moveHistoryAsTurnArray, _pass, _setCanvasHeight, _setCanvasWidth, _setPieceImages, _startFromJson } from "./containter_funcs";
 import { _print_history, _render_after_move, _render_all_spaces, _render_circles_and_lines, _render_entire_board, _render_glows, _render_move_squares, _render_pieces, _render_promotion_menu } from "./render";
 import { _firstMove, _handleLmbClick, _handleMouseLeave, _handleMouseMove, _handleRmbDown, _handleRmbUp, _lastMove, _nextMove, _previousMove } from "./ui";
 import { HistoryRecord } from "../board/make_move";
@@ -10,6 +10,7 @@ import { HistoryRecord } from "../board/make_move";
 export type LoadedFrom = "canon" | "file" | "server" | "editor" | "unknown";
 
 export class GameContainer {
+    isCreator: boolean = false;
     gameData!: GameData;
     boardHistory: Board[] = [];
     moveHistory: HistoryRecord[] = []; //Notations
@@ -103,6 +104,16 @@ export class GameContainer {
     onSizeAdjust = (width: number, height: number) => {};
     getJsonFromCanon = (name: string) => {};
     getJsonFromServer = (name: string) => {};
+
+    //Editor
+    addRankTop = (): void => _addRankTop(this);
+    addRankBottom = (): void => _addRankBottom(this);
+    addFileLeft = (): void => _addFileLeft(this);
+    addFileRight = (): void => _addFileRight(this);
+    deleteRankTop = (): void => _deleteRankTop(this);
+    deleteRankBottom = (): void => _deleteRankBottom(this);
+    deleteFileLeft = (): void => _deleteFileLeft(this);
+    deleteFileRight = (): void => _deleteFileRight(this);
 }
 
 export class ClickData {

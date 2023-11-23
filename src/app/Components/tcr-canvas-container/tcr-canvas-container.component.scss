@@ -1,0 +1,16 @@
+.side-by-side {
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    width: max-content;
+    overflow: auto;
+}
+
+.vertical {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}

@@ -1,5 +1,4 @@
-﻿import { GameRules } from "../Constants";
-import { Squareset, ss_and } from "../Squareset";
+﻿import { Squareset, ss_and } from "../Squareset";
 import { elemHeight, elemWidth, file, rank } from "../utils";
 import { GameContainer } from "./GameContainer";
 

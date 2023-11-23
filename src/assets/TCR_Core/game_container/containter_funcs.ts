@@ -6,6 +6,7 @@ import { GameData } from "../game_data/GameData";
 import { cyrb128, mulberry32, time_as_string } from "../random";
 import { Circle, ClickData, GameContainer, Line, LoadedFrom, MultiplayerData } from "./GameContainer";
 import { elemHeight, elemWidth } from "../utils";
+import { Squareset } from "../Squareset";
 
 export function _startFromJson(gameContainer: GameContainer, json_data: any, seed: number = 0, from?: LoadedFrom) {
     if(seed === 0)
@@ -374,4 +375,132 @@ function makeImportMoves(container: GameContainer, history: string) {
             container.makeMove(src_x, src_y, dst_x, dst_y, promotion);
         }
     }
+}
+
+function forEachSS(container: GameContainer, func: Function) {
+    let gd = container.gameData;
+    let brd = container.boardHistory[container.viewMove];
+    for (let x of [
+        gd.active_squares,
+        gd.ethereal,
+        gd.highlight,
+        gd.highlight2,
+        gd.mud,
+        gd.sanctuary,
+        gd.pacifist,
+        ...gd.zones
+    ]) {
+        func(x);
+    }
+    if (gd.camp) {
+        func(gd.camp.white)
+        func(gd.camp.black)
+    }
+    if (brd) {
+        for (let x of [
+            brd.black_attack_ss,
+            brd.black_ss,
+            ...brd.can_drop_piece_to.white,
+            ...brd.can_drop_piece_to.black,
+            ...brd.can_move_ss,
+            brd.checked.white,
+            brd.checked.black,
+            brd.ep_mask,
+            brd.has_attacked_ss,
+            brd.has_moved_ss,
+            ...brd.piece_ss,
+            brd.stoppers,
+            brd.stoppers_cursed.white,
+            brd.stoppers_cursed.black,
+            brd.white_attack_ss,
+            brd.white_ss,
+        ]) {
+            func(x);
+        }
+
+    }
+}
+export function _addRankBottom(container: GameContainer) {
+    let b = container.boardHistory[container.viewMove];
+    let gd = container.gameData;
+    forEachSS(container, (s: Squareset) => s.add_rank_bottom(gd.width));
+    container.gameData.height ++;
+    for (let a = 0; a < gd.width; a ++)
+        b.can_move_ss.push(new Squareset(gd.width * gd.height))
+    container.adjustCanvasHeight();
+    container.renderEntireBoard();
+}
+export function _addRankTop(container: GameContainer) {
+    let b = container.boardHistory[container.viewMove];
+    let gd = container.gameData;
+    forEachSS(container, (s: Squareset) => s.add_rank_top(gd.width));
+    container.gameData.height ++;
+    for (let a = 0; a < gd.width; a ++)
+        b.can_move_ss.push(new Squareset(gd.width * gd.height))
+    container.adjustCanvasHeight();
+    container.renderEntireBoard();
+}
+export function _addFileLeft(container: GameContainer) {
+    let b = container.boardHistory[container.viewMove];
+    let gd = container.gameData;
+    forEachSS(container, (s: Squareset) => s.add_file_left(gd.width));
+    container.gameData.width ++;
+    for (let a = 0; a < gd.height; a ++)
+        b.can_move_ss.push(new Squareset(gd.width * gd.height))
+    container.adjustCanvasHeight();
+    container.renderEntireBoard();
+}
+export function _addFileRight(container: GameContainer) {
+    let b = container.boardHistory[container.viewMove];
+    let gd = container.gameData;
+    forEachSS(container, (s: Squareset) => s.add_file_right(gd.width));
+    container.gameData.width ++;
+    for (let a = 0; a < gd.height; a ++)
+        b.can_move_ss.push(new Squareset(gd.width * gd.height))
+    container.adjustCanvasHeight();
+    container.renderEntireBoard();
+}
+export function _deleteRankTop(container: GameContainer) {
+    if (container.gameData.height <= 1) return;
+    let b = container.boardHistory[container.viewMove];
+    let gd = container.gameData;
+    forEachSS(container, (s: Squareset) => s.delete_rank_top(gd.width));
+    container.gameData.height --;
+    for (let a = 0; a < gd.width; a ++)
+        b.can_move_ss.pop();
+    container.adjustCanvasHeight();
+    container.renderEntireBoard();
+}
+export function _deleteRankBottom(container: GameContainer) {
+    if (container.gameData.height <= 1) return;
+    let b = container.boardHistory[container.viewMove];
+    let gd = container.gameData;
+    forEachSS(container, (s: Squareset) => s.delete_rank_bottom(gd.width));
+    container.gameData.height --;
+    for (let a = 0; a < gd.width; a ++)
+        b.can_move_ss.pop();
+    container.adjustCanvasHeight();
+    container.renderEntireBoard();
+}
+export function _deleteFileLeft(container: GameContainer) {
+    if (container.gameData.width <= 1) return;
+    let b = container.boardHistory[container.viewMove];
+    let gd = container.gameData;
+    forEachSS(container, (s: Squareset) => s.delete_file_left(gd.width));
+    container.gameData.width --;
+    for (let a = 0; a < gd.height; a ++)
+        b.can_move_ss.pop();
+    container.adjustCanvasHeight();
+    container.renderEntireBoard();
+}
+export function _deleteFileRight(container: GameContainer) {
+    if (container.gameData.width <= 1) return;
+    let b = container.boardHistory[container.viewMove];
+    let gd = container.gameData;
+    forEachSS(container, (s: Squareset) => s.delete_file_right(gd.width));
+    container.gameData.width --;
+    for (let a = 0; a < gd.height; a ++)
+        b.can_move_ss.pop();
+    container.adjustCanvasHeight();
+    container.renderEntireBoard();
 }

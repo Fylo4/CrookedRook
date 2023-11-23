@@ -1,0 +1,26 @@
+<div style="padding-bottom: 4rem;">
+    <h1>
+        Create Game
+    </h1>
+
+    <app-editor-canvas-container></app-editor-canvas-container>
+
+    <mat-accordion>
+        <mat-expansion-panel>
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+            Actions
+            </mat-panel-title>
+        </mat-expansion-panel-header>
+            <div class="button-row mt-h">
+                <button mat-raised-button color="primary" class="mr">Download</button>
+                <button mat-mini-fab color="primary" aria-label="Inspect icon" (click)="g.game.toggleInspect()" class="mr">
+                    <mat-icon>search</mat-icon>
+                </button>
+                <button mat-raised-button color="primary" class="mr" (click)="copyExport()">Export Game</button>
+                <button mat-raised-button color="primary" class="mr" (click)="copyHistory()">Copy History</button>
+                <button mat-raised-button color="primary" (click)="screenshot()" disabled><mat-icon>camera_alt</mat-icon></button>
+            </div>
+        </mat-expansion-panel>
+    </mat-accordion>
+</div>

@@ -1,0 +1,17 @@
+<p>Tools:</p>
+<div style="display: flex; gap: 1rem 1rem; flex-wrap: wrap;" class="mb">
+    <button mat-raised-button color="primary" type="button">Enable Square</button>
+    <button mat-raised-button color="primary" type="button">Disable Square</button>
+    <button mat-raised-button color="primary" type="button" (click)="addRankBottom()">Add Rank</button>
+    <button mat-raised-button color="primary" type="button" (click)="deleteRankBottom()">Remove Rank</button>
+    <button mat-raised-button color="primary" type="button" (click)="addFileRight()">Add File</button>
+    <button mat-raised-button color="primary" type="button" (click)="deleteFileRight()">Remove File</button>
+</div>
+
+<div style="display: flex;">
+    <div [class]="(spaceBeside() ? 'side-by-side' : 'vertical') +  ' mb'">
+        <app-tcr-canvas></app-tcr-canvas>
+    </div>
+</div>
+
+<canvas id="blend_canvas" width="480" height="480" style="display: none"></canvas>

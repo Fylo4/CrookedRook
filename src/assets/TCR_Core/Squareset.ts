@@ -20,7 +20,21 @@ interface ISquareset {
     ore(other: Squareset): void; //Sets this squareset to this or other
     ande(other: Squareset): void; //Sets this squareset to this and other
     pop(): void; //Sets the least significant 1 bit to zero
+    add_rank_top(width: number, val: boolean): void;
+    add_rank_bottom(width: number, val: boolean): void;
+    add_file_left(width: number, val: boolean): void;
+    add_file_right(width: number, val: boolean): void;
+    add_at_pos(pos: number, value: boolean): void;
+    push(val: boolean): void;
+    delete_rank_top(width: number): void;
+    delete_rank_bottom(width: number): void;
+    delete_file_left(width: number): void;
+    delete_file_right(width: number): void;
+    remove_at_pos(pos: number): void;
+    remove_at_end(): void;
 }
+
+const BITS_PER_NUMBER = 32;
 
 export function squareset_from_string(size: number, input: string): Squareset {
     let ret = new Squareset(size);
@@ -142,5 +156,109 @@ export class Squareset implements ISquareset{
     }
     get(n: number): boolean {
         return !!(this.backingArray[n / 32 | 0] & 1 << n % 32);
+    }
+    add_at_pos(pos: number, value: boolean = false) {
+        //Add a new number when needed
+        this.length ++;
+        if (this.length > this.backingArray.length*32) {
+            this.backingArray.push(0);
+        }
+        //Everything to the "right" of pos is shifted over
+        let startShift = Math.floor(pos/32);
+        let carry = (this.backingArray[startShift] & (1 << 31)) != 0;
+        //Find what's static, erase it, shift everything, add back in the static
+        let staticBitMask = (1 << (pos%32))-1;
+        let staticAdd = this.backingArray[startShift] & staticBitMask;
+        this.backingArray[startShift] &= ~staticBitMask;
+        this.backingArray[startShift] <<= 1;
+        this.backingArray[startShift] |= staticAdd;
+        //Shift everything in subsequent numbers
+        for (let a = startShift+1; a < this.backingArray.length; a ++) {
+            let willCarry = (this.backingArray[a] & (1 << 31)) != 0;
+            this.backingArray[a] <<= 1;
+            if (carry) this.backingArray[a] |= 1;
+            carry = willCarry;
+        }
+        //Set the bit itself
+        this.set(pos, value);
+    }
+    push(value: boolean = false) {
+        this.length ++;
+        if (this.length > this.backingArray.length*32) {
+            this.backingArray.push(0);
+        }
+        this.set(this.length-1, value);
+    }
+    remove_at_pos(pos: number) {
+        this.set_off(pos);
+        //Everything to the "right" of pos is shifted down one
+        let startShift = Math.floor(pos/32);
+        //Find what's static, erase it (plus deleted bit), shift everything, add it back
+        let staticBitMask = (1 << (pos%32))-1;
+        let staticAdd = this.backingArray[startShift] & staticBitMask;
+        this.backingArray[startShift] &= ~staticBitMask;
+        this.backingArray[startShift] >>>= 1;
+        this.backingArray[startShift] |= staticAdd;
+        //Shift down each following number
+        for (let a = startShift + 1; a < this.backingArray.length; a ++) {
+            if ((this.backingArray[a] & 1) != 0)
+                this.backingArray[a-1] |= (1 << 31);
+            this.backingArray[a] >>>= 1;
+        } 
+        //Remove numbers if needed
+        this.length --;
+        if (this.length <= (this.backingArray.length-1)*32) {
+            this.backingArray.pop();
+        }
+    }
+    remove_at_end() {
+        this.set_off(this.length-1);
+        this.length --;
+        if (this.length <= (this.backingArray.length-1)*32) {
+            this.backingArray.pop();
+        }
+    }
+    add_rank_top(width: number, val: boolean = false): void {
+        // console.log(this.backingArray);
+        for (let b = 0; b < width; b ++) {
+            this.add_at_pos(0, val);
+        }
+    }
+    add_rank_bottom(width: number, val: boolean = false): void {
+        for (let b = 0; b < width; b ++)
+            this.push(val)
+    }
+    add_file_left(width: number, val: boolean = false): void {
+        width ++;
+        let h = Math.ceil(this.length / width);
+        for (let a = 0; a < h; a ++) {
+            this.add_at_pos(width*a, val);
+        }
+    }
+    add_file_right(width: number, val: boolean = false): void {
+        width ++;
+        let h = Math.ceil(this.length / width);
+        for (let a = 0; a < h; a ++) {
+            let pos = Math.min(width*(a+1)-1, this.length+1);
+            this.add_at_pos(pos, val);
+        }
+    }
+    delete_rank_top(width: number) {
+        for (let b = 0; b < width; b ++)
+            this.remove_at_pos(0);
+    }
+    delete_rank_bottom(width: number) {
+        for (let b = 0; b < width; b ++)
+            this.remove_at_end();
+    }
+    delete_file_left(width: number) {
+        width --;
+        for (let b = 0; b < this.length; b += width)
+            this.remove_at_pos(b)
+    }
+    delete_file_right(width: number) {
+        width --;
+        for (let b = width; b < this.length; b += width)
+            this.remove_at_pos(b)
     }
 }

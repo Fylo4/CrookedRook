@@ -7,18 +7,17 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { ErrorService } from 'src/app/Services/error.service';
-import { TcrCanvasContainerComponent } from '../../Components/tcr-canvas-container/tcr-canvas-container.component';
-import { GameRules, PieceAttributes } from 'src/assets/TCR_Core/Constants';
 import { MatDialog } from '@angular/material/dialog';
 import { BoardInfoComponent } from 'src/app/Dialogs/board-info/board-info.component';
 import { InfoPanelComponent } from 'src/app/Dialogs/info-panel/info-panel.component';
+import { EditorCanvasContainerComponent } from 'src/app/Components/editor-canvas-container/editor-canvas-container.component';
 
 // firebase.initializeApp(environment.firebase);
 
 @Component({
-  selector: 'app-main',
-  templateUrl: './main.component.html',
-  styleUrls: ['./main.component.scss'],
+  selector: 'app-creator',
+  templateUrl: './creator.component.html',
+  styleUrls: ['./creator.component.scss'],
   standalone: true,
   imports: [
     CommonModule,
@@ -27,31 +26,22 @@ import { InfoPanelComponent } from 'src/app/Dialogs/info-panel/info-panel.compon
     MatExpansionModule,
     MatFormFieldModule,
     MatInputModule,
-    TcrCanvasContainerComponent,
+    EditorCanvasContainerComponent,
   ],
 })
-export class MainComponent{
+export class CreatorComponent{
   constructor(public g: GameService, private error: ErrorService, public dialog: MatDialog) {} 
   
-  @HostListener('document:keydown', ['$event'])
-  handleKeyboardEvent(event: KeyboardEvent) { 
-    if (event.key === "ArrowRight") {
-      this.error.handle(this.g.game.nextMove);
-    }
-    if (event.key === "ArrowLeft") {
-      this.error.handle(this.g.game.previousMove);
-    }
-  }
   openBoardInfoDialog() {
     this.dialog.open(BoardInfoComponent);
   }
 
   copyHistory() {
-    this.dialog.open(InfoPanelComponent, {data: {title: "Move History", text: this.g.game.getHistoryAsString()}})
+    this.dialog.open(InfoPanelComponent, {data: {title: "Move History", text: this.g.editGame.getHistoryAsString()}})
   }
 
   copyExport() {
-    this.dialog.open(InfoPanelComponent, {data: {title: "Export Code", text: [this.g.game.getExport()]}})
+    this.dialog.open(InfoPanelComponent, {data: {title: "Export Code", text: [this.g.editGame.getExport()]}})
   }
   screenshot() {
     
