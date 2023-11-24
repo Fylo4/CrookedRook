@@ -107,9 +107,10 @@
                 </tr>
             </table>
             <div class="button-row">
-                <button mat-raised-button color="primary" class="mr">Save Style</button>
-                <button mat-raised-button color="primary">Load Style</button>
+                <button mat-raised-button color="primary" class="mr" (click)="downloadStyle()">Save Style</button>
+                <button mat-raised-button color="primary" (click)="fileInput.click()">Load Style</button>
             </div>
+            <input hidden (change)="onFileSelected()" #fileInput type="file" id="file">
         </div>
     </div>
     <div class="dialog-footer">

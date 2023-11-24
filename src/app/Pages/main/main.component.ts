@@ -12,6 +12,7 @@ import { GameRules, PieceAttributes } from 'src/assets/TCR_Core/Constants';
 import { MatDialog } from '@angular/material/dialog';
 import { BoardInfoComponent } from 'src/app/Dialogs/board-info/board-info.component';
 import { InfoPanelComponent } from 'src/app/Dialogs/info-panel/info-panel.component';
+import { downloadHjson, downloadJson, stringify_consts } from 'src/assets/TCR_Core/utils';
 
 // firebase.initializeApp(environment.firebase);
 
@@ -55,5 +56,9 @@ export class MainComponent{
   }
   screenshot() {
     
+  }
+  btnDownload() {
+    let data = stringify_consts(this.g.game.lastLoadedBoard);
+    downloadHjson(data, this.g.game.gameData.name+".hjson");
   }
 }

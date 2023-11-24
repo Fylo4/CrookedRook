@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -10,6 +10,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { ErrorService } from 'src/app/Services/error.service';
 import { GameService } from 'src/app/Services/game.service';
+import { downloadHjson, downloadJson } from 'src/assets/TCR_Core/utils';
+var Hjson = require('hjson');
 
 @Component({
   selector: 'app-style',
@@ -27,7 +29,7 @@ import { GameService } from 'src/app/Services/game.service';
     MatCheckboxModule,
   ],
 })
-export class StyleComponent {
+export class StyleComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<StyleComponent>,
@@ -35,6 +37,21 @@ export class StyleComponent {
     public error: ErrorService,
   ) {}
   showAdvanced = false;
+  reader = new FileReader();
+
+  ngOnInit() {
+    //Load style functionality
+    this.reader.onload = (e: any) => {
+      let data = String.fromCharCode.apply(
+          null,
+          Array.from(new Uint8Array(e.target.result))
+      );
+      let fileResult = this.error.handle(Hjson.parse, data);
+      if (fileResult)
+        this.g.game.styleData = fileResult;
+      this.g.game.renderEntireBoard();
+    };
+  }
 
   closeModal() {
     this.dialogRef.close();
@@ -53,5 +70,12 @@ export class StyleComponent {
   }
   isSelected(color: string) {
     return this.g.game.line_col.toLowerCase() === color;
+  }
+  downloadStyle() {
+    downloadHjson(this.g.game.styleData, "style.hjson");
+  }
+  onFileSelected() {
+    const inputNode: any = document.querySelector('#file');
+    this.reader.readAsArrayBuffer(inputNode.files[0]);
   }
 }

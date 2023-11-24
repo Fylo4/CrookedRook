@@ -72,7 +72,7 @@ export const enum PieceAttributes {
 	restart_timer = 44,
 	curse_immune = 45,
 	infect_curse = 46,
-    empower= 47,
+    empower_bless= 47,
     random_promotion= 48,
 	dont_flip_on_death= 49,
 	destroy_on_capture= 50,
@@ -96,9 +96,12 @@ export const attrib_str = ["ally_static", "enemy_static", "kill_ally", "save_ene
 "burn_allies", "burn_immune", "coward", "child", "berzerk", "spawn_trail", "spawn_constant", "spawn_on_death",
 "endangered", "attacker_moves", "defender_moves", "tall", "iron", "silver", "bronze", "royal", "ghost",
 "flip_on_passive", "forced_step", "retreat", "bloodlust", "promote_on_attack", "kill_between", "mud_curse", 
-"ghost_curse", "restart_timer", "curse_immune", "infect_curse", "empower", "random_promotion","dont_flip_on_death",
+"ghost_curse", "restart_timer", "curse_immune", "infect_curse", "empower_bless", "random_promotion","dont_flip_on_death",
 "destroy_on_capture", "destroy_on_burn", "promote_from_opp_hand", "peaceful", "glue_curse", "peace_curse",
 "curse_allies", "iron_bless", "bless_enemies", "copy_move", "copy_attrib", "ninja", "statue", "no_default_move"];
+
+// Moves that are here but not implemented:
+// empower_bless, attacker_moves, defender_moves, tall
 
 export const preset_move_types = [
 	{ a: "[0]", b: "[0 0 1 1]"},

@@ -205,7 +205,7 @@ export function _from_object(gd: GameData, input: any): void {
             continue;
         }
         if (typeof(nextTurnWin [a]) != "string")
-            throw new Error("Unknown next_turn_win value: "+nextTurnWin[a]);
+            throw new Error("Unknown next_turn_wins value: "+nextTurnWin[a]);
 
         let index = wins_str.findIndex(w => w === nextTurnWin[a]);
         if (index >= 0)
@@ -215,7 +215,7 @@ export function _from_object(gd: GameData, input: any): void {
         else if (nextTurnWin[a].startsWith('royal_capture'))
             nextTurnWin[a] = Wins.royal_capture_n;
         else
-            throw new Error("Unknown next_turn_win value: "+nextTurnWin[a]);
+            throw new Error("Unknown next_turn_wins value: "+nextTurnWin[a]);
     }
     gd.nextTurnWins = nextTurnWin;
 

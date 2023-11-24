@@ -10,6 +10,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { BoardLoadingService } from 'src/app/Services/board-loading.service';
 import { GameService } from 'src/app/Services/game.service';
 import { ErrorService } from 'src/app/Services/error.service';
+var Hjson = require('hjson');
 
 @Component({
     selector: 'app-load-board',
@@ -48,12 +49,15 @@ export class LoadBoardComponent implements OnInit {
                 null,
                 Array.from(new Uint8Array(e.target.result))
             );
+            let fileResult: any;
             if (this.extension === 'hjson') {
-                console.log("Hjson imports aren't implemented yet");
-                return;
+                fileResult = Hjson.parse(data);
+                // console.log("Hjson imports aren't implemented yet");
+                // return;
             }
-            //this.fileResult = Hjson.parse(data);
-            let fileResult = this.error.handle(JSON.parse, data);
+            else {
+                fileResult = this.error.handle(JSON.parse, data);
+            }
             if (fileResult)
                 this.error.handle(this.g.game.startFromJson, fileResult, undefined, "file");
         };

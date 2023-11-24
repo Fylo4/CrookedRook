@@ -1,5 +1,6 @@
 import { attrib_str, wins_str, draws_str, events_str } from "./Constants";
 import { Squareset, squareset_from_string } from "./Squareset";
+var Hjson = require('hjson');
 
 export function gcd(a: number, b: number){
 	if(b){
@@ -421,4 +422,20 @@ export function elemHeight(cv: HTMLCanvasElement) {
 export function elemWidth(cv: HTMLCanvasElement) {
     //return pxToNumber(cv.style.width);
     return cv.width;
+}
+export function downloadJson(data: any, name: string = "download.json") {
+    var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, undefined, 2));
+    let newA = document.createElement("a");
+    newA.setAttribute("href", dataStr);
+    newA.setAttribute("download", name);
+    newA.click();
+    document.removeChild(newA);
+}
+export function downloadHjson(data: any, name: string = "download.hjson") {
+    var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(Hjson.stringify(data, undefined, 2));
+    let newA = document.createElement("a");
+    newA.setAttribute("href", dataStr);
+    newA.setAttribute("download", name);
+    newA.click();
+    document.removeChild(newA);
 }
