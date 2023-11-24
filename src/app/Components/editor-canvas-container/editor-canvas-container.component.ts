@@ -4,6 +4,7 @@ import { GameService } from 'src/app/Services/game.service';
 import { TcrCanvasComponent } from './tcr-canvas/tcr-canvas.component';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
+import { ClickData } from 'src/assets/TCR_Core/game_container/GameContainer';
 
 @Component({
   selector: 'app-editor-canvas-container',
@@ -27,6 +28,7 @@ export class EditorCanvasContainerComponent implements OnInit {
       w = this.g.editGame.canvases[0].width + 300 + pagePadding + 4;
     return w <= document.body.clientWidth;
   }
+  cd!: ClickData;
   
   ngOnInit(): void {
     let cc = document.getElementById("board_canvas_container");
@@ -67,6 +69,7 @@ export class EditorCanvasContainerComponent implements OnInit {
     this.g.editGame.pathToPieceSprites = "assets/pieces";
     this.error.handle(this.g.editGame.setPieceImages);
     this.g.fitToScreen(true);
+    this.cd = this.g.editGame.clickData;
   }
   addRankTop() {
     this.g.editGame.addRankTop();
@@ -91,5 +94,11 @@ export class EditorCanvasContainerComponent implements OnInit {
   }
   deleteFileRight() {
     this.g.editGame.deleteFileRight();
+  }
+  isEnable() {
+    return this.g.editGame.clickData.clickMode === 'addSquare' ? 'accent' : 'primary';
+  }
+  isDisable() {
+    return this.g.editGame.clickData.clickMode === 'removeSquare' ? 'accent' : 'primary';
   }
 }

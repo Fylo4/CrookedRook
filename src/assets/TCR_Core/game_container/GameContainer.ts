@@ -91,7 +91,9 @@ export class GameContainer {
     handleLmbClick = (): void => _handleLmbClick(this);
     handleMouseLeave = (): void => _handleMouseLeave(this);
     handleMouseMove = (event: MouseEvent): void => _handleMouseMove(this, event);
-    toggleInspect = (): void => {this.clickData.inspect = !this.clickData.inspect};
+    toggleInspect = (): void => {
+        this.clickData.clickMode = (this.clickData.clickMode === 'inspect') ? 'move' : 'inspect';
+    };
     previousMove = (): void => _previousMove(this);
     nextMove = (): void => _nextMove(this);
     firstMove = (): void => _firstMove(this);
@@ -129,7 +131,9 @@ export class ClickData {
     mousePxPos: { x: number, y: number } = { x: -1, y: -1 };
     mouseSqPos: { x: number, y: number, sq: number} = { x: -1, y: -1, sq: -1};
     oldMouseSq: number = -1;
-    inspect: boolean = false; //Will we inspect the next square we click?
+    clickMode: 'move'|'inspect'|'addSquare'|'removeSquare' = 'move';
+    //Only for clickMode='addSquare'
+    addMode: 'default'|'highlight1'|'highlight2'|'mud'|'ethereal'|'pacifist'|'sanctuary' = 'default';
 }
 
 export class MultiplayerData {

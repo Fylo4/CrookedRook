@@ -54,7 +54,8 @@ export function _handleMouseMove(container: GameContainer, event: MouseEvent) {
     cd.mouseSqPos.sq = cd.mouseSqPos.x + cd.mouseSqPos.y * gd.width;
     if (cd.mouseSqPos.sq != cd.oldMouseSq) {
         //If mouse changes square, re-render the board
-        container.renderMoveSquares();
+        if (cd.clickMode === 'move')
+            container.renderMoveSquares();
         container.renderCirclesAndLines();
         cd.oldMouseSq = cd.mouseSqPos.sq;
     }
@@ -77,14 +78,15 @@ export function _handleLmbClick(container: GameContainer) {
     let board = container.boardHistory[container.viewMove];
     let gd = container.gameData;
     let cd = container.clickData;
+    let sq = cd.mouseSqPos.sq;
 
     if (board.victory.val != -1)
         return;
     
     if (cd.waiting_for_promotion)
         clickWhileWaitingForPromotion(container);
-    else if (cd.inspect) {
-        cd.inspect = false;
+    else if (cd.clickMode === 'inspect') {
+        cd.clickMode = 'move';
         let piece = board.identify_piece(cd.mouseSqPos.sq);
         if (piece >= 0) {
             //let p = gd.all_pieces[piece];
@@ -92,17 +94,61 @@ export function _handleLmbClick(container: GameContainer) {
             container.handleInspect(piece);
         }
     }
+    else if (cd.clickMode === 'addSquare') {
+        gd.active_squares.set_on(sq);
+        switch(cd.addMode) {
+            case 'highlight1':
+                gd.highlight.set_on(sq);
+                break;
+            case 'highlight2':
+                gd.highlight2.set_on(sq);
+                break;
+            case 'ethereal':
+                gd.ethereal.set_on(sq);
+                break;
+            case 'mud':
+                gd.mud.set_on(sq);
+                break;
+            case 'pacifist':
+                gd.pacifist.set_on(sq);
+                break;
+            case 'sanctuary':
+                gd.sanctuary.set_on(sq);
+                break;
+            case 'default':
+                //Default mode = turn everything off
+                gd.highlight.set_off(sq);
+                gd.highlight2.set_off(sq);
+                gd.pacifist.set_off(sq);
+                gd.ethereal.set_off(sq);
+                gd.mud.set_off(sq);
+                gd.sanctuary.set_off(sq);
+                break;
+        }
+        container.renderEntireBoard();
+    }
+    else if (cd.clickMode === 'removeSquare') {
+        gd.active_squares.set_off(sq);
+        gd.highlight.set_off(sq);
+        gd.highlight2.set_off(sq);
+        gd.pacifist.set_off(sq);
+        gd.ethereal.set_off(sq);
+        gd.mud.set_off(sq);
+        gd.sanctuary.set_off(sq);
+        container.renderEntireBoard();
+    }
     else if (cd.selected || board.is_piece_locked)
         clickWhilePieceIsSelected(container);
     else if (cd.hand_selected)
         clickWhileHandIsSelected(container);
     else if (cd.mouseSqPos.y === -1 || cd.mouseSqPos.y === gd.height)
         clickOnHand(container);
-    else if ((!board.turn && board.white_ss.get(cd.mouseSqPos.sq)) || (board.turn && board.black_ss.get(cd.mouseSqPos.sq)))
+    else if ((!board.turn && board.white_ss.get(sq)) || (board.turn && board.black_ss.get(sq)))
         clickOnPiece(container);
 
     container.clearLinesAndCircles();
-    container.renderMoveSquares();
+    if (cd.clickMode === 'move')
+        container.renderMoveSquares();
 }
 
 function clickWhileWaitingForPromotion(container: GameContainer) {

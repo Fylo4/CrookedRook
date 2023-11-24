@@ -1,11 +1,27 @@
 <p>Tools:</p>
 <div style="display: flex; gap: 1rem 1rem; flex-wrap: wrap;" class="mb">
-    <button mat-raised-button color="primary" type="button">Enable Square</button>
-    <button mat-raised-button color="primary" type="button">Disable Square</button>
+    <button mat-raised-button [color]="isEnable()" type="button" (click)="cd.clickMode = 'addSquare'">Enable Square</button>
+    <button mat-raised-button [color]="isDisable()" type="button" (click)="cd.clickMode = 'removeSquare'">Disable Square</button>
     <button mat-raised-button color="primary" type="button" (click)="addRankBottom()">Add Rank</button>
     <button mat-raised-button color="primary" type="button" (click)="deleteRankBottom()">Remove Rank</button>
     <button mat-raised-button color="primary" type="button" (click)="addFileRight()">Add File</button>
     <button mat-raised-button color="primary" type="button" (click)="deleteFileRight()">Remove File</button>
+</div>
+<div style="display: flex; gap: 1rem 1rem; flex-wrap: wrap;" class="mb">
+    <button mat-raised-button [color]="cd.addMode === 'default' ? 'accent' : 'primary'"
+        type="button" (click)="cd.addMode = 'default'">Default</button>
+    <button mat-raised-button [color]="cd.addMode === 'highlight1' ? 'accent' : 'primary'"
+        type="button" (click)="cd.addMode = 'highlight1'">Highlight 1</button>
+    <button mat-raised-button [color]="cd.addMode === 'highlight2' ? 'accent' : 'primary'"
+        type="button" (click)="cd.addMode = 'highlight2'">Highlight 2</button>
+    <button mat-raised-button [color]="cd.addMode === 'mud' ? 'accent' : 'primary'"
+        type="button" (click)="cd.addMode = 'mud'">Mud</button>
+    <button mat-raised-button [color]="cd.addMode === 'pacifist' ? 'accent' : 'primary'"
+        type="button" (click)="cd.addMode = 'pacifist'">Pacifist</button>
+    <button mat-raised-button [color]="cd.addMode === 'sanctuary' ? 'accent' : 'primary'"
+        type="button" (click)="cd.addMode = 'sanctuary'">Sanctuary</button>
+    <button mat-raised-button [color]="cd.addMode === 'ethereal' ? 'accent' : 'primary'"
+        type="button" (click)="cd.addMode = 'ethereal'">Ethereal</button>
 </div>
 
 <div style="display: flex;">

@@ -42,7 +42,8 @@ export function _render_entire_board(container: GameContainer){
     container.renderAllSpaces();
     container.renderGlows();
     container.renderPieces();
-    container.renderMoveSquares();
+    if (container.clickData.clickMode === 'move')
+        container.renderMoveSquares();
     container.renderCirclesAndLines();
     container.renderPromotionMenu();
 }
@@ -160,19 +161,53 @@ function render_space(container: GameContainer, a: number, b?: number) {
         }
     }
     else {
-        let is_dark = (a + b + (sd.flip_colors?1:0)) % 2 && sd.style.toLowerCase() === "checkered";
-        if (gd.highlight.get(sq) && sd.show_highlights && sd.style.toLowerCase() !== "ashtapada")
-            { ctx[cid.board].fillStyle = is_dark ? sd.dark_highlight_col : sd.light_highlight_col; }
-        else if (gd.highlight2.get(sq) && sd.show_highlights && sd.style.toLowerCase() !== "ashtapada")
-            { ctx[cid.board].fillStyle = is_dark ? sd.dark_highlight_2_col : sd.light_highlight_2_col; }
-        else if (gd.mud.get(sq)) { ctx[cid.board].fillStyle = is_dark ? sd.dark_mud_col : sd.light_mud_col; }
-        else if (gd.ethereal.get(sq)) { ctx[cid.board].fillStyle = is_dark ? sd.dark_ethereal_col : sd.light_ethereal_col; }
-        else if (gd.pacifist.get(sq)) { ctx[cid.board].fillStyle = is_dark ? sd.dark_pacifist_col : sd.light_pacifist_col; }
-        else if (gd.sanctuary.get(sq)) { ctx[cid.board].fillStyle = is_dark ? sd.dark_sanctuary_col : sd.light_sanctuary_col; }
-        else { ctx[cid.board].fillStyle = is_dark ? sd.dark_square_col : sd.light_square_col; }
-        
         let {x, y} = get_square_xy(container, a, b);
-        ctx[cid.board].fillRect(x, y, width_px, height_px);
+        let is_dark = (a + b + (sd.flip_colors?1:0)) % 2 && sd.style.toLowerCase() === "checkered";
+        if (gd.highlight.get(sq) && sd.show_highlights && sd.style.toLowerCase() !== "ashtapada") {
+            ctx[cid.board].fillStyle = is_dark ? sd.dark_highlight_col : sd.light_highlight_col;
+            ctx[cid.board].fillRect(x, y, width_px, height_px);
+        }
+        else if (gd.highlight2.get(sq) && sd.show_highlights && sd.style.toLowerCase() !== "ashtapada") {
+            ctx[cid.board].fillStyle = is_dark ? sd.dark_highlight_2_col : sd.light_highlight_2_col;
+            ctx[cid.board].fillRect(x, y, width_px, height_px);
+        }
+        else {
+            //Not a highlight, split up the square based on special squares
+            let squares = [];
+            if (gd.mud.get(sq)) squares.push(is_dark ? sd.dark_mud_col : sd.light_mud_col);
+            if (gd.ethereal.get(sq)) squares.push(is_dark ? sd.dark_ethereal_col : sd.light_ethereal_col);
+            if (gd.pacifist.get(sq)) squares.push(is_dark ? sd.dark_pacifist_col : sd.light_pacifist_col);
+            if (gd.sanctuary.get(sq)) squares.push(is_dark ? sd.dark_sanctuary_col : sd.light_sanctuary_col);
+            if (squares.length <= 1) {
+                if (squares.length === 0) ctx[cid.board].fillStyle = is_dark ? sd.dark_square_col : sd.light_square_col;
+                else ctx[cid.board].fillStyle = squares[0];
+                ctx[cid.board].fillRect(x, y, width_px, height_px);
+            }
+            else if (squares.length === 2) {
+                ctx[cid.board].fillStyle = squares[0];
+                ctx[cid.board].fillRect(x, y, width_px/2, height_px);
+                ctx[cid.board].fillStyle = squares[1];
+                ctx[cid.board].fillRect(x+width_px/2, y, width_px/2, height_px);
+            }
+            else if (squares.length === 3) {
+                ctx[cid.board].fillStyle = squares[0];
+                ctx[cid.board].fillRect(x, y, width_px/2, height_px/2);
+                ctx[cid.board].fillStyle = squares[1];
+                ctx[cid.board].fillRect(x+width_px/2, y, width_px/2, height_px/2);
+                ctx[cid.board].fillStyle = squares[2];
+                ctx[cid.board].fillRect(x, y+height_px/2, width_px, height_px/2);
+            }
+            else {
+                ctx[cid.board].fillStyle = squares[0];
+                ctx[cid.board].fillRect(x, y, width_px/2, height_px/2);
+                ctx[cid.board].fillStyle = squares[1];
+                ctx[cid.board].fillRect(x+width_px/2, y, width_px/2, height_px/2);
+                ctx[cid.board].fillStyle = squares[2];
+                ctx[cid.board].fillRect(x, y+height_px/2, width_px/2, height_px/2);
+                ctx[cid.board].fillStyle = squares[3];
+                ctx[cid.board].fillRect(x+width_px/2, y+height_px/2, width_px/2, height_px/2);
+            }
+        }
 
         //X on highlighted ashtapada squares
         if (sd.style.toLowerCase() === "ashtapada" && gd.highlight.get(sq)) {

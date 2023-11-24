@@ -26,7 +26,7 @@
                 <button mat-raised-button color="primary" (click)="screenshot()" disabled><mat-icon>camera_alt</mat-icon></button>
             </div>
             
-            <p *ngIf="g.game.clickData.inspect" style="margin-bottom:0;">Click on any piece to inspect it</p>
+            <p *ngIf="g.game.clickData.clickMode === 'inspect'" style="margin-bottom:0;">Click on any piece to inspect it</p>
             <br />
             
             <div *ngIf="g.game.loadedFrom === 'editor'">

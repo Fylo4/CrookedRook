@@ -40,5 +40,6 @@ export class GameService {
     this.game.getJsonFromCanon = (name: string) => {
       return this.loader.getFromName(name)?.value;
     }
+    this.editGame.clickData.clickMode = 'addSquare';
   }
 }
