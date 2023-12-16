@@ -7,9 +7,9 @@ import { MatDividerModule } from '@angular/material/divider';
 import { ErrorService } from "src/app/Services/error.service";
 
 @Component({
-    selector: 'app-tcr-canvas',
-    templateUrl: './tcr-canvas.component.html',
-    styleUrls: ['./tcr-canvas.component.scss'],
+    selector: 'app-editor-canvas',
+    templateUrl: './editor-canvas.component.html',
+    styleUrls: ['./editor-canvas.component.scss'],
     standalone: true,
     imports: [
       CommonModule,
@@ -18,6 +18,6 @@ import { ErrorService } from "src/app/Services/error.service";
       MatDividerModule,
     ],
 })
-export class TcrCanvasComponent {
+export class EditorCanvasComponent {
 
 }

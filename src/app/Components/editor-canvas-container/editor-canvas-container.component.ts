@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ErrorService } from 'src/app/Services/error.service';
 import { GameService } from 'src/app/Services/game.service';
-import { TcrCanvasComponent } from './tcr-canvas/tcr-canvas.component';
+import { EditorCanvasComponent } from './editor-canvas/editor-canvas.component';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { ClickData } from 'src/assets/TCR_Core/game_container/GameContainer';
@@ -13,7 +13,7 @@ import { ClickData } from 'src/assets/TCR_Core/game_container/GameContainer';
   standalone: true,
   imports: [
     CommonModule,
-    TcrCanvasComponent,
+    EditorCanvasComponent,
     MatButtonModule,
   ],
 })
