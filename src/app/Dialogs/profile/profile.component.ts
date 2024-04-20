@@ -30,7 +30,7 @@ export class ProfileComponent {
     this.dialogRef.close();
   }
   startNameChange() {
-    this.editNameText = this.auth.name ?? "";
+    this.editNameText = this.auth.user?.name ?? "";
     this.isEditingName = true;
   }
   cancelNameChange() {

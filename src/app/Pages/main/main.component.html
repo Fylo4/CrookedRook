@@ -12,9 +12,6 @@
             <mat-panel-title>
             Actions
             </mat-panel-title>
-            <!-- <mat-panel-description>
-            This is a summary of the content
-            </mat-panel-description> -->
         </mat-expansion-panel-header>
             <div class="button-row mt-h">
                 <button mat-raised-button color="primary" class="mr" (click)="btnDownload()">Download</button>
@@ -29,13 +26,13 @@
             <p *ngIf="g.game.clickData.inspect" style="margin-bottom:0;">Click on any piece to inspect it</p>
             <br />
             
-            <div *ngIf="g.game.loadedFrom === 'editor'">
+            <div *ngIf="(g.game.loadedFrom === 'editor' || g.game.loadedFrom === 'file') && auth.loggedIn">
                 <span class="mr">Upload Board:</span>
                 <mat-form-field class="mr">
                     <mat-label>Board Code</mat-label>
-                    <input matInput>
+                    <input matInput [(ngModel)]="uploadCode" />
                 </mat-form-field>
-                <button mat-raised-button color="primary">Upload</button>
+                <button mat-raised-button color="primary" (click)="uploadBoard()">Upload</button>
             </div>
         </mat-expansion-panel>
     </mat-accordion>

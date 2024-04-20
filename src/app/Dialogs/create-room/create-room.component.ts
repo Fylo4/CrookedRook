@@ -11,8 +11,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { collapseTransition } from 'src/app/Transitions/collapse-y';
-import { trigger } from '@angular/animations';
+import { DBService } from 'src/app/Services/Firebase/db.service';
+import { CreateLobbyType } from 'src/types/types';
 
 @Component({
   selector: 'app-create-room',
@@ -34,31 +34,27 @@ import { trigger } from '@angular/animations';
   ]
 })
 export class CreateRoomComponent {
-  constructor(public dialogRef: MatDialogRef<CreateRoomComponent>) {}
+  constructor(public dialogRef: MatDialogRef<CreateRoomComponent>, private db: DBService) {}
 
   closeModal() {
     this.dialogRef.close();
   }
 
-  data = {
+  data: CreateLobbyType = {
     boardCode: "",
-    playAs: "random",
+    hostColor: "random",
     isPrivate: false,
     privateCode: "",
     saveMode: "save"
   }
 
   send() {
-    console.log(this.data);
-    this.dialogRef.close(this.data);
+    // console.log(this.data);
+    this.db.createLobby(this.data).subscribe({
+      next: v => {
+        this.dialogRef.close(this.data);
+      },
+      error: e => console.error(e)
+    });
   }
-
-}
-
-export interface createRoomData {
-  boardCode: string;
-  playAs: "random" | "white" | "black";
-  isPrivate: boolean;
-  privateCode?: string;
-  isSaved: "save" | "save-anon" | "no-save";
 }

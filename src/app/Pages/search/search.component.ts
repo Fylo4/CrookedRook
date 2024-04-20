@@ -6,6 +6,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatButtonModule } from '@angular/material/button';
 import { DBService } from 'src/app/Services/Firebase/db.service';
+import { shogi } from 'src/assets/boards/Shogi/shogi';
 
 @Component({
   selector: 'app-search',
@@ -26,9 +27,11 @@ export class SearchComponent implements OnInit {
   constructor(public db: DBService) {}
 
   ngOnInit() {
-    this.db.getBoards().subscribe((value) => {
-      console.log("Boards: ")
-      console.log(value);
-    })
+    // this.db.getBoards().subscribe((value) => {
+    //   console.log("Boards: ", value);
+    // })
+    // this.db.getBoard("chess").subscribe((value) => {
+    //   console.log("Chess: ", value)
+    // })
   }
 }

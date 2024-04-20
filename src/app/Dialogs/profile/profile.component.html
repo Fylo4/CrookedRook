@@ -11,7 +11,7 @@
                 <button mat-raised-button color="warn" (click)="cancelNameChange()">Cancel</button>
             </div>
             <div *ngIf="!isEditingName">
-                <p>Name: {{auth.name}}</p>
+                <p>Name: {{auth.user?.name}}</p>
                 <button mat-raised-button color="primary" (click)="startNameChange()">Change</button>
             </div>
         </div>

@@ -1,7 +1,7 @@
-<div class="dialog" id="createMatchDialog" @dialogTrigger>
+<div class="dialog" id="createMatchDialog">
     <div class="dialog-body">
         <h1>Create Match</h1>
-        <mat-form-field>
+        <mat-form-field subscriptSizing="dynamic">
             <mat-label>Board Code</mat-label>
             <input matInput [(ngModel)]="data.boardCode">
         </mat-form-field>
@@ -12,7 +12,7 @@
                 <mat-icon matTooltip="Private matches are not visible to the public lobby, but can be joined and spectated using the room code.">info</mat-icon>
             </mat-slide-toggle>
             <div *ngIf="data.isPrivate">
-                <mat-form-field>
+                <mat-form-field subscriptSizing="dynamic">
                     <mat-label>Private Room Code</mat-label>
                     <input matInput [(ngModel)]="data.privateCode">
                 </mat-form-field>
@@ -30,7 +30,7 @@
         <br /> -->
 
         <p>Play As:</p>
-        <mat-button-toggle-group [(ngModel)]="data.playAs">
+        <mat-button-toggle-group [(ngModel)]="data.hostColor">
             <mat-button-toggle value="random">Random</mat-button-toggle>
             <mat-button-toggle value="white" color="primary">White</mat-button-toggle>
             <mat-button-toggle value="black" color="accent">Black</mat-button-toggle>

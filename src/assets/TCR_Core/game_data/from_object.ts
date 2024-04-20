@@ -1,7 +1,7 @@
-import { Wins, Draws, Events, GameRules, PieceAttributes, attrib_str, wins_str, draws_str, events_str, game_rules_str } from "../Constants";
+import { Wins, Draws, Events, GameRules, PieceAttributes, attrib_str, wins_str, events_str, game_rules_str } from "../Constants";
 import { Piece, Promotion } from "../Piece";
 import { Squareset, ss_and, ss_or } from "../Squareset";
-import { get_bnb_ss, get_slide_ss } from "../bnb_ep_init";
+import { get_bnb_ss } from "../bnb_ep_init";
 import { Board } from "../board/Board";
 import { NameSymbol, array_singles, get_1_num, get_2_zones, get_zone_and_push, name_to_piece_id, pieces_in_bracket, string_to_mol_num, to_magic_numbers, zone_to_squareset } from "../utils";
 import { GameData } from "./GameData";

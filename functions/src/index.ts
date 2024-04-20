@@ -1,34 +1,36 @@
-// The Cloud Functions for Firebase SDK to create Cloud Functions and triggers.
-import {onRequest} from "firebase-functions/v2/https";
+// // The Cloud Functions for Firebase SDK to create Cloud Functions and triggers.
+// import {onRequest} from "firebase-functions/v2/https";
 
-// The Firebase Admin SDK to access Firestore.
-import {initializeApp} from "firebase-admin/app";
-import {DocumentData, getFirestore} from "firebase-admin/firestore";
+// // The Firebase Admin SDK to access Firestore.
+// import {initializeApp} from "firebase-admin/app";
+import functions = require('firebase-functions/v1');
+import admin = require('firebase-admin');
+import express = require('express');
+import { getBoardByCode } from "./nonauth.functions";
+import { getMyMatches, getPublicLobbies, getUser, joinPublicLobby, postBoard, postLobby, validateFirebaseIdToken } from "./auth.functions";
 
-initializeApp();
 
-// https://getallboards-mlqacmsctq-uc.a.run.app
-exports.getAllBoards = onRequest(
-  {cors: true },
-  async (req: any, res: any) => {
-  let allBoards: any[] = [];
-  await getFirestore()
-    .collection("Boards")
-    .get()
-    .then((snapshot: DocumentData) => {
-      allBoards = snapshot.map((b: any) => {
-        return {
-          boardCode: b.code,
-          boardName: b.data.name ?? "",
-          creator: b.ownedBy,
-          date: b.timeUploaded,
-          plays: b.stats.timesPlayed,
-          rating: 5,
-        };
-      });
-    })
-    .catch((err: any) => {
-      console.error("Error getting boards", err);
-    });
-  res.json({boards: allBoards});
-});
+admin.initializeApp();
+const cors = require('cors')({origin: true});
+
+// Auth is for all endpoints that require authentication
+// https://us-central1-crooked-rook.cloudfunctions.net/auth
+const auth = express();
+auth.use(cors);
+auth.use(validateFirebaseIdToken);
+auth.post('/board', postBoard);
+auth.post('/lobby', postLobby);
+auth.get('/user', getUser);
+auth.get('/lobbies', getPublicLobbies);
+auth.get('/joinLobby/:lobbyId', joinPublicLobby);
+auth.get('/matches', getMyMatches);
+
+// Non-auth is for endpoints that are open for all users
+// https://us-central1-crooked-rook.cloudfunctions.net/nonauth
+const nonauth = express();
+nonauth.use(cors);
+nonauth.get('/board/:code', getBoardByCode);
+
+exports.auth = functions.https.onRequest(auth);
+exports.nonauth = functions.https.onRequest(nonauth);
+// firebase deploy --only functions

@@ -28,12 +28,12 @@ $dark-theme: mat.define-dark-theme((
 @include mat.input-theme($light-theme);
 @include mat.form-field-theme($light-theme);
 
-@media (prefers-color-scheme: dark) {
-    @include mat.core-color($dark-theme);
-    @include mat.button-color($dark-theme);
-    @include mat.toolbar-color($dark-theme);
-    @include mat.slide-toggle-color($dark-theme);
-    @include mat.select-color($dark-theme);
-    @include mat.input-color($dark-theme);
-    @include mat.form-field-color($dark-theme);
-}
+// @media (prefers-color-scheme: dark) {
+//     @include mat.core-color($dark-theme);
+//     @include mat.button-color($dark-theme);
+//     @include mat.toolbar-color($dark-theme);
+//     @include mat.slide-toggle-color($dark-theme);
+//     @include mat.select-color($dark-theme);
+//     @include mat.input-color($dark-theme);
+//     @include mat.form-field-color($dark-theme);
+// }

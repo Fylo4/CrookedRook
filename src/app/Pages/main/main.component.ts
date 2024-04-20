@@ -12,7 +12,13 @@ import { GameRules, PieceAttributes } from 'src/assets/TCR_Core/Constants';
 import { MatDialog } from '@angular/material/dialog';
 import { BoardInfoComponent } from 'src/app/Dialogs/board-info/board-info.component';
 import { InfoPanelComponent } from 'src/app/Dialogs/info-panel/info-panel.component';
-import { downloadHjson, downloadJson, stringify_consts } from 'src/assets/TCR_Core/utils';
+import { downloadJson, stringify_consts } from 'src/assets/TCR_Core/utils';
+import { DBService } from 'src/app/Services/Firebase/db.service';
+import { chess } from 'src/assets/boards/Chess/chess';
+import { shogi } from 'src/assets/boards/Shogi/shogi';
+import { FormsModule } from '@angular/forms';
+import { AuthService } from 'src/app/Services/Firebase/auth.service';
+import { downloadHjson } from 'src/assets/TCR_Core/hjson';
 
 // firebase.initializeApp(environment.firebase);
 
@@ -29,11 +35,19 @@ import { downloadHjson, downloadJson, stringify_consts } from 'src/assets/TCR_Co
     MatFormFieldModule,
     MatInputModule,
     TcrCanvasContainerComponent,
+    FormsModule,
   ],
 })
 export class MainComponent{
-  constructor(public g: GameService, private error: ErrorService, public dialog: MatDialog) {} 
-  
+  constructor(
+    public g: GameService,
+    private error: ErrorService,
+    public dialog: MatDialog,
+    public db: DBService,
+    public auth: AuthService,
+  ) {} 
+  uploadCode: string = '';
+
   @HostListener('document:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) { 
     if (event.key === "ArrowRight") {
@@ -60,5 +74,20 @@ export class MainComponent{
   btnDownload() {
     let data = stringify_consts(this.g.game.lastLoadedBoard);
     downloadHjson(data, this.g.game.gameData.name+".hjson");
+  }
+
+  uploadBoard() {
+    this.db.postBoard(this.g.game.lastLoadedBoard, this.uploadCode).subscribe({
+      next: v => {
+        console.log(v);
+        this.uploadCode = '';
+      },
+      error: e => {
+        if (e.error.includes("Board code already taken"))
+          this.error.addError(e.error);
+        else
+          console.error(e);
+      }
+    });
   }
 }

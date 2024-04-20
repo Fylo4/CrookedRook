@@ -3,7 +3,7 @@ import { Term } from "../game_data/from_object";
 import { GameData } from "../game_data/GameData";
 import { Piece } from "../Piece";
 import { Squareset } from "../Squareset";
-import { _can_move, _canPass, _clear_space, _count_pieces_in_column, _find_promotions, _find_victory, _generateRepetitionCode, _get_attribute_ss, _get_attributes, _get_iron_ss, _get_solid_ss, _identify_piece, _pass, _set_from_game_data, _set_piece_space, _slots_left, _spawn_piece, _swap_spaces } from "./board_funcs";
+import { _can_move, _canPass, _clear_space, _count_pieces_in_column, _find_promotions, _find_victory, _generateRepetitionCode, _get_attribute_ss, _get_attributes, _get_iron_ss, _get_solid_ss, _identify_piece, _pass, _set_from_game_data, _set_piece_space, _slots_left, _spawn_piece, _swap_spaces, _toMatchObject } from "./board_funcs";
 import { _make_drop_move, _make_move, HistoryRecord } from "./make_move";
 import { _parse_term, _refresh_moves, _reload_can_drop_piece_to } from "./refresh_moves";
 
@@ -146,5 +146,6 @@ export class Board {
     public pass = (): boolean => _pass(this);
     public canPass = (): boolean => _canPass(this);
     public generateRepetitionCode = (): number => _generateRepetitionCode(this);
+    public toMatchObject = (): any => _toMatchObject(this);
 }
 type BoardConstructors = {gameData: GameData, rand: any} | Board;

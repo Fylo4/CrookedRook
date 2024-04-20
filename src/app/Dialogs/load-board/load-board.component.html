@@ -6,7 +6,7 @@
             <mat-select [(ngModel)]="loadFrom" value="canon">
                 <mat-option value="canon">Canon</mat-option>
                 <mat-option value="file">File</mat-option>
-                <!-- <mat-option value="server">Server</mat-option> -->
+                <mat-option value="server">Server</mat-option>
                 <mat-option value="import">Import Code</mat-option>
             </mat-select>
         </mat-form-field>
@@ -47,7 +47,7 @@
         <div *ngIf="loadFrom === 'server'">
             <mat-form-field>
                 <mat-label>Board Code</mat-label>
-                <input matInput>
+                <input matInput [(ngModel)]="importCode" />
             </mat-form-field>
         </div>
 

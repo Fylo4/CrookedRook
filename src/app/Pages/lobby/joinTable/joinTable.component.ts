@@ -1,9 +1,11 @@
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ViewChild, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, Component, Input, OnChanges, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { DBService } from 'src/app/Services/Firebase/db.service';
+import { StoredLobbyType } from 'src/types/types';
 
 @Component({
   selector: 'app-join-table',
@@ -18,24 +20,20 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
   ],
   encapsulation: ViewEncapsulation.None,
 })
-export class JoinTableComponent implements AfterViewInit {
+export class JoinTableComponent implements AfterViewInit, OnChanges {
+  @Input() lobbies: StoredLobbyType[] = []
   displayedColumns: string[] = ['boardName', 'host', 'hostColor', 'saved', 'join'];
-  dataRows = [
-    {boardName: "fShogi", host: "fFylo", hostColor: "Random", private: "No", saved: "No"},
-    {boardName: "aShogi", host: "aFylo", hostColor: "White", private: "No", saved: "Yes"},
-    {boardName: "eShogi", host: "eFylo", hostColor: "Black", private: "Yes", saved: "No"},
-    {boardName: "bShogi", host: "dFylo", hostColor: "Random", private: "Yes", saved: "No"},
-    {boardName: "dShogi", host: "bFylo", hostColor: "Black", private: "No", saved: "Yes"},
-    {boardName: "cShogi", host: "cFylo", hostColor: "White", private: "No", saved: "No"},
-  ];
-  dataSource = new MatTableDataSource(this.dataRows);
+  dataSource = new MatTableDataSource(this.lobbies);
 
-  constructor(private _liveAnnouncer: LiveAnnouncer) {}
+  constructor(private _liveAnnouncer: LiveAnnouncer, private db: DBService) {}
 
   @ViewChild(MatSort) sort!: MatSort;
 
   ngAfterViewInit() {
     this.dataSource.sort = this.sort;
+  }
+  ngOnChanges() {
+    this.dataSource = new MatTableDataSource(this.lobbies);
   }
 
   /** Announce the change in sort state for assistive technology. */
@@ -49,5 +47,11 @@ export class JoinTableComponent implements AfterViewInit {
       sortState.direction === "desc" ? `Sorted ${column} descending` :
       "Sorting cleared"
     this._liveAnnouncer.announce(msg);
+  }
+  join(id: string) {
+    this.db.joinLobby(id).subscribe({
+      next: v => console.log(v),
+      error: e => console.error(e)
+    });
   }
 }

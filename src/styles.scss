@@ -96,3 +96,18 @@ td:not(:first-child), th:not(:first-child) {
 //         background-color: #3f3f3f !important;
 //     }
 // }
+
+.flex-row {
+    display: flex;
+    flex-direction: row;
+}
+.flex-col {
+    display: flex;
+    flex-direction: column;
+}
+.align-center {
+    align-items: center;
+}
+.gap-1 {
+    gap: 1rem 1rem;
+}

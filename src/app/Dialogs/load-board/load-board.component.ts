@@ -10,6 +10,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { BoardLoadingService } from 'src/app/Services/board-loading.service';
 import { GameService } from 'src/app/Services/game.service';
 import { ErrorService } from 'src/app/Services/error.service';
+import { DBService } from 'src/app/Services/Firebase/db.service';
 var Hjson = require('hjson');
 
 @Component({
@@ -27,7 +28,7 @@ var Hjson = require('hjson');
     ],
 })
 export class LoadBoardComponent implements OnInit {
-    loadFrom: string = 'canon';
+    loadFrom: 'canon' | 'file' | 'server' | 'import' = 'canon';
     canonSelector: any;
     errorStr: string = '';
 
@@ -41,7 +42,8 @@ export class LoadBoardComponent implements OnInit {
         public dialogRef: MatDialogRef<LoadBoardComponent>,
         public loader: BoardLoadingService,
         public g: GameService,
-        private error: ErrorService
+        private error: ErrorService,
+        private db: DBService,
     ) {}
     ngOnInit(): void {
         this.reader.onload = (e: any) => {
@@ -52,8 +54,6 @@ export class LoadBoardComponent implements OnInit {
             let fileResult: any;
             if (this.extension === 'hjson') {
                 fileResult = Hjson.parse(data);
-                // console.log("Hjson imports aren't implemented yet");
-                // return;
             }
             else {
                 fileResult = this.error.handle(JSON.parse, data);
@@ -83,6 +83,12 @@ export class LoadBoardComponent implements OnInit {
         } else if (this.loadFrom === 'import') {
             this.error.handle(this.g.game.importHistory, this.importCode);
             this.dialogRef.close();
+        }
+        else if (this.loadFrom === 'server') {
+            this.db.getBoard(this.importCode).subscribe(b => {
+                this.g.game.startFromJson(b.data);
+                this.dialogRef.close();
+            })
         }
     }
     loadRandom() {

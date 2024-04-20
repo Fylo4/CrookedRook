@@ -10,7 +10,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { ErrorService } from 'src/app/Services/error.service';
 import { GameService } from 'src/app/Services/game.service';
-import { downloadHjson, downloadJson } from 'src/assets/TCR_Core/utils';
+import { downloadHjson } from 'src/assets/TCR_Core/hjson';
 var Hjson = require('hjson');
 
 @Component({

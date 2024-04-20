@@ -115,7 +115,6 @@ export function _set_piece_space(board: Board, piece: number, col: 'w' | 'b' | '
     if (col === "b" || col === "n") {
         board.black_ss.set_on(pos);
     }
-    let attributes = board.get_attributes(piece);
 }
 
 //Finds how many pieces can still be placed, considering piece.limit
@@ -195,23 +194,23 @@ export function _find_promotions(board: Board, piece_id: number, src_sq: number,
 
 //Currently not used
 //If I implement drop promotions, this will be useful
-function _find_drop_promotions(board: Board, piece_id: number, end_sq: number, 
-    color: boolean): number[] {
+// function _find_drop_promotions(board: Board, piece_id: number, end_sq: number, 
+//     color: boolean): number[] {
 
-    let promote_to: number[] = [];
-    for (let a = 0; a < board.game_data.all_pieces[piece_id].promotions.length; a++) {
-        let prom = board.game_data.all_pieces[piece_id].promotions[a];
-        let end_in_white = board.game_data.zones[prom.white].get(end_sq);
-        let end_in_black = board.game_data.zones[prom.black].get(end_sq);
-        if (prom.on.includes(Events.drop) &&
-            ((!color && end_in_white) || (color && end_in_black))) {
-            promote_to.push(...prom.to);
-        }
-    }
-    //Promote from opp hand doesn't make sense here
-    promote_to.filter(e => is_valid_prom(piece_id, e, !color, color, end_sq, board));
-    return promote_to;
-}
+//     let promote_to: number[] = [];
+//     for (let a = 0; a < board.game_data.all_pieces[piece_id].promotions.length; a++) {
+//         let prom = board.game_data.all_pieces[piece_id].promotions[a];
+//         let end_in_white = board.game_data.zones[prom.white].get(end_sq);
+//         let end_in_black = board.game_data.zones[prom.black].get(end_sq);
+//         if (prom.on.includes(Events.drop) &&
+//             ((!color && end_in_white) || (color && end_in_black))) {
+//             promote_to.push(...prom.to);
+//         }
+//     }
+//     //Promote from opp hand doesn't make sense here
+//     promote_to.filter(e => is_valid_prom(piece_id, e, !color, color, end_sq, board));
+//     return promote_to;
+// }
 
 function is_valid_prom(this_piece: number, prom_piece: number, is_white: boolean, 
     is_black: boolean, sq: number, board: Board): boolean {
@@ -336,7 +335,6 @@ export function _spawn_piece(board: Board, sq: number, piece_id: number, col: nu
     if (col == 1 || col == 2) {
         board.black_ss.set_on(sq);
     }
-    let attributes = board.get_attributes(piece_id);
     board.has_moved_ss.set_off(sq);
     board.has_attacked_ss.set_off(sq);
 }
@@ -560,4 +558,51 @@ export function _generateRepetitionCode(board: Board) {
         }
     }
     return cyrb53(JSON.stringify(relevant_data));
+}
+function objectifySS(ss: Squareset) {
+    return {length: ss.length, backingArray: ss.backingArray}
+}
+
+// Create the type of object stored in the match database
+export function _toMatchObject(board: Board) {
+    return {
+        turn: board.turn,
+        turn_count: board.turn_count,
+        turn_pos: board.turn_pos,
+        last_moved_src: board.last_moved_src,
+        last_moved_dest: board.last_moved_dest,
+        last_moved_col: board.last_moved_col,
+        
+        is_piece_locked: board.is_piece_locked,
+        is_promotion_locked: board.is_promotion_locked,
+        piece_locked_pos: board.piece_locked_pos,
+        multi_step_pos: board.multi_step_pos,
+        is_bloodlust: board.is_bloodlust,
+        
+        white_ss: objectifySS(board.white_ss),
+        black_ss: objectifySS(board.black_ss),
+        piece_ss: board.piece_ss.map(objectifySS),
+        has_moved_ss: objectifySS(board.has_moved_ss),
+        has_attacked_ss: objectifySS(board.has_attacked_ss),
+        can_move_ss: board.can_move_ss.map(objectifySS),
+        ep_mask: objectifySS(board.ep_mask),
+        white_attack_ss: objectifySS(board.white_attack_ss),
+        black_attack_ss: objectifySS(board.black_attack_ss),
+        checked: {white: objectifySS(board.checked.white), black: objectifySS(board.checked.black)},
+        stoppers_cursed: {white: objectifySS(board.stoppers_cursed.white), black: objectifySS(board.stoppers_cursed.black)},
+        stoppers: objectifySS(board.stoppers),
+        
+        victory: board.victory,
+        royals_killed: board.royals_killed,
+        times_checked: board.times_checked,
+        repetition_codes: board.repetition_codes,
+        open_draw: board.open_draw,
+        draw_move_counter: board.draw_move_counter,
+        lastWasPass: board.lastWasPass,
+
+        hands: board.hands,
+        copycat_memory: board.copycat_memory,
+        can_drop_piece_to: {white: board.can_drop_piece_to.white.map(objectifySS), black: board.can_drop_piece_to.black.map(objectifySS)},
+        can_drop: board.can_drop
+    }
 }

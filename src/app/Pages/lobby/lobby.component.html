@@ -7,15 +7,22 @@
     <mat-card class="mb">
         <mat-card-header>
             <h2>Join Match</h2>
+            <button mat-raised-button color="primary" type="button" (click)="loadPublicLobbies()" class="ml">
+                Refresh
+            </button>
         </mat-card-header>
         <mat-card-content>
-            <app-join-table></app-join-table>
-            <h2 class="mt">Join Private Match</h2>
-            <mat-form-field class="mr">
-                <mat-label>Private Match Code</mat-label>
-                <input matInput>
-            </mat-form-field>
-            <button mat-raised-button color="primary">Join</button>
+            <ng-container *ngIf="lobbiesLoaded">
+                <app-join-table [lobbies]="lobbies"></app-join-table>
+                <h2 class="mt">Join Private Match</h2>
+                <div class="flex-row align-center gap-1">
+                    <mat-form-field subscriptSizing="dynamic">
+                        <mat-label>Private Match Code</mat-label>
+                        <input matInput>
+                    </mat-form-field>
+                    <button mat-raised-button color="primary">Join</button>
+                </div>
+            </ng-container>
         </mat-card-content>
     </mat-card>
 </div>
@@ -27,10 +34,12 @@
     <mat-card-content>
         <app-spectate-table></app-spectate-table>
         <h2 class="mt">Spectate Private Match</h2>
-        <mat-form-field class="mr">
-            <mat-label>Private Match Code</mat-label>
-            <input matInput>
-        </mat-form-field>
-        <button mat-raised-button color="primary">Spectate</button>
+        <div class="flex-row align-center gap-1">
+            <mat-form-field subscriptSizing="dynamic">
+                <mat-label>Private Match Code</mat-label>
+                <input matInput>
+            </mat-form-field>
+            <button mat-raised-button color="primary" type="button">Spectate</button>
+        </div>
     </mat-card-content>
 </mat-card>
