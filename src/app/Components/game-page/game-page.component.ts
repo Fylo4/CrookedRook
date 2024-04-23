@@ -1,31 +1,28 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, HostListener, OnInit } from '@angular/core';
+import { Component, HostListener, Input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { GameService } from 'src/app/Services/game.service';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { ErrorService } from 'src/app/Services/error.service';
 import { TcrCanvasContainerComponent } from './tcr-canvas-container/tcr-canvas-container.component';
-import { GameRules, PieceAttributes } from 'src/assets/TCR_Core/Constants';
 import { MatDialog } from '@angular/material/dialog';
 import { BoardInfoComponent } from 'src/app/Dialogs/board-info/board-info.component';
 import { InfoPanelComponent } from 'src/app/Dialogs/info-panel/info-panel.component';
-import { downloadJson, stringify_consts } from 'src/assets/TCR_Core/utils';
+import { stringify_consts } from 'src/assets/TCR_Core/utils';
 import { DBService } from 'src/app/Services/Firebase/db.service';
-import { chess } from 'src/assets/boards/Chess/chess';
-import { shogi } from 'src/assets/boards/Shogi/shogi';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from 'src/app/Services/Firebase/auth.service';
 import { downloadHjson } from 'src/assets/TCR_Core/hjson';
+import { GameContainer } from 'src/assets/TCR_Core/tcr';
 
-// firebase.initializeApp(environment.firebase);
+// Not a single page- Used in several different pages that display game boards
 
 @Component({
-  selector: 'app-main',
-  templateUrl: './main.component.html',
-  styleUrls: ['./main.component.scss'],
+  selector: 'app-game-page',
+  templateUrl: './game-page.component.html',
+  styleUrls: ['./game-page.component.scss'],
   standalone: true,
   imports: [
     CommonModule,
@@ -38,9 +35,10 @@ import { downloadHjson } from 'src/assets/TCR_Core/hjson';
     FormsModule,
   ],
 })
-export class MainComponent{
+export class GamePageComponent{
+  @Input() game!: GameContainer;
+
   constructor(
-    public g: GameService,
     private error: ErrorService,
     public dialog: MatDialog,
     public db: DBService,
@@ -51,10 +49,10 @@ export class MainComponent{
   @HostListener('document:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) { 
     if (event.key === "ArrowRight") {
-      this.error.handle(this.g.game.nextMove);
+      this.error.handle(this.game.nextMove);
     }
     if (event.key === "ArrowLeft") {
-      this.error.handle(this.g.game.previousMove);
+      this.error.handle(this.game.previousMove);
     }
   }
   openBoardInfoDialog() {
@@ -62,24 +60,23 @@ export class MainComponent{
   }
 
   copyHistory() {
-    this.dialog.open(InfoPanelComponent, {data: {title: "Move History", text: this.g.game.getHistoryAsString()}})
+    this.dialog.open(InfoPanelComponent, {data: {title: "Move History", text: this.game.getHistoryAsString()}})
   }
 
   copyExport() {
-    this.dialog.open(InfoPanelComponent, {data: {title: "Export Code", text: [this.g.game.getExport()]}})
+    this.dialog.open(InfoPanelComponent, {data: {title: "Export Code", text: [this.game.getExport()]}})
   }
   screenshot() {
     
   }
   btnDownload() {
-    let data = stringify_consts(this.g.game.lastLoadedBoard);
-    downloadHjson(data, this.g.game.gameData.name+".hjson");
+    let data = stringify_consts(this.game.lastLoadedBoard);
+    downloadHjson(data, this.game.gameData.name+".hjson");
   }
 
   uploadBoard() {
-    this.db.postBoard(this.g.game.lastLoadedBoard, this.uploadCode).subscribe({
+    this.db.postBoard(this.game.lastLoadedBoard, this.uploadCode).subscribe({
       next: v => {
-        console.log(v);
         this.uploadCode = '';
       },
       error: e => {

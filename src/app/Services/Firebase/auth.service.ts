@@ -1,4 +1,4 @@
-import { Injectable, OnInit } from '@angular/core';
+import { EventEmitter, Injectable, OnInit } from '@angular/core';
 import firebase from 'firebase/compat/app';
 import { getAuth, signInWithPopup, GoogleAuthProvider, OAuthCredential, User, signOut } from "firebase/auth";
 import { Firestore, getFirestore, doc, getDoc, setDoc, collection, DocumentData } from "firebase/firestore";
@@ -32,6 +32,7 @@ export class AuthService {
   token?: string;
   userRef?: firebase.database.Reference;
   provider?: string;
+  onSignin = new EventEmitter<void>();
 
   getAuthHeader() {
     return {
@@ -73,9 +74,9 @@ export class AuthService {
         await this.getUserToken().then(() => {
           this.getUser().subscribe({
             next: u => {
-              console.log("User: ", u);
               this.user = u;
               this.loggedIn = true;
+              this.onSignin.emit();
             },
             error: e => {
               console.error(e.message);

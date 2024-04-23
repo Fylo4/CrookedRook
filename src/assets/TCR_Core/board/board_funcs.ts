@@ -3,7 +3,7 @@ import { Piece } from "../Piece";
 import { Squareset, ss_and, ss_or } from "../Squareset";
 import { GameData } from "../game_data/GameData";
 import { cyrb53 } from "../random";
-import { Board } from "./Board";
+import { Board, BoardMatchObject } from "./Board";
 
 //Makes copy_attrib work
 export function _get_attributes(board: Board, piece: number | Piece) {
@@ -559,12 +559,13 @@ export function _generateRepetitionCode(board: Board) {
     }
     return cyrb53(JSON.stringify(relevant_data));
 }
+
 function objectifySS(ss: Squareset) {
     return {length: ss.length, backingArray: ss.backingArray}
 }
 
 // Create the type of object stored in the match database
-export function _toMatchObject(board: Board) {
+export function _toMatchObject(board: Board): BoardMatchObject {
     return {
         turn: board.turn,
         turn_count: board.turn_count,

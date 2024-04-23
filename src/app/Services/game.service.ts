@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { GameContainer } from "../../assets/TCR_Core/tcr";
 import { chess } from 'src/assets/boards/Chess/chess';
-import { shogi } from 'src/assets/boards/Shogi/shogi';
 import { MatDialog } from '@angular/material/dialog';
 import { ErrorService } from './error.service';
 import { PieceInfoPanelComponent } from '../Dialogs/piece-info-panel/piece-info-panel.component';
@@ -12,7 +11,7 @@ import { BoardLoadingService } from './board-loading.service';
 })
 export class GameService {
   game: GameContainer = new GameContainer(chess, undefined, "canon");
-
+  
   fitToScreen() {
     //canvas border = 2px * 2
     //page padding-left and right = 32px * 2

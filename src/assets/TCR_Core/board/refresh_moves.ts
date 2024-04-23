@@ -340,14 +340,14 @@ export function _parse_term(board: Board, term: Term[], term_index: number, sq: 
     for (let a = term_index; a < term.length; a++) {
         if (term[a].type === "pre") {
             //Check condition, possibly return
-            if (typeof (term[a].data) === "function" && (!is_attack || !term[a].at) && term[a].data(board, col, sq, piece)) {
+            if (typeof (term[a].data) === "function" && (!is_attack || !term[a].at) && term[a].data(board, col, sq, ret, piece)) {
                 return ss_or(ret, saved_ss);
             }
         } else if (term[a].type === "post") {
             //Filter squares in ret
             if (typeof (term[a].data) === "function") {
                 if (!is_attack || term[a].at === undefined) {
-                    let req_ss = term[a].data(board, col, sq, ret);
+                    let req_ss = term[a].data(board, col, sq, ret, piece);
                     ret.ande(req_ss.inverse());
                 }
                 else if(term.findIndex((e, i) => e.type === "mol" && i > a) === -1) {
@@ -356,7 +356,7 @@ export function _parse_term(board: Board, term: Term[], term_index: number, sq: 
                     }
                 }
                 else if(!term[a].at) {
-                    let req_ss = term[a].data(board, col, sq, ret);
+                    let req_ss = term[a].data(board, col, sq, ret, piece);
                     ret.ande(req_ss.inverse());
                 }
             }

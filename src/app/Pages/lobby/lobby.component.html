@@ -1,18 +1,16 @@
 <h1>Lobby</h1>
-<p *ngIf="!auth.loggedIn">You must be logged in to create or join matches</p>
 
-<div *ngIf="auth.loggedIn">
+@if(auth.loggedIn) {
     <button mat-raised-button color="primary" class="mb" (click)="openCreateDialog()">Create Room</button>
 
     <mat-card class="mb">
         <mat-card-header>
             <h2>Join Match</h2>
-            <button mat-raised-button color="primary" type="button" (click)="loadPublicLobbies()" class="ml">
+            <!-- <button mat-raised-button color="primary" type="button" (click)="loadPublicLobbies()" class="ml">
                 Refresh
-            </button>
+            </button> -->
         </mat-card-header>
         <mat-card-content>
-            <ng-container *ngIf="lobbiesLoaded">
                 <app-join-table [lobbies]="lobbies"></app-join-table>
                 <h2 class="mt">Join Private Match</h2>
                 <div class="flex-row align-center gap-1">
@@ -22,10 +20,12 @@
                     </mat-form-field>
                     <button mat-raised-button color="primary">Join</button>
                 </div>
-            </ng-container>
         </mat-card-content>
     </mat-card>
-</div>
+}
+@else {
+    <p>You must be logged in to create or join matches</p>
+}
 
 <mat-card>
     <mat-card-header>

@@ -1,10 +1,10 @@
 <div style="padding-bottom: 4rem;">
     <h1>
-        {{g.game.gameData.name}}
+        {{game.gameData.name}}
         <button mat-raised-button color="primary" (click)="openBoardInfoDialog()">Info</button>
     </h1>
 
-    <app-tcr-canvas-container></app-tcr-canvas-container>
+    <app-tcr-canvas-container [game]="game" />
 
     <mat-accordion>
         <mat-expansion-panel>
@@ -15,7 +15,7 @@
         </mat-expansion-panel-header>
             <div class="button-row mt-h">
                 <button mat-raised-button color="primary" class="mr" (click)="btnDownload()">Download</button>
-                <button mat-mini-fab color="primary" aria-label="Inspect icon" (click)="g.game.toggleInspect()" class="mr">
+                <button mat-mini-fab color="primary" aria-label="Inspect icon" (click)="game.toggleInspect()" class="mr">
                     <mat-icon>search</mat-icon>
                 </button>
                 <button mat-raised-button color="primary" class="mr" (click)="copyExport()">Export Game</button>
@@ -23,10 +23,10 @@
                 <button mat-raised-button color="primary" (click)="screenshot()" disabled><mat-icon>camera_alt</mat-icon></button>
             </div>
             
-            <p *ngIf="g.game.clickData.inspect" style="margin-bottom:0;">Click on any piece to inspect it</p>
+            <p *ngIf="game.clickData.inspect" style="margin-bottom:0;">Click on any piece to inspect it</p>
             <br />
             
-            <div *ngIf="(g.game.loadedFrom === 'editor' || g.game.loadedFrom === 'file') && auth.loggedIn">
+            <div *ngIf="(game.loadedFrom === 'editor' || game.loadedFrom === 'file') && auth.loggedIn">
                 <span class="mr">Upload Board:</span>
                 <mat-form-field class="mr">
                     <mat-label>Board Code</mat-label>

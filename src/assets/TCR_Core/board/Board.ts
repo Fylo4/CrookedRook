@@ -149,3 +149,45 @@ export class Board {
     public toMatchObject = (): any => _toMatchObject(this);
 }
 type BoardConstructors = {gameData: GameData, rand: any} | Board;
+
+type SquaresetObj = {length: number, backingArray: number[]}
+export type BoardMatchObject = {
+    turn: boolean;
+    turn_count: number;
+    turn_pos: number;
+    last_moved_src: number;
+    last_moved_dest: number;
+    last_moved_col: boolean;
+    
+    is_piece_locked: boolean;
+    is_promotion_locked: boolean;
+    piece_locked_pos: number;
+    multi_step_pos: number;
+    is_bloodlust: boolean;
+    
+    white_ss: SquaresetObj;
+    black_ss: SquaresetObj;
+    piece_ss: SquaresetObj[];
+    has_moved_ss: SquaresetObj;
+    has_attacked_ss: SquaresetObj;
+    can_move_ss: SquaresetObj[];
+    ep_mask: SquaresetObj;
+    white_attack_ss: SquaresetObj;
+    black_attack_ss: SquaresetObj;
+    checked: {white: SquaresetObj, black: SquaresetObj};
+    stoppers_cursed: {white: SquaresetObj, black: SquaresetObj};
+    stoppers: SquaresetObj;
+    
+    victory: {val: number, message: string};
+    royals_killed: { white: number, black: number };
+    times_checked: { white: number, black: number };
+    repetition_codes: number[];
+    open_draw: boolean;
+    draw_move_counter: number;
+    lastWasPass: boolean;
+
+    hands: {white: number[], black: number[]};
+    copycat_memory: number;
+    can_drop_piece_to: {white: SquaresetObj[], black: SquaresetObj[]};
+    can_drop: {white: boolean, black: boolean};
+}

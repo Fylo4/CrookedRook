@@ -350,7 +350,7 @@ function inflate_piece(piece: any, all_zones: Squareset[], all_molecules: string
             on,
             to: promote_to_number(piece.name ?? piece.n, to_str, names_symbols_royals)
         })
-        if(promotions[a].to.length === 0) {
+        if(promotions[a].to.length === 0 && !piece.attributes.includes(PieceAttributes.promote_from_opp_hand)) {
             throw new Error(`You must specify what ${piece.name ?? piece.n} promotes to`);
         }
     }
@@ -578,10 +578,9 @@ function string_to_term(string: string, mols: string[], pieceList: NameSymbol[],
             data: (board: Board) =>  {return ss_and(ss_or(board.white_ss, board.black_ss), board.has_moved_ss)}}); }
         else if (string[a] === "B") {
             term.push({
-                type: "post", data: (board: Board, col: boolean, pos: number, current_moves: Squareset) => {
+                type: "post", data: (board: Board, col: boolean, pos: number, current_moves: Squareset, piece: number) => {
                     let ret = new Squareset(board.game_data.width * board.game_data.height);
-                    let piece = board.game_data.all_pieces[board.identify_piece(pos)];
-                    let my_stoppers = piece.attributes.includes(PieceAttributes.curse_immune) ? board.stoppers
+                    let my_stoppers = board.get_attributes(piece).includes(PieceAttributes.curse_immune) ? board.stoppers
                         : col ? board.stoppers_cursed.black : board.stoppers_cursed.white;
                     let my_stop_spaces = ss_and(my_stoppers, current_moves);
                     for (; !my_stop_spaces.is_zero(); my_stop_spaces.pop()) {

@@ -58,8 +58,9 @@ export class LoadBoardComponent implements OnInit {
             else {
                 fileResult = this.error.handle(JSON.parse, data);
             }
-            if (fileResult)
+            if (fileResult) {
                 this.error.handle(this.g.game.startFromJson, fileResult, undefined, "file");
+            }
         };
     }
 

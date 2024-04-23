@@ -16,7 +16,7 @@ export const ccit_chesscraft_trailer = {
             symbol: "p",
             notation: "",
 			move: "i[0 1 1 2]Bae+[S]ae+[P]ca",
-            promotions: {to: ["W", "B", "R", "Q"]},
+            promotions: {to: ["N", "B", "R", "Q"]},
 			attributes: [PieceAttributes.ep_capturer, PieceAttributes.ep_captured],
 		},
 		{
@@ -33,7 +33,6 @@ export const ccit_chesscraft_trailer = {
             sprite: "knight",
 			symbol: "N",
 			move: "[N]a",
-			promotions: {to: "Z"}
 		},
 		{
             name: "Bishop",

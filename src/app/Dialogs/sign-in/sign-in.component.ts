@@ -28,12 +28,10 @@ export class SignInComponent implements AfterViewInit {
         // User successfully signed in.
         // Return type determines whether we continue the redirect automatically
         // or whether we leave that to developer to handle.
-        console.log(authResult);
         let username = authResult.additionalUserInfo.profile.name;
         let locale = authResult.additionalUserInfo.profile.locale;
         let provider = authResult.additionalUserInfo.providerId;
         let userId = authResult.user.multiFactor.user.uid;
-        console.log(username, locale, provider, userId);
         return false;
       },
     },

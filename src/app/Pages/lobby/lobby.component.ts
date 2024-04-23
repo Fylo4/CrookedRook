@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation, inject } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { JoinTableComponent } from './joinTable/joinTable.component';
 import { MatDialog } from '@angular/material/dialog';
@@ -11,6 +11,9 @@ import { SpectateTableComponent } from './spectateTable/spectateTable.component'
 import { AuthService } from 'src/app/Services/Firebase/auth.service';
 import { DBService } from 'src/app/Services/Firebase/db.service';
 import { StoredLobbyType } from 'src/types/types';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { collection, onSnapshot } from 'firebase/firestore';
+import { Unsubscribe } from 'firebase/auth';
 
 @Component({
   selector: 'app-lobby',
@@ -28,26 +31,40 @@ import { StoredLobbyType } from 'src/types/types';
   ],
   encapsulation: ViewEncapsulation.None,
 })
-export class LobbyComponent implements OnInit{
-  constructor(public dialog: MatDialog, public auth: AuthService, public db: DBService) {}
-  lobbies: StoredLobbyType[] = [];
-  lobbiesLoaded: boolean = false;
-
-  ngOnInit(): void {
-    this.loadPublicLobbies();
+export class LobbyComponent implements OnDestroy {
+  constructor(public dialog: MatDialog, public auth: AuthService, public db: DBService) {
+    this.tryTrackLobbies();
+    this.auth.onSignin.pipe(takeUntilDestroyed()).subscribe(() => {
+      this.tryTrackLobbies();
+    });
   }
+  lobbies: StoredLobbyType[] = [];
+  private trackingLobbies?: undefined | Unsubscribe;
+
+  tryTrackLobbies() {
+    if (this.trackingLobbies == undefined && this.auth.loggedIn && this.auth.db) {
+      this.trackingLobbies = onSnapshot(collection(this.auth.db, "Lobbies"), (docs) => {
+        this.lobbies = docs.docs.map(doc => ({ ...doc.data(), id: doc.id }) as StoredLobbyType);
+      });
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.trackingLobbies != undefined) {
+      this.trackingLobbies(); // Unsubscribes from the listener
+    }
+  }
+
 
   openCreateDialog() {
     this.dialog.open(CreateRoomComponent);
   }
   loadPublicLobbies() {
-    this.db.getPublicLobbies().subscribe({
-      next: v => {
-        console.log(v);
-        this.lobbies = v as StoredLobbyType[];
-        this.lobbiesLoaded = true;
-      },
-      error: e => console.error(e)
-    })
+    // this.db.getPublicLobbies().subscribe({
+    //   next: v => {
+    //     this.lobbies = v as StoredLobbyType[];
+    //   },
+    //   error: e => console.error(e)
+    // })
   }
 }

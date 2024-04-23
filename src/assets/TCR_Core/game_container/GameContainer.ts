@@ -27,7 +27,7 @@ export class GameContainer {
 
     constructor(data: any, seed: number = 0, from: LoadedFrom = "unknown") {
         this.startFromJson(data, seed, from);
-        //console.log(this.gameData);
+        // console.log(this.gameData);
         
         loadImage(this, "movable", (img: ImageBitmap) => this.img_movable = img);
         loadImage(this, "glow", (img: ImageBitmap) => this.img_glow = img);

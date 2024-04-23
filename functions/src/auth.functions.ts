@@ -4,7 +4,7 @@ import admin = require('firebase-admin');
 import {BoardType, CreateLobbyType, MatchType, StoredLobbyType} from "../../src/types/types";
 import {Board} from "../../src/assets/TCR_Core/board/Board";
 import {GameData} from "../../src/assets/TCR_Core/game_data/GameData";
-import { cyrb128, mulberry32, time_as_string } from "../../src/assets/TCR_Core/random";
+import { cyrb128, mulberry32 } from "../../src/assets/TCR_Core/random";
 
 export const validateFirebaseIdToken = async (req: any, res: any, next: any) => {
     if ((!req.headers.authorization || !req.headers.authorization.startsWith('Bearer ')) &&
@@ -248,7 +248,8 @@ export const joinPublicLobby = async (req: any, res: any) => {
       if (data === undefined) return res.status(400).send("Board data undefined")
       return data.data;
     });
-  let brd = new Board({gameData: new GameData(gameDataSeed), rand: mulberry32(cyrb128(time_as_string())[0])});
+  const seed = Math.random();
+  let brd = new Board({gameData: new GameData(gameDataSeed), rand: mulberry32(cyrb128(seed+'')[0])});
   brd.refresh_moves();
   let newMatchData = {
     blackId: IAmWhite ? myLobby.hostId : req.user.uid,
@@ -258,22 +259,25 @@ export const joinPublicLobby = async (req: any, res: any) => {
     boardCode: myLobby.boardCode,
     dateTimeStarted: new Date(),
     isPrivate: myLobby.isPrivate,
-    moveHistory: '',
     toMove: false,
     turnNum: 1,
-    board: brd.toMatchObject()
+    seed,
+    board: brd.toMatchObject(),
   };
   //Make the match object
-  await getFirestore()
+  let matchDoc = await getFirestore()
     .collection("Matches")
-    .add(newMatchData);
+    .add({});
+  // Make the moves sub-collection
+  matchDoc.collection("match").doc("moves").set({moves: []});
+  matchDoc.collection("match").doc("matchData").set(newMatchData);
   //Delete the lobby object
-  await getFirestore()
+  getFirestore()
     .collection("Lobbies")
     .doc(req.params.lobbyId)
     .delete();
   
-  return res.send(newMatchData);
+  return res.send({ id: matchDoc.id });
 }
 export const getMyMatches = async (req: any, res: any) => {
   let blackMatches: MatchType[] = await getFirestore()

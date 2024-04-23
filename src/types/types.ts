@@ -62,7 +62,6 @@ export type MatchType = {
     boardCode: string;
     dateTimeStarted: Date;
     isPrivate: boolean;
-    moveHistory: string;
     toMove: boolean;
     turnNum: number;
     whiteId: string;

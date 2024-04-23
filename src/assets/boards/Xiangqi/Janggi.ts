@@ -28,7 +28,7 @@ export const xiangqi_janggi = {
       description: "Janggi Cannon",
       sprite: "cannon",
       symbol: "C",
-      move: "[R]Bbp{C}[0 1 1 -1]Bap{C}+z{0 0}[B]Bbp{C}[0 1 1 -1]Bap{C}Z{0 0}"
+      move: "T{2}[R]Bbp{C}[0 1 1 -1]Bap{C}+z{0 0}[B]Bbp{C}[0 1 1 -1]Bap{C}Z{0 0}"
     },
     {
       name: "Horse",
@@ -42,7 +42,7 @@ export const xiangqi_janggi = {
       description: "Blockable Zebra",
       sprite: "elephant",
       symbol: "E",
-      move: "t{3}i[1 0 2 1]mP{H}+t{3}i[0]+[W]ae([1 1 1 2],[-1 1 1 2])Ba+-[N]"
+      move: "t{3}i[1 0 2 1]mP{H}+t{3}i[0]+T{2}[W]ae([1 1 1 2],[-1 1 1 2])Ba+-[N]"
     },
     {
       name: "Advisor",

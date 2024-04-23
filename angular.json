@@ -67,10 +67,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "CRNG:build:production"
+              "buildTarget": "CRNG:build:production"
             },
             "development": {
-              "browserTarget": "CRNG:build:development"
+              "buildTarget": "CRNG:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -78,7 +78,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "CRNG:build"
+            "buildTarget": "CRNG:build"
           }
         },
         "test": {
