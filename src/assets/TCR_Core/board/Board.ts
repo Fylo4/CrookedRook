@@ -80,6 +80,47 @@ export class Board {
             //Set everything based on the game data
             _set_from_game_data(this, input.gameData, input.rand);
         }
+        else if ('game' in input) {
+            this.game_data = new GameData(input.game);
+            this.turn = input.board.turn;
+            this.turn_count = input.board.turn_count;
+            this.turn_pos = input.board.turn_pos;
+            this.last_moved_src = input.board.last_moved_src;
+            this.last_moved_dest = input.board.last_moved_dest;
+            this.last_moved_col = input.board.last_moved_col;
+            
+            this.is_piece_locked = input.board.is_piece_locked;
+            this.is_promotion_locked = input.board.is_promotion_locked;
+            this.piece_locked_pos = input.board.piece_locked_pos;
+            this.multi_step_pos = input.board.multi_step_pos;
+
+            this.victory = {...input.board.victory};
+            this.royals_killed = {...input.board.royals_killed};
+            this.times_checked = {...input.board.times_checked};
+            this.repetition_codes = [...input.board.repetition_codes];
+            this.open_draw = input.board.open_draw;
+            this.draw_move_counter = input.board.draw_move_counter;
+            this.lastWasPass = input.board.lastWasPass;
+
+            this.white_ss = new Squareset(input.board.white_ss);
+            this.black_ss = new Squareset(input.board.black_ss);
+            this.piece_ss = input.board.piece_ss.map(s => new Squareset(s));
+            this.has_moved_ss = new Squareset(input.board.has_moved_ss);
+            this.has_attacked_ss = new Squareset(input.board.has_attacked_ss);
+            this.can_move_ss = input.board.can_move_ss.map(s => new Squareset(s));
+            this.ep_mask = new Squareset(input.board.ep_mask);
+            this.white_attack_ss = new Squareset(input.board.white_attack_ss);
+            this.black_attack_ss = new Squareset(input.board.black_attack_ss);
+            this.checked = {white: new Squareset(input.board.checked.white), black: new Squareset(input.board.checked.black)};
+            this.stoppers = new Squareset(input.board.stoppers);
+            this.stoppers_cursed = {white: new Squareset(input.board.stoppers_cursed.black), black: new Squareset(input.board.stoppers_cursed.white)};
+            
+            this.hands = {white: [...input.board.hands.white], black: [...input.board.hands.black]};
+            this.copycat_memory = input.board.copycat_memory;
+            this.can_drop = {...input.board.can_drop};
+            this.can_drop_piece_to = {white: input.board.can_drop_piece_to.white.map(s => new Squareset(s)), 
+                black: input.board.can_drop_piece_to.black.map(s => new Squareset(s))};
+        }
         else {
             this.game_data = input.game_data; //Shallow copy- that's ok
             this.turn = input.turn;
@@ -148,7 +189,7 @@ export class Board {
     public generateRepetitionCode = (): number => _generateRepetitionCode(this);
     public toMatchObject = (): any => _toMatchObject(this);
 }
-type BoardConstructors = {gameData: GameData, rand: any} | Board;
+type BoardConstructors = {gameData: GameData, rand: any} | {game: any, board: BoardMatchObject} | Board;
 
 type SquaresetObj = {length: number, backingArray: number[]}
 export type BoardMatchObject = {

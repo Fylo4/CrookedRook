@@ -395,7 +395,9 @@ export function validate_move(board: Board, src_x: number, src_y: number, dst_x:
 
     //If a piece of turn's color isn't on src
     if(board.turn && !board.black_ss.get(src_sq) || !board.turn && !board.white_ss.get(src_sq)) {
-        throw new Error("Trying to move the wrong color");
+        const turn = board.turn ? "black" : "white";
+        const piece = board.black_ss.get(src_sq) ? "black" : "white";
+        throw new Error("Trying to move the wrong color: "+turn+" "+piece);
     }
     //If the piece can't move there
     if(!board.can_move_ss[src_sq].get(dst_sq)) {

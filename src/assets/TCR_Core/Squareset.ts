@@ -54,7 +54,7 @@ export class Squareset implements ISquareset{
     length: number;
     backingArray: number[];
 
-    constructor(length: number | Squareset, seed?: number) {
+    constructor(length: number | Squareset | {length: number, backingArray: number[]}, seed?: number) {
         if (typeof length === "object") {
             //Copy constructor
             let copy = length;

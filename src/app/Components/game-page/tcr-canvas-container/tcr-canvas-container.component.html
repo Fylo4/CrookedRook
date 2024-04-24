@@ -1,5 +1,5 @@
 
-<p>Mode: Single-player; Turn: {{game.boardHistory[game.boardHistory.length-1].turn ? 'Black' : 'White'}}</p>
+<p>Mode: {{game.multiplayerData.isInMultiplayerGame ? 'Multiplayer' : 'Local'}}; Turn: {{game.boardHistory[game.boardHistory.length-1].turn ? 'Black' : 'White'}}</p>
 
 <div style="display: flex;">
     <div [class]="(spaceBeside() ? 'side-by-side' : 'vertical') +  ' mb'">

@@ -7,7 +7,7 @@ import functions = require('firebase-functions/v1');
 import admin = require('firebase-admin');
 import express = require('express');
 import { getBoardByCode } from "./nonauth.functions";
-import { getMyMatches, getPublicLobbies, getUser, joinPublicLobby, postBoard, postLobby, validateFirebaseIdToken } from "./auth.functions";
+import { getMyMatches, getPublicLobbies, getUser, joinPublicLobby, makeMove, postBoard, postLobby, validateFirebaseIdToken } from "./auth.functions";
 
 
 admin.initializeApp();
@@ -24,6 +24,7 @@ auth.get('/user', getUser);
 auth.get('/lobbies', getPublicLobbies);
 auth.get('/joinLobby/:lobbyId', joinPublicLobby);
 auth.get('/matches', getMyMatches);
+auth.post('/move', makeMove);
 
 // Non-auth is for endpoints that are open for all users
 // https://us-central1-crooked-rook.cloudfunctions.net/nonauth

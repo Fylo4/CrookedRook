@@ -21,7 +21,7 @@ import { MatchType } from "src/types/types";
 export class PlayComponent implements OnInit, OnDestroy {
     private matchId = '';
     private movesSub?: undefined | Unsubscribe;
-    private myMoveList: HistoryRecord[] = [];
+    private myMoveList: any[] = [];
     private matchDataSub?: undefined | Unsubscribe;
     private matchData?: MatchType;
     private gameInitiated = false;
@@ -41,11 +41,6 @@ export class PlayComponent implements OnInit, OnDestroy {
             return;
         }
 
-      this.movesSub = onSnapshot(doc(this.auth.db!, "Matches", this.matchId, "match", "moves"), (doc) => {
-        let d = doc.data();
-        const moveArr = d ? (d['moves']??[]) : [];
-        if (moveArr) this.verifyMoveHistory(moveArr);
-      });
       this.matchDataSub = onSnapshot(doc(this.auth.db!, "Matches", this.matchId, "match", "matchData"), (doc) => {
         const matchData = doc.data();
         if (matchData) {
@@ -78,6 +73,16 @@ export class PlayComponent implements OnInit, OnDestroy {
                 otherName: this.matchData!.blackId === this.user.user?.id ? this.matchData!.whiteName : this.matchData!.blackName,
                 myCol: this.matchData!.blackId === this.user.user?.id,
             };
+            this.thisGame.handleMultiplayerMove = (src_x: number, src_y: number, dst_x: number, dst_y: number, promotion?: number | undefined) => {
+                console.log("hello")
+                this.db.makeMultiplayerMove({matchId: this.matchId, src_x, src_y, dst_x, dst_y, promotion}).subscribe();
+            }
+            this.movesSub = onSnapshot(doc(this.auth.db!, "Matches", this.matchId, "match", "moves"), (doc) => {
+                const d = doc.data();
+                console.log("movesSub update", d);
+              const moveArr = d ? (d['moves']??[]) : [];
+              if (moveArr) this.verifyMoveHistory(moveArr);
+            });
         });
         this.gameInitiated = true;
     }
@@ -87,7 +92,20 @@ export class PlayComponent implements OnInit, OnDestroy {
         if (this.matchDataSub != undefined) this.matchDataSub();
     }
 
-    verifyMoveHistory(moveArray: HistoryRecord[]) {
-        
+    verifyMoveHistory(moveArray: {src_x: number, src_y: number, dst_x: number, dst_y: number, promotion?: number}[]) {
+        for (let a = 0; a < moveArray.length; a ++) {
+            if (this.myMoveList.length <= a) {
+                // We're behind, fast-forward
+                console.log("Fast-forwarding");
+                const m = moveArray[a];
+                this.thisGame!.makeMove(m.src_x, m.src_y, m.dst_x, m.dst_y, m.promotion);
+                this.thisGame!.renderAfterMove();
+                this.myMoveList.push({...m})
+            }
+            else if (JSON.stringify(this.myMoveList[a]) != JSON.stringify(moveArray[a])) {
+                // In the future, handle this better
+                console.error("Move conflict detected");
+            }
+        }
     }
 }

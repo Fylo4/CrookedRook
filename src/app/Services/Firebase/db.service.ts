@@ -31,4 +31,7 @@ export class DBService {
     getMyMatches() {
         return this.http.get(this.baseUrl+"auth/matches/", this.authService.getAuthHeader());
     }
+    makeMultiplayerMove(data: {matchId: string, src_x: number, src_y: number, dst_x: number, dst_y: number, promotion?: number | undefined}) {
+        return this.http.post(this.baseUrl+"auth/move/", {data}, this.authService.getAuthHeader());
+    }
 }

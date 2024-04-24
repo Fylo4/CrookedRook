@@ -2,7 +2,7 @@ import { getFirestore } from "firebase-admin/firestore";
 import functions = require('firebase-functions/v1');
 import admin = require('firebase-admin');
 import {BoardType, CreateLobbyType, MatchType, StoredLobbyType} from "../../src/types/types";
-import {Board} from "../../src/assets/TCR_Core/board/Board";
+import {Board, BoardMatchObject} from "../../src/assets/TCR_Core/board/Board";
 import {GameData} from "../../src/assets/TCR_Core/game_data/GameData";
 import { cyrb128, mulberry32 } from "../../src/assets/TCR_Core/random";
 
@@ -262,7 +262,6 @@ export const joinPublicLobby = async (req: any, res: any) => {
     toMove: false,
     turnNum: 1,
     seed,
-    board: brd.toMatchObject(),
   };
   //Make the match object
   let matchDoc = await getFirestore()
@@ -271,6 +270,8 @@ export const joinPublicLobby = async (req: any, res: any) => {
   // Make the moves sub-collection
   matchDoc.collection("match").doc("moves").set({moves: []});
   matchDoc.collection("match").doc("matchData").set(newMatchData);
+  matchDoc.collection("match").doc("game").set(gameDataSeed);
+  matchDoc.collection("match").doc("board").set(brd.toMatchObject());
   //Delete the lobby object
   getFirestore()
     .collection("Lobbies")
@@ -300,4 +301,36 @@ export const getMyMatches = async (req: any, res: any) => {
     ...blackMatches.filter(m1 => !whiteMatches.find(m2 => m2.id === m1.id))
   ]
   return res.send(allMatches);
+}
+
+export const makeMove = async (req: any, res: any) => {
+  // First find board and game data for the match
+  // matchId: string, src_x: number, src_y: number, dst_x: number, dst_y: number, promotion?: number | undefined
+  const id = req.body.data.matchId;
+  const collection = await getFirestore().collection(`Matches/${id}/match`).get();
+  const game = collection.docs.find(d => d.id === 'game')?.data();
+  const board = (collection.docs.find(d => d.id === 'board')?.data() as any) as BoardMatchObject;
+  const history = collection.docs.find(d => d.id === 'moves')?.data();
+  // return res.send({game, board});
+  if (!game) return res.status(400).send("Game undefined: "+JSON.stringify(game));
+  if (!board) return res.status(400).send("Board undefined: "+JSON.stringify(board));
+  let brd = new Board({game, board});
+  brd.refresh_moves();
+  try {
+    brd.make_move(req.body.data.src_x, req.body.data.src_y, req.body.data.dst_x, req.body.data.dst_y, req.body.data.promotion);
+  }
+  catch(e: any) {
+    return res.status(400).send(e.message);
+  }
+  await getFirestore().doc(`Matches/${id}/match/board`).set(brd.toMatchObject());
+  const historyEntry = {
+    src_x: req.body.data.src_x,
+    src_y: req.body.data.src_y,
+    dst_x: req.body.data.dst_x,
+    dst_y: req.body.data.dst_y,
+  };
+  const newHistory = [...(history?.moves??[]), historyEntry];
+  await getFirestore().doc(`Matches/${id}/match/moves`).set({moves: newHistory});
+  await getFirestore().doc(`Matches/${id}/match/matchData`).update({toMove: brd.turn, turnNum: brd.turn_count})
+  return res.send(true);
 }
